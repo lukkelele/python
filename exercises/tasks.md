@@ -1,6 +1,6 @@
-## STARTER
+# STARTER
 
-1. Printing
+### 1. Printing
 Write a program print.py, which will print the phrase Knowledge is power!
 
     on one line,  
@@ -9,7 +9,7 @@ Write a program print.py, which will print the phrase Knowledge is power!
 	
 ---
 
-2. Quote
+### 2. Quote
 Write a program quote.py which reads a line of text from the keyboard and then prints the same line as a quote (that is inside " "). An example of an execution:
 
     Write a line of text:  I wish I was a punk rocker with flowers in my hair.
@@ -18,7 +18,7 @@ Write a program quote.py which reads a line of text from the keyboard and then p
   
 ---
 
-3. Fahrenheit
+### 3. Fahrenheit
 Write a program fahrenheit.py that reads a The Fahrenheit temperature F (a float) from the keyboard and then print the corresponding Celsius temperature C. The realtionship between C and F is:
 
 	     F = (9/5)*C + 32
@@ -33,7 +33,7 @@ An example of an execution:
 
 ---
   
-4. 5-year Interest
+### 4. 5-year Interest
 Write a program interest.py which computes the value of your savings S after five years given a certain interest rate P (percentage). You can assume that both S and P are integers. The value should be an integer correctly rounded off. An example of an execution:
 
     Initial savings: 1000
@@ -44,7 +44,7 @@ Write a program interest.py which computes the value of your savings S after fiv
 
 ---
 
-5. Area
+### 5. Area
 Write a program area.py which reads a radius (R, a float) and computes the area A of a circle with radius R. An example of an execution:
   
     Provide radius: 2.5
@@ -55,7 +55,7 @@ The result should be presented with a single decimal correctly rounded off.
 
 ---
 
-6. Time
+### 6. Time
 Write a program time.py, which reads a number of seconds (an integer) and then prints the same amount of time given in hours, minutes and seconds. An example of an execution:
 
     Give a number of seconds: 9999
@@ -65,7 +65,7 @@ Hint: Use integer division and the modulus (remainder) operator.
 
 ---
   
-7. Sum of Three
+### 7. Sum of Three
 Write a program sumofthree.py which asks the user to provide a three digit number. The program should then compute the sum of the three digits. For example:
 
     Provide a three digit number: 483
@@ -73,7 +73,7 @@ Write a program sumofthree.py which asks the user to provide a three digit numbe
 
 ---
 
-8. Change
+### 8. Change
 Write a program change.py that computes the change a customer should receive when she/he has paid a certain sum. The program should exactly describe the minimum number of Swedish bills and coins that should be returned rounded off to nearest krona (kr). Example:
 
 Price: 372.38
@@ -94,7 +94,8 @@ Change: 628 kr
 ---
 
 ## IF STATEMENTS
-1. Largest
+
+### 1. Largest
 Write a program largest.py which reads three integers A, B, C and then prints the largest number. For example
 
 Please provide three integers A, B, C.
@@ -108,7 +109,7 @@ Notice: You should solve this problem using if statements. You are not allowed t
 
 ---
 
-2. Taxes
+### 2. Taxes
 In a (very) simplified version of the Swedish income tax system we have three tax levels depending on your monthly salary:
 
     You pay a 30% tax on all income below 38.000 SEK/month
@@ -128,7 +129,7 @@ Corresponding income tax:  27200
 
 ---
 
-3. Random Number
+### 3. Random Number
 Write a program randomsum.py generating and printing the sum of five random numbers in the interval [1,100]. For example
 
     Five random numbers: 78 13 91 2 36
@@ -140,7 +141,7 @@ Notice: No reading from the keyboard in this exercise
 
 ---
 
-4. Classify Numbers
+### 4. Classify Numbers
 Write a program oddpositive.py which generates a random numer in the interval [-10,10] and classifies it as odd/even and as positive/negative. For example
 
 The generated number is -7
@@ -151,7 +152,7 @@ Notice: No reading from the keyboard in this exercise
 
 ---
 
-5. Short Name
+### 5. Short Name
 Write a program shortname.py, reading a first name and a last name (given name and family name) as two strings. The output should consist of the first letter of the first name followed by a dot and a space, followed by the first four letters of the last name. An example of an execution:
 
     First name: Anakin
@@ -159,3 +160,5 @@ Write a program shortname.py, reading a first name and a last name (given name a
     Short name: A. Skyw
 
 What happens if the last name consists of less than four letters? 
+
+---
