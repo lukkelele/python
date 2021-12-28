@@ -1,4 +1,5 @@
+# Ignore list
+# '**/' to ignore in all directories
 
 .directory
-./__*
-__pycache__
+**/__*
