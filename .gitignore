@@ -2,6 +2,6 @@
 # '**/' to ignore in all directories
 
 .directory
-*/
-*
+**/__*
+
 !.py
