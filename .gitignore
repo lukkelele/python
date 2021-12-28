@@ -1,3 +1,4 @@
 
 .directory
-__*
+./__*
+__pycache__
