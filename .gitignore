@@ -2,4 +2,6 @@
 # '**/' to ignore in all directories
 
 .directory
-**/__pycache__
+*/
+*
+!.py
