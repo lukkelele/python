@@ -5,6 +5,14 @@ voice_commands = ['open', 'visit', 'check', 'look up', 'mute', 'execute', 'show 
 long_voiceCommands = ['show me', 'look up', 'turn on']
 
 
+#
+#   Read calendar, read weather, check notifications
+#   Check time, mute, start music, adjust volume, 
+#   Control blinds, reminders
+#
+
+
+
 def scan_command(string):
     for command in voice_commands:
         if string.startswith(command):
