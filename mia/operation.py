@@ -10,17 +10,12 @@ def repeat(word):
 def refine(string):
     words = string.split(' ')
     if len(words) == 0:
-        print("returning ''...")
-        return ''   # If empty
+        return ''
     else:
-        print("else entered;")
-        if string.startwith('show me'):
-            print('returning showme')
+        if string.startswith('show me'):
             return ' '.join(words[2:]).strip(' ')
         else:
-            print('returning regular..')
-            return ' '.join(words[1:]).strip(' ')
-
+            return ' '.join(words[1:]).strip(' ')  # for open and visit command
 
 def predict_website(command):
     print("visiting website --> ", end=' ')
