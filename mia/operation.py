@@ -2,13 +2,7 @@ import webbrowser
 from urllib.parse import urlencode
 
 voice_commands = ['open', 'visit', 'check', 'look up', 'mute', 'execute', 'show me']
-
 long_voiceCommands = ['show me', 'look up', 'turn on']
-
-
-def repeat(word):
-    print(word)
-
 
 
 def scan_command(string):
@@ -54,13 +48,12 @@ def predict_website(command):
     
 
 
-def main(op_text):
-    print(f"OPERATION: {op_text}")
-    op_text = op_text.lower()
-    if scan_command == True:
-        if ' ' in op_text:
-            command = refine(op_text)
-            predict_website(command)
-        else:
-            print(f"\nCouldn't process information correctly")
+def think(operation):
+    print(f"OPERATION: {operation}")
+    operation = operation.lower()
+    s = scan_command(operation)
+    if s != '':
+        predict_website(s)
+    else:
+        print(f"\nCouldn't process information correctly")
 
