@@ -1,10 +1,23 @@
 import webbrowser
 from urllib.parse import urlencode
 
+voice_commands = ['open', 'visit', 'check', 'look up', 'mute', 'execute', 'show me']
+
+long_voiceCommands = ['show me', 'look up', 'turn on']
+
 
 def repeat(word):
     print(word)
 
+
+
+def scan_command(string):
+    for command in voice_commands:
+        if string.startswith(command):
+            if ' ' in string:
+                return refine(string)
+        else:
+            return ''
 
 
 def refine(string):
@@ -12,10 +25,13 @@ def refine(string):
     if len(words) == 0:
         return ''
     else:
-        if string.startswith('show me'):
-            return ' '.join(words[2:]).strip(' ')
-        else:
-            return ' '.join(words[1:]).strip(' ')  # for open and visit command
+        for cmd in long_voiceCommands:
+            if string.startswith(cmd):
+                return ' '.join(words[2:]).strip(' ')
+            else:
+                return ' '.join(words[1:]).strip(' ')  # for open and visit command
+
+
 
 def predict_website(command):
     print("visiting website --> ", end=' ')
@@ -35,20 +51,16 @@ def predict_website(command):
         webbrowser.open_new(complete_url)
 
 
+    
+
+
 def main(op_text):
     print(f"OPERATION: {op_text}")
     op_text = op_text.lower()
-    if op_text.startswith('visit') or op_text.startswith('show me') or op_text.startswith('open'):
+    if scan_command == True:
         if ' ' in op_text:
-            print("refining..")
             command = refine(op_text)
-            print("refine done")
             predict_website(command)
         else:
             print(f"\nCouldn't process information correctly")
-
-
-if __name__ == '__main__':
-    text = 'visit '
-    main(text)
 

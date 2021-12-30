@@ -1,5 +1,6 @@
-import speech_recognition as sr
 from operation import main
+import speech_recognition as sr
+import os
 
 # index device=1 for proper mic
 
@@ -11,7 +12,6 @@ with sr.Microphone(device_index=1) as mic:
 
 try:
     text = ear.recognize_google(audio)
-    print(f"i heard: {text}")
     main(op_text=text)
 except:
     print(f"Audio could not be recognized")
