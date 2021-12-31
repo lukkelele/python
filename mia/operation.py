@@ -60,7 +60,8 @@ def predict(command):
 def predict_application(command):
     if command in exec_dict.keys():
         print(f"launching {command}")
-        subprocess.call(['/usr/bin/{command}']) 
+        subprocess.call([f'/usr/bin/{command}']) 
+        print(f"{command} invoked..")
     else:
         print(f"couldnt launch {command}")
 
