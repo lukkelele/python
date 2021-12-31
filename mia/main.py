@@ -7,7 +7,6 @@ import pyttsx3
 
 
 
-
 def init_engine():
     engine = pyttsx3.init()
     voices = engine.getProperty('voices')
@@ -15,6 +14,24 @@ def init_engine():
     engine.setProperty('rate', 200)
     return engine
 
+
+def run():
+    engine = init_engine()
+    ear = sr.Recognizer()
+    mute = 0
+    on = True
+    with sr.Microphone(device_index=1) as mic:
+        while on:  
+            while mute == 0:
+                audio = ear.listen(mic, timeout=4)
+                print(f"I heard {audio}")
+                try:
+                    text = ear.recognize_google(audio)
+                    engine.say(text)
+                    think(operation=text)
+                except:
+                    print("Audio could not be recognized")
+         
 
 def say(string):
     engine.say(string)
