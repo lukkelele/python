@@ -83,3 +83,4 @@ def think(operation):
     else:
         print(f"\nCouldn't process information correctly")
 
+

@@ -1,10 +1,12 @@
 from operation import think
 import speech_recognition as sr
 import os
+import voice
 import pyttsx3
 
-# index device=1 for proper mic
 
+# index device=1 for proper mic
+host = "Lukas"
 
 
 def init_engine():
@@ -38,6 +40,7 @@ def say(string):
     engine.runAndWait()
 
 
+voice.good_morning(host)
 
 ear = sr.Recognizer()
 engine = init_engine()
