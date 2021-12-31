@@ -92,3 +92,10 @@ def think(operation):
         print(f"\nCouldn't process information correctly")
 
 
+def mute():
+    print("-- MUTE --")
+    #-- Lower volume and mute mic --#
+    # implement code here
+
+
+
