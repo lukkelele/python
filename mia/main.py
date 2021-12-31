@@ -26,7 +26,6 @@ def run():
         while on:  
             while mute == 0:
                 audio = ear.listen(mic, timeout=4)
-                print(f"I heard {audio}")
                 try:
                     text = ear.recognize_google(audio)
                     engine.say(text)
@@ -41,6 +40,7 @@ def say(string):
 
 
 voice.good_morning(host)
+voice.good_night(host)
 
 ear = sr.Recognizer()
 engine = init_engine()

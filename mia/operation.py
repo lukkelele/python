@@ -1,4 +1,5 @@
 import webbrowser
+import voice
 import os
 import subprocess
 from urllib.parse import urlencode
@@ -10,6 +11,7 @@ web_dict = {'youtube': 'youtube.com', 'facebook': 'facebook.com', 'codespeedy': 
             'quora': 'quora.com', 'amazon': 'amazon.in'} 
 exec_dict = {'spotify': '/usr/bin/spotify', 'alacritty': '/usr/bin/alacritty'}
 
+daily_phrasing = {"morning": "good morning", "night": "good night"}
 #
 #   Read calendar, read weather, check notifications
 #   Check time, mute, start music, adjust volume, 
@@ -46,6 +48,12 @@ def predict(command):
     
     elif command in exec_dict.keys():
         predict_application(command)
+
+    elif command in daily_phrasing.keys():
+        if command == "morning":
+            voice.good_morning("Lukas")
+        elif command == "night":
+            voice.good_night("Lukas")
     
     # Search if no other option get selected
     else:
