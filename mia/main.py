@@ -17,6 +17,7 @@ def init_engine():
     return engine
 
 
+# Is not used yet but will be the main method for running Mia
 def run():
     engine = init_engine()
     ear = sr.Recognizer()
