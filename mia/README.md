@@ -9,3 +9,6 @@ I'm not fully comfortable using os.system too much but to simulate a voice that 
   
 To weave in as much learning as possible, I'm thinking about using python to execute scripts to control a microcontroller that runs on c.  
 This may seem unneccessary since the compiled C code would already exist on a microcontroller, but I learn a lot this way.  
+I do try to make the code not rely too much on other libraries hence making it loosely coupled.  
+
+I'm also trying to fully grasp bash and scripts in general which is great with small projects like this.  
