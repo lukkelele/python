@@ -1,3 +1,5 @@
+# Program to simulate borders around printed output to create an GUI-like output in the terminal
+
 
 indent_sensitivity = 2      # Used for the indentation BEFORE string begins
                             # To compensate for the loss of symmetry across the print outputs

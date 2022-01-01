@@ -1,4 +1,4 @@
-
+# Trying to grasp .join and slicing in general
 
 colors = ['blue', 'green', 'red', 'orange', 'black', 'gray']
 
@@ -11,9 +11,9 @@ print(f"Slicing [5:2] ==> {colors[5:2]}")
 print(f"Slicing [5:2:-1] ==> {colors[5:2:-1]}")
 
 # Joining strings
-s1 = 'Lukas Gunnarsson'
-s2 = 'byyn'
-s3 = 'röd mazda'
+s1 = 'Lukas'
+s2 = 'Blueberry'
+s3 = 'Darth Vader'
 
 
 s4 = s1.join(s3)
