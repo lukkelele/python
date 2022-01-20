@@ -4,4 +4,5 @@
 .directory
 **/__pycache__/
 **/*/__pycache__/
+tomb
 !.py
