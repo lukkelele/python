@@ -1,6 +1,7 @@
 # Ignore list
 # '**/' to ignore in all directories
 
+sims4_mod
 .directory
 **/__pycache__/
 **/*/__pycache__/
