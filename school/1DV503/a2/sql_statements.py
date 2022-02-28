@@ -4,6 +4,8 @@ import mysql.connector
 DB_NAME = "GUNNARSSON"
 end_statement = "\n);"
 
+
+
 def create_table(table_name, attributes):
     len_attributes = len(attributes)
     query = f"CREATE TABLE {table_name} (\n"
@@ -16,6 +18,18 @@ def create_table(table_name, attributes):
         query += name + " " + attr_type + ",\n"
     return query 
 
+
+
+# s_attr ==> string attribute instead of a list
+def alter_table(table_name, method, s_attr):
+    query = f"ALTER TABLE {table_name}\n{method} {s_attr}"
+    return query
+
+
+
+
+
+# Tests
 
 attributes = [["PersonID", "int"], ["FirstName", "varChar(255)"], ["LastName", "varchar(255)"]]
 
