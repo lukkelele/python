@@ -1,6 +1,6 @@
 import mysql.connector
 import csv
-
+import sql_statements as SQL
 
 DB_name = "GUNNARSSON"
 
@@ -48,6 +48,8 @@ except:
 
 
 cursor = db.cursor()    # Create cursor object
+
+SQL.create_table()
 
 main_menu()
 
