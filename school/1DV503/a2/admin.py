@@ -48,8 +48,8 @@ except:
 
 
 cursor = db.cursor()    # Create cursor object
-
-SQL.create_table()
+attr = [["f_name", "varchar(20)"], ["l_name", "varchar(20)"]]
+SQL.create_table("Migge-Mike Kingen", attr)
 
 main_menu()
 

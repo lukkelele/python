@@ -42,19 +42,47 @@ def alter_table(table, method, s_attr):
         else:
             return ""
 
+def insert_into(table, values):
+    query = f"""
+            INSERT INTO {table}
+            VALUES {values}
+            """
+    return query
+
 
 def list_planets(table):
+    query = f"""SELECT p_name
+                FROM Planet
+             """
+    return query
+
+
+def list_planet_details(table, user_input):
     query = f"""
-    
-    """
+            SELECT DISTINCT *
+            FROM Planet AS p
+            WHERE p.p_name={user_input}
+             """
+    return query
 
 
-def commit():
-    query = f""
+def search_species_height(min_height):
+    query = f"""
+            SELECT *
+            FROM Specie AS s
+            WHERE s.height > {min_height}
+             """
+    return query
 
 
-
-
+# Estimated climate for a species ---> their homeworld
+def estimated_climate(specie):
+    query = f"""
+            SELECT climate
+            FROM Specie as s
+            WHERE 
+             """
+    return query
 
 # Tests
 
