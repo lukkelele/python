@@ -1,5 +1,5 @@
 import mysql.connector
-
+import csv
 
 DB_NAME = "GUNNARSSON"
 end_statement = "\n);"
