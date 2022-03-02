@@ -4,6 +4,9 @@ import csv
 DB_NAME = "GUNNARSSON"
 end_statement = "\n);"
 
+planet_datatypes =  """p_name varchar(20), rotation_period int, orbital_period int,
+                       diameter long, climate varchar(20), gravity decimal(2,2),
+                       terrain varchar(20), surface_water int, population bigint"""
 
 def create_database(db_name):
     query = f"CREATE DATABASE {db_name}"
@@ -41,6 +44,15 @@ def alter_table(table, method, s_attr):
             return query
         else:
             return ""
+
+
+def check_data_exist(table):
+    query = f"""SELECT COUNT(*)
+                FROM (select top 1 *
+                FROM TABLE) {table});
+            """
+    return query
+
 
 def insert_into(table, values):
     query = f"""
@@ -87,6 +99,7 @@ def estimated_climate(specie):
 # Tests
 
 attributes = [["PersonID", "int"], ["FirstName", "varChar(255)", "NOT NULL"], ["LastName", "varchar(255)"]]
+attributes2 = "PersonID int, FirstName varchar(255) NOT NULL, LastName varchar(255)"
 
 s = create_table("Person", attributes)
 print(s)
