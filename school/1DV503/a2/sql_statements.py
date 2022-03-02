@@ -35,29 +35,13 @@ def create_table(table, attributes):
     return query 
 
 
-# s_attr ==> string attribute instead of a list
-def alter_table(table, method, s_attr):
-    approved_methods = ["ADD", "DROP"]
-    for approved_method in approved_methods:
-        if method == approved_method:
-            query = f"ALTER TABLE {table}\n{method} {s_attr} {end_statement}"
-            return query
-        else:
-            return ""
 
-
-def get_tables(database):
-    query = f"""SELECT * 
-                FROM gunnarsson_schema.TABLES
-                WHERE TABLE_TYPE='BASE TABLE');
-             """
-    return query
 
 
 def check_data_exist(table):
     query = f"""SELECT COUNT(*)
                 FROM (select top 1 *
-                FROM TABLE) {table});
+                FROM TABLE) {table};
             """
     return query
 
@@ -111,8 +95,6 @@ attributes2 = "PersonID int, FirstName varchar(255) NOT NULL, LastName varchar(2
 
 #s = create_table("Person", attributes)
 #print(s)
-
-
 
 
 
