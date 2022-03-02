@@ -90,3 +90,18 @@ attributes = [["PersonID", "int"], ["FirstName", "varChar(255)", "NOT NULL"], ["
 
 s = create_table("Person", attributes)
 print(s)
+
+
+
+
+
+def read_multivalued_attribute(path, table):
+    with open(path, newline="") as csv_file:
+        reader = csv.DictReader(csv_file)
+        for row in reader:
+            row_split = row['climate'].split(",")
+            if len(row_split) > 1:          # if multivalued attribute
+                #print(row['climate'])
+                for attribute in row_split:
+                    print(attribute)
+
