@@ -54,8 +54,17 @@ SQL.create_table("Migge-Mike Kingen", attr)
 main_menu()
 
 
+# MULTIVALUED ATTRIBUTES INCLUDE:
+# Planets.csv ==> climate, terrain
+# Species.csv ==> skin_colors, hair_colors, eye_colors
+                    
 
-
-
-
-
+def read_multivalued_attribute(path, table):
+    with open(path, newline="") as csv_file:
+        reader = csv.DictReader(csv_file)
+        for row in reader:
+            row_split = row['climate'].split(",")
+            if len(row_split) > 1:          # if multivalued attribute
+                for attribute in row_split:
+                    s = f"INSERT INTO {table}"
+                    print(s)
