@@ -2,13 +2,9 @@
 ---
 ![](./simple_csv.png "database ER diagram")
  
-It is not certain that a specie *currently* lives on its **homeworld** but for the sake of simplicity I assume that in this case.
-
 
 ---
-skin_colors are multivalued attributes which means that they are going to be separate relations.\\
-hair_colors are also multivalued but are also NULL quite often.\\
-Same goes for eye_colors who has some NULL values (NA) and the rest are single or multivalues.\\
-\\
-FOREIGN KEY Specie(homeworld) REFERENCES Planet(p_name) \\
-Climate should be its own table. CREATE TABLE Environment(climate varchar(20), FOREIGN KEY Planet(p_name));\\
+My personal life has been quite busy and I've not managed to finish in time.\\
+The diagram has to be adjusted with the appropriate relationships.\\
+When reading the data from the *csv files*, currently there is no way of properly getting the initial data into separate tables. An example is with Planet and Environment, the multivalued attribute *climate* from Planet is to be moved to a separate entity to reduce redundancy. When parsing the data, the entire column could instantly be assigned to Environment and then later referenced. I am to implement something along those lines. \\
+I will finish the assignment as soon as possible and have a proper report ready to hand in.\\

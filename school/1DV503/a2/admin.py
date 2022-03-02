@@ -68,16 +68,6 @@ def read_multivalued_attribute(path, table, attr):
 
 
 
-def check_data_exists(cursor, database):
-    cursor.execute(SQL.get_tables(database))
-    for table in cursor:
-        query = SQL.check_data_exist(table)
-        cursor.execute(query)
-        if cursor == 0:
-            return False
-    return True             # If all tables have some data, set true
-
-
 def get_tables(cursor):
     cursor.execute("SHOW TABLES;")
     for table in cursor:
@@ -113,6 +103,7 @@ print("Creating cursor")
 cursor = db.cursor()    # Create cursor object
 
 if flag == False:
+    # LOTS OF TESTING
     print(f"Creating new database named {DB_name}.")
     cursor.execute("CREATE DATABASE {};".format(DB_name))
     cursor.execute("USE {}".format(DB_name))
@@ -128,10 +119,6 @@ if flag == False:
 
 
 else:
-    # DATABASE EXISTS, check if data exists in tables
-    print("Checking if data exists")
-    #data_exist = check_data_exists(cursor, db)
-
     ui.main_menu()
     user = user_input()
     if user == 1:
