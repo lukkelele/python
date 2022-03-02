@@ -46,6 +46,14 @@ def alter_table(table, method, s_attr):
             return ""
 
 
+def get_tables(database):
+    query = f"""SELECT * 
+                FROM gunnarsson.schema.TABLES
+                WHERE TABLE_TYPE='BASE TABLE');
+             """
+    return query
+
+
 def check_data_exist(table):
     query = f"""SELECT COUNT(*)
                 FROM (select top 1 *
