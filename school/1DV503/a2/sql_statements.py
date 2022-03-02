@@ -48,7 +48,7 @@ def alter_table(table, method, s_attr):
 
 def get_tables(database):
     query = f"""SELECT * 
-                FROM gunnarsson.schema.TABLES
+                FROM gunnarsson_schema.TABLES
                 WHERE TABLE_TYPE='BASE TABLE');
              """
     return query
@@ -109,8 +109,8 @@ def estimated_climate(specie):
 attributes = [["PersonID", "int"], ["FirstName", "varChar(255)", "NOT NULL"], ["LastName", "varchar(255)"]]
 attributes2 = "PersonID int, FirstName varchar(255) NOT NULL, LastName varchar(255)"
 
-s = create_table("Person", attributes)
-print(s)
+#s = create_table("Person", attributes)
+#print(s)
 
 
 

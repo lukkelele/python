@@ -4,7 +4,7 @@ import sql_statements as SQL
 import ui
 
 
-DB_name = "GUNNARSSON"
+DB_name = "gunnarsson"
 
 
 # Schema
@@ -63,6 +63,19 @@ def check_data_exists(cursor, database):
     return True             # If all tables have some data, set true
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Try to connect
 # If database not found, create one
 # Parse the CSV files and add to the tables accordingly
@@ -76,6 +89,7 @@ try:
             passwd="root",
             database=DB_name
             )
+    print("Database named "+DB_name)
 except:
     print(f"No database found going by name {DB_name}.\nConnecting without a specified database instead.")
     db = mysql.connector.connect(
@@ -85,7 +99,7 @@ except:
             )
     flag = False
 
-
+print("Creating cursor")
 cursor = db.cursor()    # Create cursor object
 
 
@@ -93,14 +107,15 @@ if flag == False:
     print(f"Creating new database named {DB_name}.")
 else:
     # DATABASE EXISTS, check if data exists in tables
-    data_exist = check_data_exists(cursor, db)
-    if data_exist:
-        ui.main_menu()
-        user = user_input()
-        if user == 1:
-            print("List all planets")
-        elif user == 2:
-            print("Search for planet details")
+    print("Checking if data exists")
+    #data_exist = check_data_exists(cursor, db)
+
+    ui.main_menu()
+    user = user_input()
+    if user == 1:
+        print("List all planets")
+    elif user == 2:
+        print("Search for planet details")
     
 
 
@@ -108,7 +123,7 @@ else:
 
 
 # Tests
-attr = [["f_name", "varchar(20)"], ["l_name", "varchar(20)"]]
-SQL.create_table("Migge-Mike Kingen", attr)
+#attr = [["f_name", "varchar(20)"], ["l_name", "varchar(20)"]]
+#SQL.create_table("Migge-Mike Kingen", attr)
 
 
