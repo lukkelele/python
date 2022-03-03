@@ -6,7 +6,6 @@ import ui
 
 DB_name = "gunnarss2on"
 
-
 # Schema
 # =======================================
 # Planet(attributes)    
@@ -30,18 +29,15 @@ planet_datatypes = [["p_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["rota
                     ["orbital_period", "int"], ["diameter","long"], ["climate", "varchar(20)"],
                     ["gravity", "decimal(2,2)"], 
                     ["terrain", "varchar(20)"], ["surface_water", "int"], ["population", "bigint"]]
-
 specie_datatypes = [["s_name", "varchar(15)", "NOT NULL", "PRIMARY KEY"], ["classification", "varchar(15)"],
                     ["designation", "varchar(14)"] ,["average_height", "int"], 
                     ["average_lifespan", "int"], ["language", "varchar(18)"], ["homeworld", "varchar(14)"]]
-
 environment_datatypes = [["p_name", "varchar(14)", "NOT NULL", "PRIMARY KEY"], ["terrain", "varchar(12)"]]
-
 terrain_datatypes = [["p_name", "varchar(14)", "NOT NULL", "PRIMARY KEY"], ["terrain", "varchar(12)"]]      # FIX
-
 hair_color_datatypes = [["s_name", "varchar(20)"], ["hair_color", "varchar(14)", "PRIMARY KEY"]]
 eye_color_datatypes =  [["s_name", "varchar(20)"], ["eye_color",  "varchar(14)", "PRIMARY KEY"]]
 skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(14)", "PRIMARY KEY"]]
+
 
 
 def user_input():
@@ -67,7 +63,6 @@ def add_FOREIGN_KEY(cursor, table, attr, target_table, target_key):
     query = f"ALTER TABLE {table} ADD FOREIGN KEY {attr}_FK ({attr}) REFERENCES {target_table}({target_key}) ON DELETE CASCADE;"
     cursor.execute(query)
     print(f"New foreign key on table {table} added onto {attr}!")
-
 
 def read_multivalued_attribute(path, table, attr):
     with open(path, newline="") as csv_file:
@@ -105,7 +100,7 @@ def new_database(flag):
     print(f"Creating new database named {DB_name}.")
     cursor.execute("CREATE DATABASE {};".format(DB_name))
     cursor.execute("USE {}".format(DB_name))                # Set new database as default
-    # Create all tables
+
     cursor.execute(SQL.create_table("Specie", specie_datatypes))    # Specie Entity
     cursor.execute(SQL.create_table("Planet", planet_datatypes))
     cursor.execute(SQL.create_table("Environment", environment_datatypes))
@@ -117,17 +112,12 @@ def new_database(flag):
     #cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
     #cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
     
-    print("Getting tables")
-    get_tables(cursor)
-    
     flag = True
     return flag
 
 
 
-# Try to connect
-# If database not found, create one
-# Parse the CSV files and add to the tables accordingly
+# ---------------------------------------------------------------------
 
 flag = True
 try:
