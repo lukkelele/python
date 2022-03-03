@@ -39,9 +39,9 @@ environment_datatypes = [["p_name", "varchar(14)", "NOT NULL", "PRIMARY KEY"], [
 
 terrain_datatypes = [["p_name", "varchar(14)", "NOT NULL", "PRIMARY KEY"], ["terrain", "varchar(12)"]]      # FIX
 
-hair_color_datatypes = [["s_name", "varchar(20)"], ["hair_color", "varchar(14)", "PRIMARY KEY hair_color_PK (hair_color)"]]
-eye_color_datatypes =  [["s_name", "varchar(20)"], ["eye_color",  "varchar(14)", "PRIMARY KEY eye_color_PK  (eye_color)" ]]
-skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(14)", "PRIMARY KEY skin_color_PK (hair_color)"]]
+hair_color_datatypes = [["s_name", "varchar(20)"], ["hair_color", "varchar(14)", "PRIMARY KEY"]]
+eye_color_datatypes =  [["s_name", "varchar(20)"], ["eye_color",  "varchar(14)"], ["PRIMARY KEY eye_color_PK  (eye_color)" ]]
+skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(14)"], ["PRIMARY KEY skin_color_PK (hair_color)"]]
 
 
 def user_input():
@@ -97,7 +97,7 @@ def get_tables(cursor):
         print(table)
 
 
-def new_database():
+def new_database(flag):
     print(f"No database found going by name {DB_name}.\nConnecting without a specified database instead.")
     db = mysql.connector.connect(
         host="127.0.0.1",
@@ -112,16 +112,19 @@ def new_database():
     cursor.execute(SQL.create_table("Specie", specie_datatypes))    # Specie Entity
     cursor.execute(SQL.create_table("Planet", planet_datatypes))
     cursor.execute(SQL.create_table("Environment", environment_datatypes))
-    cursor.execute(SQL.create_table("Hair_Color", environment_datatypes))
-    cursor.execute(SQL.create_table("Eye_Color",  eye_color_datatypes))
-    cursor.execute(SQL.create_table("Skin_Color", skin_color_datatypes))
+    cursor.execute(SQL.create_table("Hair_Color", hair_color_datatypes))
+    #cursor.execute(SQL.create_table("Eye_Color",  eye_color_datatypes))
+    #cursor.execute(SQL.create_table("Skin_Color", skin_color_datatypes))
     
-    cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
-    cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
-    cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
+    cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
+    #cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
+    #cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
     
     print("Getting tables")
     get_tables(cursor)
+    
+    flag = True
+    return flag
 
 
 
@@ -139,48 +142,16 @@ try:
             )
     print("Database named "+DB_name)
 except:
-    print(f"No database found going by name {DB_name}.\nConnecting without a specified database instead.")
-    db = mysql.connector.connect(
-            host="127.0.0.1",
-            user="root",
-            passwd="root"
-            )
-    flag = False
+    flag = new_database(flag)
 
 
 print("Creating cursor")
 cursor = db.cursor()    # Create cursor object
 
 if flag == False:
-    print(f"Creating new database named {DB_name}.")
-    cursor.execute("CREATE DATABASE {};".format(DB_name))
-    cursor.execute("USE {}".format(DB_name))
-    # Create all tables
-    
-    cursor.execute("""CREATE TABLE Specie (
-	s_name varchar(20) PRIMARY KEY,
-    classification varchar(18),
-	designation    varchar(18),
-    average_height   int,
-    average_lifespan int,
-    s_language     varchar(18),
-    homeworld      varchar(18)
-    );""")
-
-    cursor.execute(SQL.create_table("Planet", planet_datatypes))
-    cursor.execute(SQL.create_table("Specie", specie_datatypes))
-    cursor.execute(SQL.create_table("Environment", environment_datatypes))
-    cursor.execute("ALTER TABLE Environment ADD FOREIGN KEY (p_name) REFERENCES Planet(p_name);")
-    print("Getting tables")
-    get_tables(cursor)
-    print("Parsing CSV file")
-    #parse_csv_file("./data/planets.csv", cursor)
-
+    print("error")
 
 else:
-    # DATABASE EXISTS, check if data exists in tables
-    print("Checking if data exists")
-    #data_exist = check_data_exists(cursor, db)
 
     ui.main_menu()
     user = user_input()
