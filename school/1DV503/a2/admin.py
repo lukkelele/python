@@ -40,8 +40,8 @@ environment_datatypes = [["p_name", "varchar(14)", "NOT NULL", "PRIMARY KEY"], [
 terrain_datatypes = [["p_name", "varchar(14)", "NOT NULL", "PRIMARY KEY"], ["terrain", "varchar(12)"]]      # FIX
 
 hair_color_datatypes = [["s_name", "varchar(20)"], ["hair_color", "varchar(14)", "PRIMARY KEY"]]
-eye_color_datatypes =  [["s_name", "varchar(20)"], ["eye_color",  "varchar(14)"], ["PRIMARY KEY eye_color_PK  (eye_color)" ]]
-skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(14)"], ["PRIMARY KEY skin_color_PK (hair_color)"]]
+eye_color_datatypes =  [["s_name", "varchar(20)"], ["eye_color",  "varchar(14)", "PRIMARY KEY"]]
+skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(14)", "PRIMARY KEY"]]
 
 
 def user_input():
@@ -63,8 +63,8 @@ def parse_csv_file(path, cursor):
 
 
 
-def add_FOREIGN_KEY(cursor, table, attr):
-    query = f"ALTER TABLE {table} ADD FOREIGN KEY {attr}_FK ({attr});"
+def add_FOREIGN_KEY(cursor, table, attr, target_table, target_key):
+    query = f"ALTER TABLE {table} ADD FOREIGN KEY {attr}_FK ({attr}) REFERENCES {target_table}({target_key}) ON DELETE CASCADE;"
     cursor.execute(query)
     print(f"New foreign key on table {table} added onto {attr}!")
 
@@ -79,8 +79,6 @@ def read_multivalued_attribute(path, table, attr):
                     s = f"INSERT INTO {table}"
                     print(s)
 
-
-
 def check_data_exists(cursor, database):
     cursor.execute(SQL.get_tables(database))
     for table in cursor:
@@ -89,7 +87,6 @@ def check_data_exists(cursor, database):
         if cursor == 0:
             return False
     return True             # If all tables have some data, set true
-
 
 def get_tables(cursor):
     cursor.execute("SHOW TABLES;")
