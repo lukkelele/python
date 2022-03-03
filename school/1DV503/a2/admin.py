@@ -167,3 +167,7 @@ else:
     elif user == 5:
         print("")
         
+
+# SELECT S.s_name, C.hair_color
+#FROM Specie AS S, Hair_Color AS C
+#WHERE S.s_name = C.s_name;
