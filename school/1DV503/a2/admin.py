@@ -28,6 +28,11 @@ planet_csv_datatypes = [["p_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["
                        ["orbital_period", "int"], ["diameter","long"], ["climate", "varchar(20)"],
                        ["gravity", "decimal(2,2)"]]
 
+specie_csv_datatypes = [["s_name", "varchar(15)", "NOT NULL", "PRIMARY KEY"], ["classification", "varchar(15)"],
+                        ["designation", "varchar(14)"] ,["average_height", "int"], ["skin_colors", "varchar(14)"],
+                        ["hair_colors", "varchar(12)"], ["eye_colors", "varchar(10)"], ["average_lifespan", "int"],
+                        ["language", "varchar(18)"], ["homeworld", "varchar(14)"]]
+
 
 planet_datatypes = [["p_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["rotation_period", "int"], 
                     ["orbital_period", "int"], ["diameter","long"], ["climate", "varchar(20)"],
@@ -119,7 +124,7 @@ def new_database(flag):
     cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
     cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
     # Create temporary tables for parsing the CSV files
-
+    cursor.execute(SQL.create_table("csv_planets", planet_csv_datatypes))
     
     flag = True
     return flag
