@@ -6,6 +6,9 @@ import ui
 
 DB_name = "gunnarss2on"
 
+csv_planets = "./data/planets.csv"
+csv_species = "./data/species.csv"
+
 # Schema
 # =======================================
 # Planet(attributes)    
@@ -58,11 +61,11 @@ def user_input():
     return menu_input
 
 
-def parse_csv_file(path, cursor):
+def parse_csv_file(cursor, path, target_table):
     with open (path, 'r') as csv_file:
         file_reader = csv.reader(csv_file)
         header = next(file_reader)       # the attributes or column names
-        query = "INSERT INTO Planet({0}) VALUES ({1})"
+        query = f"INSERT INTO {target_table}({{0}}) VALUES({{1}})"       # double curly braces because of string format
         query = query.format(','.join(header), ','.join('?' * len(header)))
         for row in file_reader:
             cursor.execute(query, row)
@@ -125,6 +128,8 @@ def new_database(flag):
     cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
     # Create temporary tables for parsing the CSV files
     cursor.execute(SQL.create_table("csv_planets", planet_csv_datatypes))
+    cursor.execute(SQL.create_table("csv_species", specie_csv_datatypes))
+    parse_csv_file(cursor, csv_planets, target_table)
     
     flag = True
     return flag
