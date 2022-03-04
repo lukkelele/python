@@ -36,7 +36,29 @@ def create_table(table, attributes):
     return query 
 
 
+def copy_column(source_table, target_table, column, PK):
+    query = f"""UPDATE {source_table}
+                    SET {column} = (
+                        SELECT {column}
+                        FROM   {target_table}
+                        WHERE  {source_table}.{PK} = {target_table}.{PK}
+                );  """
+    return query
 
+
+def drop_column(table, column):
+    query = f"ALTER TABLE {table} DROP COLUMN {column};"
+    return query
+
+
+def copy_table(source_table, target_table):
+    query = f"INSERT INTO {target_table} SELECT * FROM {source_table};"
+    return query
+
+
+def duplicate_table(source_table, new_table):
+    query = f"CREATE TABLE {new_table} LIKE {source_table};"
+    return query
 
 
 def check_data_exist(table):

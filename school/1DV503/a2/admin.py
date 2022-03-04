@@ -29,7 +29,9 @@ csv_species = "./data/species.csv"
 
 planet_csv_datatypes = [["p_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["rotation_period", "int"], 
                        ["orbital_period", "int"], ["diameter","long"], ["climate", "varchar(20)"],
-                       ["gravity", "decimal(2,2)"]]
+                       ["gravity", "decimal(2,2)"],
+                       ["terrain", "varchar(20)"], ["surface_water", "int"], ["population", "bigint"]]
+
 
 specie_csv_datatypes = [["s_name", "varchar(15)", "NOT NULL", "PRIMARY KEY"], ["classification", "varchar(15)"],
                         ["designation", "varchar(14)"] ,["average_height", "int"], ["skin_colors", "varchar(14)"],
@@ -38,9 +40,8 @@ specie_csv_datatypes = [["s_name", "varchar(15)", "NOT NULL", "PRIMARY KEY"], ["
 
 
 planet_datatypes = [["p_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["rotation_period", "int"], 
-                    ["orbital_period", "int"], ["diameter","long"], ["climate", "varchar(20)"],
-                    ["gravity", "decimal(2,2)"], 
-                    ["terrain", "varchar(20)"], ["surface_water", "int"], ["population", "bigint"]]
+                    ["orbital_period", "int"], ["diameter","long"], ["gravity", "decimal(2,2)"],
+                    ["surface_water", "int"], ["population", "bigint"]]
 
 specie_datatypes = [["s_name", "varchar(15)", "NOT NULL", "PRIMARY KEY"], ["classification", "varchar(15)"],
                     ["designation", "varchar(14)"] ,["average_height", "int"], 
@@ -105,35 +106,61 @@ def get_tables(cursor):
 
 
 def new_database(flag):
-    print(f"No database found going by name {DB_name}.\nConnecting without a specified database instead.")
-    db = mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        passwd="root"
-        )
-    cursor = db.cursor()
-    print(f"Creating new database named {DB_name}.")
-    cursor.execute("CREATE DATABASE {};".format(DB_name))
-    cursor.execute("USE {}".format(DB_name))                # Set new database as default
+    try:
+        print(f"No database found going by name {DB_name}.\nConnecting without a specified database instead.")
+        db = mysql.connector.connect(
+            host="127.0.0.1",
+            user="root",
+            passwd="root"
+            )
+        cursor = db.cursor()
+        print(f"Creating new database named {DB_name}.")
+        cursor.execute("CREATE DATABASE {};".format(DB_name))
+        cursor.execute("USE {}".format(DB_name))                # Set new database as default
 
-    cursor.execute(SQL.create_table("Specie", specie_datatypes))    # Specie Entity
-    cursor.execute(SQL.create_table("Planet", planet_datatypes))
-    cursor.execute(SQL.create_table("Environment", environment_datatypes))
-    cursor.execute(SQL.create_table("Hair_Color", hair_color_datatypes))
-    cursor.execute(SQL.create_table("Eye_Color",  eye_color_datatypes))
-    cursor.execute(SQL.create_table("Skin_Color", skin_color_datatypes))
-    
-    cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
-    cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
-    cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
-    # Create temporary tables for parsing the CSV files
-    cursor.execute(SQL.create_table("csv_planets", planet_csv_datatypes))
-    cursor.execute(SQL.create_table("csv_species", specie_csv_datatypes))
-    parse_csv_file(cursor, csv_planets, target_table)
-    
-    flag = True
-    return flag
+        #cursor.execute(SQL.create_table("Specie", specie_datatypes))    # Specie Entity
+        #cursor.execute(SQL.create_table("Planet", planet_datatypes))
+        cursor.execute(SQL.create_table("Environment", environment_datatypes))
+        cursor.execute(SQL.create_table("Terrain", terrain_datatypes))
+        cursor.execute(SQL.create_table("Hair_Color", hair_color_datatypes))
+        cursor.execute(SQL.create_table("Eye_Color",  eye_color_datatypes))
+        cursor.execute(SQL.create_table("Skin_Color", skin_color_datatypes))
+        
+        # Create temporary tables for parsing the CSV files
+        csv_planets_table = "csv_planets"
+        csv_species_table = "csv_species"
+        cursor.execute(SQL.create_table(csv_planets_table, planet_csv_datatypes))
+        cursor.execute(SQL.create_table(csv_species_table, specie_csv_datatypes))
+        parse_csv_file(cursor, csv_planets, csv_planets_table)  # Read data into newly created tables
+        parse_csv_file(cursor, csv_species, csv_species_table)
+        # skin_color, hair_color and eye_color columns shall be removed from csv_species
+        # climate and terrain shall be removed from csv_planets
+        cursor.execute(SQL.copy_column(csv_planets_table, "Terrain", "terrain", "p_name"))
+        cursor.execute(SQL.copy_column(csv_planets_table, "Environment", "climate", "p_name"))
 
+        cursor.execute(SQL.copy_column(csv_species_table, "Hair_Color", "hair_color", "s_name"))
+        cursor.execute(SQL.copy_column(csv_species_table, "Eye_Color",  "eye_color",  "s_name"))
+        cursor.execute(SQL.copy_column(csv_species_table, "Skin_Color", "skin_color", "s_name"))
+        # Drop columns 
+        cursor.execute(SQL.drop_column(csv_planets_table, "terrain"))
+        cursor.execute(SQL.drop_column(csv_planets_table, "climate"))
+        #
+        cursor.execute(SQL.drop_column(csv_species_table, "hair_color"))
+        cursor.execute(SQL.drop_column(csv_species_table, "eye_color "))
+        cursor.execute(SQL.drop_column(csv_species_table, "skin_color"))
+        # Create intended tables
+        cursor.execute(SQL.duplicate_table(csv_planets_table, "Planet"))
+        cursor.execute(SQL.duplicate_table(csv_species_table, "Specie"))
+       
+        # Set references
+        cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
+        cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
+        cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
+
+        return True
+    except:
+        print("A new database could not be created.")
+        return False
 
 # ---------------------------------------------------------------------
 
