@@ -2,7 +2,7 @@ import mysql.connector
 import csv
 import sql_statements as SQL
 import ui
-
+import lib
 
 DB_name = "gunnarss2on"
 
@@ -27,31 +27,16 @@ csv_species = "./data/species.csv"
 # TABLES TO CREATE:
 # Planet, Specie, Environment, Color
 
-planet_csv_datatypes = [["p_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["rotation_period", "int"], 
-                       ["orbital_period", "int"], ["diameter","long"], ["climate", "varchar(20)"],
-                       ["gravity", "decimal(2,2)"],
-                       ["terrain", "varchar(20)"], ["surface_water", "int"], ["population", "bigint"]]
-
-
-specie_csv_datatypes = [["s_name", "varchar(15)", "NOT NULL", "PRIMARY KEY"], ["classification", "varchar(15)"],
-                        ["designation", "varchar(14)"] ,["average_height", "int"], ["skin_colors", "varchar(14)"],
-                        ["hair_colors", "varchar(12)"], ["eye_colors", "varchar(10)"], ["average_lifespan", "int"],
-                        ["language", "varchar(18)"], ["homeworld", "varchar(14)"]]
-
-
-planet_datatypes = [["p_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["rotation_period", "int"], 
-                    ["orbital_period", "int"], ["diameter","long"], ["gravity", "decimal(2,2)"],
-                    ["surface_water", "int"], ["population", "bigint"]]
-
-specie_datatypes = [["s_name", "varchar(15)", "NOT NULL", "PRIMARY KEY"], ["classification", "varchar(15)"],
-                    ["designation", "varchar(14)"] ,["average_height", "int"], 
-                    ["average_lifespan", "int"], ["language", "varchar(18)"], ["homeworld", "varchar(14)"]]
-
-environment_datatypes = [["p_name", "varchar(14)", "NOT NULL", "PRIMARY KEY"], ["terrain", "varchar(12)"]]
-terrain_datatypes = [["p_name", "varchar(14)", "NOT NULL", "PRIMARY KEY"], ["terrain", "varchar(12)"]]      # FIX
-hair_color_datatypes = [["s_name", "varchar(20)"], ["hair_color", "varchar(14)", "PRIMARY KEY"]]
-eye_color_datatypes =  [["s_name", "varchar(20)"], ["eye_color",  "varchar(14)", "PRIMARY KEY"]]
-skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(14)", "PRIMARY KEY"]]
+# Fetch the attribute names and datatypes for the table creations
+planet_csv_datatypes = lib.get_datatypes("planet_csv")
+specie_csv_datatypes = lib.get_datatypes("specie_csv")
+planet_datatypes = lib.get_datatypes("planet")
+specie_datatypes = lib.get_datatypes("specie")
+environment_datatypes = lib.get_datatypes("environment")
+terrain_datatypes = lib.get_datatypes("terrain")
+hair_color_datatypes = lib.get_datatypes("hair_color")
+eye_color_datatypes = lib.get_datatypes("eye_color")
+skin_color_datatypes = lib.get_datatypes("skin_color")
 
 
 
@@ -154,8 +139,8 @@ def new_database(flag):
        
         # Set references
         cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
-        cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
-        cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
+        cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY eyecolor  (eye_color)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
+        cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY skincolor (skin_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
 
         return True
     except:
