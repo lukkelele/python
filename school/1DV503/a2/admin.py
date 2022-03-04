@@ -67,19 +67,21 @@ def get_tables(cursor):
 
 
 def parse_csv_file(path, target_table):
-    print("PARSING..")    
     with open('data\planets.csv', 'r') as file:
         file_data = csv.reader(file)
        # print("file reader applied")
         header = next(file_data)       # the attributes or column names
-       # print(f"HEADER: {header}")
-        query = "INSERT INTO "+target_table+" ({0}) VALUES ({1});"     
-        print(f"QUERY: {query}")
+        print(f"HEADER: {header}")
+        query = f"INSERT INTO {target_table}({{0}}) VALUES ({{1}});"  
+        org_query = query
+        print("copy ==> "+org_query)
         query = query.format(','.join(header), ','.join('?' * len(header)))
+        cursor.execute(query)
+        print("query ===> "+query)
         for row in file_data:
-            print(row)
+            query = org_query.format(','.join(header), ','.join(row))
+            print("AFTER FORMAT +>  "+query)
             cursor.execute(query, row)
-            print('done with row')
         cursor.commit()
 
 

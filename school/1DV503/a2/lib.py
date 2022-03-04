@@ -33,9 +33,9 @@ def get_datatypes(file):
 
 
 planet_csv_datatypes = [["p_name", "varchar(20)", "PRIMARY KEY"], ["rotation_period", "int"], 
-                       ["orbital_period", "int"], ["diameter","long"], ["climate", "varchar(20)"],
-                       ["gravity", "decimal(2,2)"],
-                       ["terrain", "varchar(20)"], ["surface_water", "int"], ["population", "bigint"]]
+                       ["orbital_period", "int"], ["diameter","long"], ["climate", "varchar(40)"],
+                       ["gravity", "varchar(40)"],     # temporarily change decimal(2,2) to varchar
+                       ["terrain", "varchar(30)"], ["surface_water", "int"], ["population", "bigint"]]
 
 
 specie_csv_datatypes = [["s_name", "varchar(15)", "PRIMARY KEY"], ["classification", "varchar(15)"],
@@ -45,7 +45,7 @@ specie_csv_datatypes = [["s_name", "varchar(15)", "PRIMARY KEY"], ["classificati
 
 
 planet_datatypes = [["p_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["rotation_period", "int"], 
-                    ["orbital_period", "int"], ["diameter","long"], ["gravity", "decimal(2,2)"],
+                    ["orbital_period", "int"], ["diameter","bigint"], ["gravity", "varchar(20)"],
                     ["surface_water", "int"], ["population", "bigint"]]
 
 specie_datatypes = [["s_name", "varchar(15)", "NOT NULL", "PRIMARY KEY"], ["classification", "varchar(15)"],
