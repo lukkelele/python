@@ -24,14 +24,20 @@ DB_name = "gunnarss2on"
 # TABLES TO CREATE:
 # Planet, Specie, Environment, Color
 
+planet_csv_datatypes = [["p_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["rotation_period", "int"], 
+                       ["orbital_period", "int"], ["diameter","long"], ["climate", "varchar(20)"],
+                       ["gravity", "decimal(2,2)"]]
+
 
 planet_datatypes = [["p_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["rotation_period", "int"], 
                     ["orbital_period", "int"], ["diameter","long"], ["climate", "varchar(20)"],
                     ["gravity", "decimal(2,2)"], 
                     ["terrain", "varchar(20)"], ["surface_water", "int"], ["population", "bigint"]]
+
 specie_datatypes = [["s_name", "varchar(15)", "NOT NULL", "PRIMARY KEY"], ["classification", "varchar(15)"],
                     ["designation", "varchar(14)"] ,["average_height", "int"], 
                     ["average_lifespan", "int"], ["language", "varchar(18)"], ["homeworld", "varchar(14)"]]
+
 environment_datatypes = [["p_name", "varchar(14)", "NOT NULL", "PRIMARY KEY"], ["terrain", "varchar(12)"]]
 terrain_datatypes = [["p_name", "varchar(14)", "NOT NULL", "PRIMARY KEY"], ["terrain", "varchar(12)"]]      # FIX
 hair_color_datatypes = [["s_name", "varchar(20)"], ["hair_color", "varchar(14)", "PRIMARY KEY"]]
@@ -58,11 +64,19 @@ def parse_csv_file(path, cursor):
         cursor.commit()
 
 
-
 def add_FOREIGN_KEY(cursor, table, attr, target_table, target_key):
     query = f"ALTER TABLE {table} ADD FOREIGN KEY {attr}_FK ({attr}) REFERENCES {target_table}({target_key}) ON DELETE CASCADE;"
     cursor.execute(query)
     print(f"New foreign key on table {table} added onto {attr}!")
+
+
+
+def list_planets(cursor):
+    query = f"""SELECT DISTINCT P.p_name
+                FROM Planet AS P;"""    
+    cursor.execute(query)
+
+
 
 def read_multivalued_attribute(path, table, attr):
     with open(path, newline="") as csv_file:
@@ -74,14 +88,7 @@ def read_multivalued_attribute(path, table, attr):
                     s = f"INSERT INTO {table}"
                     print(s)
 
-def check_data_exists(cursor, database):
-    cursor.execute(SQL.get_tables(database))
-    for table in cursor:
-        query = SQL.check_data_exist(table)
-        cursor.execute(query)
-        if cursor == 0:
-            return False
-    return True             # If all tables have some data, set true
+
 
 def get_tables(cursor):
     cursor.execute("SHOW TABLES;")
@@ -105,21 +112,22 @@ def new_database(flag):
     cursor.execute(SQL.create_table("Planet", planet_datatypes))
     cursor.execute(SQL.create_table("Environment", environment_datatypes))
     cursor.execute(SQL.create_table("Hair_Color", hair_color_datatypes))
-    #cursor.execute(SQL.create_table("Eye_Color",  eye_color_datatypes))
-    #cursor.execute(SQL.create_table("Skin_Color", skin_color_datatypes))
+    cursor.execute(SQL.create_table("Eye_Color",  eye_color_datatypes))
+    cursor.execute(SQL.create_table("Skin_Color", skin_color_datatypes))
     
     cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
-    #cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
-    #cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
+    cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
+    cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY (p_name) REFERENCES Specie(p_name) ON DELETE CASCADE;")
+    # Create temporary tables for parsing the CSV files
+
     
     flag = True
     return flag
 
 
-
 # ---------------------------------------------------------------------
 
-flag = True
+flag = False
 try:
     db = mysql.connector.connect(
             host="127.0.0.1",
