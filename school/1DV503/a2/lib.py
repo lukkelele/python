@@ -19,7 +19,7 @@
 # Planet, Specie, Environment, Color
 
 def get_datatypes(file):
-    file = file.lowercase()
+    file = file.lower()
     if   file == "planet_csv" : return planet_csv_datatypes
     elif file == "specie_csv" : return specie_csv_datatypes
     elif file == "planet"     : return planet_datatypes 
@@ -32,13 +32,13 @@ def get_datatypes(file):
 
 
 
-planet_csv_datatypes = [["p_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["rotation_period", "int"], 
+planet_csv_datatypes = [["p_name", "varchar(20)", "PRIMARY KEY"], ["rotation_period", "int"], 
                        ["orbital_period", "int"], ["diameter","long"], ["climate", "varchar(20)"],
                        ["gravity", "decimal(2,2)"],
                        ["terrain", "varchar(20)"], ["surface_water", "int"], ["population", "bigint"]]
 
 
-specie_csv_datatypes = [["s_name", "varchar(15)", "NOT NULL", "PRIMARY KEY"], ["classification", "varchar(15)"],
+specie_csv_datatypes = [["s_name", "varchar(15)", "PRIMARY KEY"], ["classification", "varchar(15)"],
                         ["designation", "varchar(14)"] ,["average_height", "int"], ["skin_colors", "varchar(14)"],
                         ["hair_colors", "varchar(12)"], ["eye_colors", "varchar(10)"], ["average_lifespan", "int"],
                         ["language", "varchar(18)"], ["homeworld", "varchar(14)"]]

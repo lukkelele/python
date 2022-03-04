@@ -1,3 +1,4 @@
+from stat import FILE_ATTRIBUTE_NO_SCRUB_DATA
 import mysql.connector
 import csv
 import sql_statements as SQL
@@ -6,8 +7,10 @@ import lib
 
 DB_name = "gunnarss2on"
 
-csv_planets = "./data/planets.csv"
-csv_species = "./data/species.csv"
+#csv_planets_file = "C:/Users/lukkelele/Code/python/school/1DV503/a2/data/planets.csv"
+#csv_planets_file = "C:\\Users\\lukkelele\\Code\\python\\school\\1DV503\\a2\\data\\planets.csv"
+csv_planets_file = "data\planets.csv"
+csv_species_file = "C:\\Users\\lukkelele\\Code\\python\\school\\1DV503\\a2\\data\\species.csv"
 
 # Schema
 # =======================================
@@ -46,17 +49,6 @@ def user_input():
     return menu_input
 
 
-def parse_csv_file(cursor, path, target_table):
-    with open (path, 'r') as csv_file:
-        file_reader = csv.reader(csv_file)
-        header = next(file_reader)       # the attributes or column names
-        query = f"INSERT INTO {target_table}({{0}}) VALUES({{1}})"       # double curly braces because of string format
-        query = query.format(','.join(header), ','.join('?' * len(header)))
-        for row in file_reader:
-            cursor.execute(query, row)
-        cursor.commit()
-
-
 def add_FOREIGN_KEY(cursor, table, attr, target_table, target_key):
     query = f"ALTER TABLE {table} ADD FOREIGN KEY {attr}_FK ({attr}) REFERENCES {target_table}({target_key}) ON DELETE CASCADE;"
     cursor.execute(query)
@@ -72,6 +64,23 @@ def get_tables(cursor):
     cursor.execute("SHOW TABLES;")
     for table in cursor:
         print(table)
+
+
+def parse_csv_file(path, target_table):
+    print("PARSING..")    
+    with open('data\planets.csv', 'r') as file:
+        file_data = csv.reader(file)
+       # print("file reader applied")
+        header = next(file_data)       # the attributes or column names
+       # print(f"HEADER: {header}")
+        query = "INSERT INTO "+target_table+" ({0}) VALUES ({1});"     
+        print(f"QUERY: {query}")
+        query = query.format(','.join(header), ','.join('?' * len(header)))
+        for row in file_data:
+            print(row)
+            cursor.execute(query, row)
+            print('done with row')
+        cursor.commit()
 
 
 def new_database(flag):
@@ -100,8 +109,12 @@ def new_database(flag):
         csv_species_table = "csv_species"
         cursor.execute(SQL.create_table(csv_planets_table, planet_csv_datatypes))
         cursor.execute(SQL.create_table(csv_species_table, specie_csv_datatypes))
-        parse_csv_file(cursor, csv_planets, csv_planets_table)  # Read data into newly created tables
-        parse_csv_file(cursor, csv_species, csv_species_table)
+        print("CSV tables created.\nTime to parse data...")
+        parse_csv_file("data\planets.csv", csv_planets_table)  # Read data into newly created tables
+        print("CSV file data read and inserted csv_planets.")
+        parse_csv_file(csv_species_file, csv_species_table)
+        print("CSV file data read and inserted into CSV tables.")
+        
         # skin_color, hair_color and eye_color columns shall be removed from csv_species
         # climate and terrain shall be removed from csv_planets
         cursor.execute(SQL.copy_column(csv_planets_table, "Terrain", "terrain", "p_name"))
@@ -110,6 +123,7 @@ def new_database(flag):
         cursor.execute(SQL.copy_column(csv_species_table, "Hair_Color", "hair_color", "s_name"))
         cursor.execute(SQL.copy_column(csv_species_table, "Eye_Color",  "eye_color",  "s_name"))
         cursor.execute(SQL.copy_column(csv_species_table, "Skin_Color", "skin_color", "s_name"))
+        print("Columns copied temporary CSV tables to other tables")
         # Drop columns 
         cursor.execute(SQL.drop_column(csv_planets_table, "terrain"))
         cursor.execute(SQL.drop_column(csv_planets_table, "climate"))
@@ -117,10 +131,11 @@ def new_database(flag):
         cursor.execute(SQL.drop_column(csv_species_table, "hair_color"))
         cursor.execute(SQL.drop_column(csv_species_table, "eye_color "))
         cursor.execute(SQL.drop_column(csv_species_table, "skin_color"))
+        print("Columns dropped from temporary CSV tables")
         # Create intended tables
         cursor.execute(SQL.duplicate_table(csv_planets_table, "Planet"))
         cursor.execute(SQL.duplicate_table(csv_species_table, "Specie"))
-       
+        print("Planet and Specie tables created.")
         # Set references
         cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
         cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY eyecolor  (eye_color)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
@@ -129,6 +144,8 @@ def new_database(flag):
         return True
     except:
         print("A new database could not be created.")
+        cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
+        print("Schema dropped!\nShutting down..")
         return False
 
 # ---------------------------------------------------------------------
@@ -146,13 +163,12 @@ except:
     flag = new_database(flag)
 
 
-print("Creating cursor")
-cursor = db.cursor()    # Create cursor object
 
 if flag == False:
     print("error")
 
 else:
+    cursor = db.cursor()    # Create cursor object
     ui.main_menu()
     user = user_input()
     while user != 'Q':      # Loop until Q is entered 

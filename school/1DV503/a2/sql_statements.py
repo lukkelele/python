@@ -4,9 +4,6 @@ import csv
 DB_NAME = "GUNNARSSON"
 end_statement = "\n);"
 
-planet_datatypes =  """p_name varchar(20), rotation_period int, orbital_period int,
-                       diameter long, climate varchar(20), gravity decimal(2,2),
-                       terrain varchar(20), surface_water int, population bigint"""
 
 def create_database(db_name):
     query = f"CREATE DATABASE {db_name}"
