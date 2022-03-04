@@ -39,7 +39,6 @@ eye_color_datatypes = lib.get_datatypes("eye_color")
 skin_color_datatypes = lib.get_datatypes("skin_color")
 
 
-
 def user_input():
     menu_input = input("ENTER A NUMBER: ")
     while menu_input.isnumeric == False:
@@ -63,25 +62,10 @@ def add_FOREIGN_KEY(cursor, table, attr, target_table, target_key):
     cursor.execute(query)
     print(f"New foreign key on table {table} added onto {attr}!")
 
-
-
 def list_planets(cursor):
-    query = f"""SELECT DISTINCT P.p_name
-                FROM Planet AS P;"""    
-    cursor.execute(query)
-
-
-
-def read_multivalued_attribute(path, table, attr):
-    with open(path, newline="") as csv_file:
-        reader = csv.DictReader(csv_file)
-        for row in reader:
-            row_split = row[attr].split(",")
-            if len(row_split) > 1:          # if multivalued attribute
-                for attribute in row_split:
-                    s = f"INSERT INTO {table}"
-                    print(s)
-
+    cursor.execute(SQL.list_planets())
+    for planet in cursor:
+        print(planet)
 
 
 def get_tables(cursor):
@@ -169,23 +153,27 @@ if flag == False:
     print("error")
 
 else:
-
     ui.main_menu()
     user = user_input()
-    if user == 1:
-        print("List all planets")
-    
-    elif user == 2:
-        print("Search for planet details")
-    
-    elif user == 3:
-        print("")
-    
-    elif user == 4:
-        print("")
+    while user != 'Q':      # Loop until Q is entered 
+        if user == 1:
+            print("List all planets")
+            list_planets(cursor) 
+
+        elif user == 2:
+            print("Search for planet details")
         
-    elif user == 5:
-        print("")
+        elif user == 3:
+            print("")
+        
+        elif user == 4:
+            print("")
+            
+        elif user == 5:
+            print("")
+
+        ui.main_menu()
+        user = user_input()
         
 
 # SELECT S.s_name, C.hair_color

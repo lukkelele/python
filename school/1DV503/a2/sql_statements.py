@@ -77,7 +77,7 @@ def insert_into(table, values):
     return query
 
 
-def list_planets(table):
+def list_planets():
     query = f"""SELECT p_name
                 FROM Planet
              """
