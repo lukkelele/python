@@ -51,6 +51,12 @@ def get_datatypes(file):
     elif file == "environment": return environment_datatypes
 
 
+def get_column_names(entity):
+    if entity == "planet":
+        return planet_columns
+    elif entity == "specie":
+        return specie_columns
+
 
 planet_csv_datatypes = [["p_name", "varchar(20)", "PRIMARY KEY"], ["rotation_period", "int"], 
                        ["orbital_period", "int"], ["diameter","bigint"], ["climate", "varchar(40)"],

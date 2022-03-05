@@ -120,14 +120,6 @@ def new_database(flag):
         print(f"Creating new database named {DB_name}.")
         cursor.execute("CREATE DATABASE {};".format(DB_name))
         cursor.execute("USE {}".format(DB_name))                # Set new database as default
-
-        #cursor.execute(SQL.create_table("Specie", specie_datatypes))    # Specie Entity
-        #cursor.execute(SQL.create_table("Planet", planet_datatypes))
-        #cursor.execute(SQL.create_table("Environment", environment_datatypes))
-        #cursor.execute(SQL.create_table("Terrain", terrain_datatypes))
-        #cursor.execute(SQL.create_table("Hair_Color", hair_color_datatypes))
-        #cursor.execute(SQL.create_table("Eye_Color",  eye_color_datatypes))
-        #cursor.execute(SQL.create_table("Skin_Color", skin_color_datatypes))
         
         # Create temporary tables for parsing the CSV files
         csv_planets_table = "csv_planets"
@@ -139,19 +131,6 @@ def new_database(flag):
         parse_csv_file(cursor, csv_species_file, csv_species_table)
         print("CSV file data read and inserted into CSV tables.")
         
-        # skin_color, hair_color and eye_color columns shall be removed from csv_species
-        # climate and terrain shall be removed from csv_planets
-        print("Attempting to copy columns..")
-        #cursor.execute(SQL.copy_column(csv_planets_table, "Terrain", "terrain", "p_name", "p_name"))
-        #cursor.execute(SQL.copy_column(csv_planets_table, "Environment", "climate", "p_name", "p_name"))
-        print("Copied PLANETS CSV columns..")
-        #cursor.execute(SQL.copy_column(csv_species_table, "Hair_Color", "hair_color", "s_name", "s_name"))
-        #print("hair color copied")
-        #cursor.execute(SQL.copy_column(csv_species_table, "Eye_Color",  "eye_color",  "s_name", "s_name"))
-        print("eye color copied")
-        #cursor.execute(SQL.copy_column(csv_species_table, "Skin_Color", "skin_color", "s_name", "s_name"))
-        #print("Columns copied temporary CSV tables to other tables")
-      
         # Create the environment and terraint entity
         cursor.execute(SQL.duplicate_table(csv_planets_table, "Terrain"))
         cursor.execute(SQL.copy_table(csv_planets_table, "Terrain"))
@@ -172,11 +151,6 @@ def new_database(flag):
         drop_columns("Eye_Color" , specie_csv_datatypes, ["s_name", "eye_color"], cursor)
 
         # Create intended tables
-        #cursor.execute(SQL.drop_column(csv_planets_table, "terrain"))
-        #cursor.execute(SQL.drop_column(csv_planets_table, "climate"))
-        #cursor.execute(SQL.drop_column(csv_species_table, "hair_color"))
-        #cursor.execute(SQL.drop_column(csv_species_table, "skin_color"))
-        #cursor.execute(SQL.drop_column(csv_species_table, "eye_color"))
         cursor.execute(SQL.duplicate_table(csv_planets_table, "Planet"))
         cursor.execute(SQL.duplicate_table(csv_species_table, "Specie"))
         cursor.execute(SQL.copy_table(csv_planets_table, "Planet"))
@@ -186,10 +160,12 @@ def new_database(flag):
         drop_columns("Planet" , planet_csv_datatypes, planet_columns, cursor)
         drop_columns("Specie" , specie_csv_datatypes, specie_columns, cursor)
         print("Planet and Specie tables created.")
+
         # Set references
         #cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
         #cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY eyecolor  (eye_color)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
         #cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY skincolor (skin_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
+
         print("New database successfully created!")
         return True
     except:
@@ -239,7 +215,14 @@ else:
 
         elif user == '2':
             print("Search for planet details")
-        
+            search = input("Search for:     (Planet) (Specie)")
+            detail = input("Detail: ")
+            query = ui.search_details(search, detail)
+            print(query)
+            if query != "":     # if a match was found
+                cursor.execute(query)
+                for result in cursor:
+                    print(result)
         elif user == '3':
             print("3")
             drop_columns("Hair_Color", specie_csv_datatypes, ["s_name", "hair_color"], cursor)
