@@ -75,37 +75,24 @@ def parse_csv_file(path, target_table):
         print(f"HEADER: {header}")
         query = f"INSERT INTO {target_table}({{0}}) VALUES ({{1}});"  
         org_query = query
+        value_query = f"INSERT INTO {target_table} VALUES ({{0}});"      
         query = query.format(','.join(header), ','.join('?' * len(header)))
-        #cursor.execute(query)
-        #print("query ===> "+query)
+
+        values = []
         for row in file_data:
             for attribute in row:
-                #print(attribute)    
-                if len(attribute.split(',')) > 1:       # if multivalue
-                    list_pos = row.index(attribute)
-                    first_attr = attribute.split(',')[0]
-                    first_attr = f"'{first_attr}'"
-                    second_attr = attribute.split(',')[1]
-                    second_attr = f"'{second_attr}'"
-                    multivalued_queue = [[list_pos, second_attr]]   # [ INDEX, ATTRIBUTE_VALUE ]
-                    row.remove(attribute)
-                    row.insert(list_pos, first_attr)
-                    query = org_query.format(','.join(header), ','.join(row))
-                   # row.remove(first_attr)
-                   # row.insert(list_pos, second_attr)
-                   # query = org_query.format(','.join(header), ','.join(row))
-            else:
                 attribute = f"'{attribute}'"
-                query = org_query.format(','.join(header), ','.join(row))
-                print("AFTER FORMAT +>  "+query)
-                attribute = f"'{attribute}'"
-                cursor.execute(query, row)
-        cursor.commit()
+                values.append(attribute)
+            query = value_query.format(','.join(values))
+            print(query)
+            values.clear()
+                
+
 
 
 def new_database(flag):
     try:
-        print(f"No database found going by name {DB_name}.\nConnecting without a specified database instead.")
+        print(f"\nNo database found going by name {DB_name}.\nConnecting without a specified database instead.")
         db = mysql.connector.connect(
             host="127.0.0.1",
             user="root",

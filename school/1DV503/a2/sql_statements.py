@@ -29,7 +29,7 @@ def create_table(table, attributes):
             break
         else:
             query += f"{name} {attr_type} {constraint} {key_property},\n"
-    print(query)
+    #print(query)
     return query 
 
 
