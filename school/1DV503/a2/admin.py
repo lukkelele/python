@@ -178,6 +178,7 @@ try:
             database=DB_name
             )
     print("Database named "+DB_name)
+    flag = True
 except:
     flag = new_database(flag)
 
@@ -187,6 +188,8 @@ if flag == False:
     print("error")
 
 else:
+    # If database doesn't exist, one is created with the same property DB_name
+    # This makes it possible to reconnect the cursor with the database selected
     db = mysql.connector.connect(
         host="127.0.0.1",
         user="root",
@@ -200,6 +203,7 @@ else:
         if user == 1:
             print("List all planets")
             list_planets(cursor) 
+            get_tables(cursor)
 
         elif user == 2:
             print("Search for planet details")
