@@ -18,6 +18,26 @@
 # TABLES TO CREATE:
 # Planet, Specie, Environment, Color
 
+csv_planets_file_win = "data\\planets.csv"
+csv_species_file_win = "data\\species.csv"
+
+csv_planets_file_linux = "./data/planets.csv"     # on linux
+csv_species_file_linux = "./data/species.csv"     # on linux
+
+
+def get_file(filename, os):
+    if filename == "planets.csv":
+        if os == "linux":
+            return csv_planets_file_linux
+        else:
+            return csv_planets_file_win
+    else:
+        if os == "linux":
+            return csv_species_file_linux
+        else:
+            return csv_species_file_win
+
+
 def get_datatypes(file):
     file = file.lower()
     if   file == "planet_csv" : return planet_csv_datatypes
