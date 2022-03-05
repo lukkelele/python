@@ -76,7 +76,7 @@ def insert_into(table, values):
 
 def list_planets():
     query = f"""SELECT p_name
-                FROM Planet
+                FROM Planet;
              """
     return query
 

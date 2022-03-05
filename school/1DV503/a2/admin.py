@@ -134,8 +134,8 @@ def new_database(flag):
         # skin_color, hair_color and eye_color columns shall be removed from csv_species
         # climate and terrain shall be removed from csv_planets
         print("Attempting to copy columns..")
-        cursor.execute(SQL.copy_column(csv_planets_table, "Terrain", "terrain", "name", "p_name"))
-        cursor.execute(SQL.copy_column(csv_planets_table, "Environment", "climate", "name", "p_name"))
+        cursor.execute(SQL.copy_column(csv_planets_table, "Terrain", "terrain", "p_name", "p_name"))
+        cursor.execute(SQL.copy_column(csv_planets_table, "Environment", "climate", "p_name", "p_name"))
         print("Copied PLANETS CSV columns..")
         cursor.execute(SQL.copy_column(csv_species_table, "Hair_Color", "hair_color", "s_name", "s_name"))
         print("hair color copied")
@@ -154,6 +154,8 @@ def new_database(flag):
         # Create intended tables
         cursor.execute(SQL.duplicate_table(csv_planets_table, "Planet"))
         cursor.execute(SQL.duplicate_table(csv_species_table, "Specie"))
+        cursor.execute(SQL.copy_table(csv_planets_table, "Planet"))
+        cursor.execute(SQL.copy_table(csv_species_table, "Specie"))
         print("Planet and Specie tables created.")
         # Set references
         cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
@@ -197,28 +199,29 @@ else:
         database=DB_name
         )
     cursor = db.cursor()    # Create cursor object
+    cursor.execute("USE {}".format(DB_name))              
     ui.main_menu()
-    user = user_input()
+    user = input()
     while user != 'Q':      # Loop until Q is entered 
-        if user == 1:
-            print("List all planets")
-            list_planets(cursor) 
-            get_tables(cursor)
+        if user == '1':
+            cursor.execute("SELECT p_name FROM Planet;")
+            for planet in cursor:
+                print(planet)
 
-        elif user == 2:
+        elif user == '2':
             print("Search for planet details")
         
-        elif user == 3:
-            print("")
+        elif user == '3':
+            print("3")
         
-        elif user == 4:
-            print("")
+        elif user == '4':
+            print("4")
             
-        elif user == 5:
-            print("")
+        elif user == '5':
+            print("5lol")
 
         ui.main_menu()
-        user = user_input()
+        user = input()
         
 
 # SELECT S.s_name, C.hair_color
