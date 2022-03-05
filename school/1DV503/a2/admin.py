@@ -7,6 +7,8 @@ import sql_statements as SQL
 import ui
 import lib
 
+
+
 DB_name = "gunnarss2on"
 
 #csv_planets_file = "C:/Users/lukkelele/Code/python/school/1DV503/a2/data/planets.csv"
@@ -157,11 +159,11 @@ def new_database(flag):
         cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
         cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY eyecolor  (eye_color)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
         cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY skincolor (skin_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
-
+        print("New database successfully created!")
         return True
     except:
         print("\n| ERROR |\nA new database could not be created.")
-       # cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
+        cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
         print("Schema dropped!\nShutting down..")
         return False
 
@@ -185,6 +187,12 @@ if flag == False:
     print("error")
 
 else:
+    db = mysql.connector.connect(
+        host="127.0.0.1",
+        user="root",
+        passwd="root",
+        database=DB_name
+        )
     cursor = db.cursor()    # Create cursor object
     ui.main_menu()
     user = user_input()
