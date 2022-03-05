@@ -33,12 +33,12 @@ def create_table(table, attributes):
     return query 
 
 
-def copy_column(source_table, target_table, column, PK):
+def copy_column(source_table, target_table, column, PK, target_PK):
     query = f"""UPDATE {source_table}
                     SET {column} = (
                         SELECT {column}
                         FROM   {target_table}
-                        WHERE  {source_table}.{PK} = {target_table}.{PK}
+                        WHERE  {source_table}.{PK} = {target_table}.{target_PK}
                 );  """
     return query
 

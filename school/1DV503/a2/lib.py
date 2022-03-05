@@ -39,8 +39,8 @@ planet_csv_datatypes = [["name", "varchar(20)", "PRIMARY KEY"], ["rotation_perio
 # TERRAIN AND GRAVITY --> varchar(50) to make sure space is available
 
 specie_csv_datatypes = [["s_name", "varchar(15)", "PRIMARY KEY"], ["classification", "varchar(15)"],
-                        ["designation", "varchar(14)"] ,["average_height", "int"], ["skin_colors", "varchar(50)"],
-                        ["hair_colors", "varchar(40)"], ["eye_colors", "varchar(40)"], ["average_lifespan", "int"],
+                        ["designation", "varchar(14)"] ,["average_height", "int"], ["skin_color", "varchar(50)"],
+                        ["hair_color", "varchar(50)"], ["eye_color", "varchar(50)"], ["average_lifespan", "int"],
                         ["language", "varchar(18)"], ["homeworld", "varchar(14)"]]
 
 
@@ -52,12 +52,17 @@ specie_datatypes = [["s_name", "varchar(15)", "NOT NULL", "PRIMARY KEY"], ["clas
                     ["designation", "varchar(14)"] ,["average_height", "int"], 
                     ["average_lifespan", "int"], ["language", "varchar(18)"], ["homeworld", "varchar(14)"]]
 
-environment_datatypes = [["p_name", "varchar(14)", "NOT NULL", "PRIMARY KEY"], ["terrain", "varchar(12)"]]
-terrain_datatypes = [["p_name", "varchar(14)", "NOT NULL", "PRIMARY KEY"], ["terrain", "varchar(12)"]]      # FIX
-hair_color_datatypes = [["s_name", "varchar(20)"], ["hair_color", "varchar(14)", "PRIMARY KEY"]]
-eye_color_datatypes =  [["s_name", "varchar(20)"], ["eye_color",  "varchar(14)", "PRIMARY KEY"]]
-skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(14)", "PRIMARY KEY"]]
+environment_datatypes = [["p_name", "varchar(14)"], ["climate", "varchar(12)"]]
+terrain_datatypes = [["p_name", "varchar(14)"], ["terrain", "varchar(50)"]]      # FIX
+hair_color_datatypes = [["s_name", "varchar(20)"], ["hair_color", "varchar(14)"]]
+eye_color_datatypes =  [["s_name", "varchar(20)"], ["eye_color",  "varchar(14)"]]
+skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(14)"]]
 
+# environment_datatypes = [["p_name", "varchar(14)"], ["climate", "varchar(12)"]]
+# terrain_datatypes = [["p_name", "varchar(14)"], ["terrain", "varchar(50)"]]      # FIX
+# hair_color_datatypes = [["s_name", "varchar(20)"], ["hair_color", "varchar(14)", "PRIMARY KEY"]]
+# eye_color_datatypes =  [["s_name", "varchar(20)"], ["eye_color",  "varchar(14)", "PRIMARY KEY"]]
+# skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(14)", "PRIMARY KEY"]]
 
 
 

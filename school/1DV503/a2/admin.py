@@ -131,12 +131,15 @@ def new_database(flag):
         
         # skin_color, hair_color and eye_color columns shall be removed from csv_species
         # climate and terrain shall be removed from csv_planets
-        cursor.execute(SQL.copy_column(csv_planets_table, "Terrain", "terrain", "p_name"))
-        cursor.execute(SQL.copy_column(csv_planets_table, "Environment", "climate", "p_name"))
-
-        cursor.execute(SQL.copy_column(csv_species_table, "Hair_Color", "hair_color", "s_name"))
-        cursor.execute(SQL.copy_column(csv_species_table, "Eye_Color",  "eye_color",  "s_name"))
-        cursor.execute(SQL.copy_column(csv_species_table, "Skin_Color", "skin_color", "s_name"))
+        print("Attempting to copy columns..")
+        cursor.execute(SQL.copy_column(csv_planets_table, "Terrain", "terrain", "name", "p_name"))
+        cursor.execute(SQL.copy_column(csv_planets_table, "Environment", "climate", "name", "p_name"))
+        print("Copied PLANETS CSV columns..")
+        cursor.execute(SQL.copy_column(csv_species_table, "Hair_Color", "hair_color", "s_name", "s_name"))
+        print("hair color copied")
+        cursor.execute(SQL.copy_column(csv_species_table, "Eye_Color",  "eye_color",  "s_name", "s_name"))
+        print("eye color copied")
+        cursor.execute(SQL.copy_column(csv_species_table, "Skin_Color", "skin_color", "s_name", "s_name"))
         print("Columns copied temporary CSV tables to other tables")
         # Drop columns 
         cursor.execute(SQL.drop_column(csv_planets_table, "terrain"))
@@ -157,8 +160,8 @@ def new_database(flag):
 
         return True
     except:
-        print("\nERROR |\nA new database could not be created.")
-        #cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
+        print("\n| ERROR |\nA new database could not be created.")
+       # cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
         print("Schema dropped!\nShutting down..")
         return False
 
