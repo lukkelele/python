@@ -76,9 +76,24 @@ def parse_csv_file(path, target_table):
         org_query = query
         print("copy ==> "+org_query)
         query = query.format(','.join(header), ','.join('?' * len(header)))
-        cursor.execute(query)
-        print("query ===> "+query)
+        #cursor.execute(query)
+        #print("query ===> "+query)
         for row in file_data:
+            for attribute in row:
+                if len(attribute.split(',')) > 1:       # if multivalue
+                    print(attribute)
+                    list_pos = row.index(attribute)
+                    first_attr = attribute.split(',')[0]
+                    second_attr = attribute.split(',')[1]   
+                    #print(f"FIRST ATTRIBUTE ==> {first_attr}\nSECOND ATTRIBUTE ==> {second_attr}\nlist_pos ==> {list_pos}")
+                    row.remove(attribute)
+                    row.insert(list_pos, first_attr)
+                    print(f"Removed {second_attr} from {row}!")
+                    query = org_query.format(','.join(header), ','.join(row))
+                    row.remove(first_attr)
+                    row.insert(list_pos, second_attr)
+                    print(f"Removed {first_attr} from {row}!")
+                    query = org_query.format(','.join(header), ','.join(row))
             query = org_query.format(','.join(header), ','.join(row))
             print("AFTER FORMAT +>  "+query)
             cursor.execute(query, row)
