@@ -39,8 +39,8 @@ planet_csv_datatypes = [["name", "varchar(20)", "PRIMARY KEY"], ["rotation_perio
 # TERRAIN AND GRAVITY --> varchar(50) to make sure space is available
 
 specie_csv_datatypes = [["s_name", "varchar(15)", "PRIMARY KEY"], ["classification", "varchar(15)"],
-                        ["designation", "varchar(14)"] ,["average_height", "int"], ["skin_colors", "varchar(14)"],
-                        ["hair_colors", "varchar(12)"], ["eye_colors", "varchar(10)"], ["average_lifespan", "int"],
+                        ["designation", "varchar(14)"] ,["average_height", "int"], ["skin_colors", "varchar(50)"],
+                        ["hair_colors", "varchar(40)"], ["eye_colors", "varchar(40)"], ["average_lifespan", "int"],
                         ["language", "varchar(18)"], ["homeworld", "varchar(14)"]]
 
 

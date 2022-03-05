@@ -69,31 +69,31 @@ def get_tables(cursor):
 
 
 def parse_csv_file(cursor, path, target_table):
-    with open('data\planets.csv', 'r') as file:
+    with open(path, 'r') as file:
         file_data = csv.reader(file)
-
-       # print("file reader applied")
+        print("File opened at path --> "+path)
         header = next(file_data)       # the attributes or column names
-        print(f"HEADER: {header}")
         query = f"INSERT INTO {target_table}({{0}}) VALUES ({{1}});"  
-        org_query = query
         value_query = f"INSERT INTO {target_table} VALUES ({{0}});"      
         query = query.format(','.join(header), ','.join('?' * len(header)))
 
         values = []
         for row in file_data:
-            for attribute in row:
-                if not attribute.isnumeric():
-                    if attribute == "NA":
-                        attribute = 'null'
-                    else:
-                        attribute = f"'{attribute}'" 
-                values.append(attribute)
-            query = value_query.format(','.join(values))
-            print(query)
-            cursor.execute(query)
-            print("query successfully executed")
-            values.clear()
+            if row[0] == "NA":  # IF PRIMARY KEY IS NULL, SKIP
+                pass
+            else:
+                for attribute in row:
+                    if not attribute.isnumeric():
+                        if attribute == "NA" or attribute == "indefinite":
+                            attribute = "null"
+                        else:
+                            attribute = f"\"{attribute}\"" 
+                    values.append(attribute)
+                query = value_query.format(','.join(values))
+                print(query)
+                cursor.execute(query)
+                values.clear()
+        print(f"Parsing from file {path} done.")
                 
 
 
@@ -124,10 +124,9 @@ def new_database(flag):
         csv_species_table = "csv_species"
         cursor.execute(SQL.create_table(csv_planets_table, planet_csv_datatypes))
         cursor.execute(SQL.create_table(csv_species_table, specie_csv_datatypes))
-        print("CSV tables created.\nTime to parse data...")
         parse_csv_file(cursor, "data\planets.csv", csv_planets_table)  # Read data into newly created tables
         print("CSV file data read and inserted csv_planets.")
-        parse_csv_file(cursor, csv_species_file, csv_species_table)
+        parse_csv_file(cursor, "data\species.csv", csv_species_table)
         print("CSV file data read and inserted into CSV tables.")
         
         # skin_color, hair_color and eye_color columns shall be removed from csv_species
@@ -159,7 +158,7 @@ def new_database(flag):
         return True
     except:
         print("\nERROR |\nA new database could not be created.")
-        cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
+        #cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
         print("Schema dropped!\nShutting down..")
         return False
 
