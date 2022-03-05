@@ -34,9 +34,9 @@ def get_datatypes(file):
 
 planet_csv_datatypes = [["name", "varchar(20)", "PRIMARY KEY"], ["rotation_period", "int"], 
                        ["orbital_period", "int"], ["diameter","bigint"], ["climate", "varchar(40)"],
-                       ["gravity", "varchar(40)"],     # temporarily change decimal(2,2) to varchar
-                       ["terrain", "varchar(30)"], ["surface_water", "int"], ["population", "bigint"]]
-
+                       ["gravity", "varchar(50)"],     # temporarily change decimal(2,2) to varchar
+                       ["terrain", "varchar(50)"], ["surface_water", "int"], ["population", "bigint"]]
+# TERRAIN AND GRAVITY --> varchar(50) to make sure space is available
 
 specie_csv_datatypes = [["s_name", "varchar(15)", "PRIMARY KEY"], ["classification", "varchar(15)"],
                         ["designation", "varchar(14)"] ,["average_height", "int"], ["skin_colors", "varchar(14)"],

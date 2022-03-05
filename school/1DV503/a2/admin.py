@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from stat import FILE_ATTRIBUTE_NO_SCRUB_DATA
 from tkinter import E
 import mysql.connector
@@ -83,7 +84,10 @@ def parse_csv_file(cursor, path, target_table):
         for row in file_data:
             for attribute in row:
                 if not attribute.isnumeric():
-                    attribute = f"'{attribute}'" 
+                    if attribute == "NA":
+                        attribute = 'null'
+                    else:
+                        attribute = f"'{attribute}'" 
                 values.append(attribute)
             query = value_query.format(','.join(values))
             print(query)
@@ -155,7 +159,7 @@ def new_database(flag):
         return True
     except:
         print("\nERROR |\nA new database could not be created.")
-       # cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
+        cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
         print("Schema dropped!\nShutting down..")
         return False
 
