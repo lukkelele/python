@@ -67,9 +67,10 @@ def get_tables(cursor):
         print(table)
 
 
-def parse_csv_file(path, target_table):
+def parse_csv_file(cursor, path, target_table):
     with open('data\planets.csv', 'r') as file:
         file_data = csv.reader(file)
+
        # print("file reader applied")
         header = next(file_data)       # the attributes or column names
         print(f"HEADER: {header}")
@@ -81,10 +82,13 @@ def parse_csv_file(path, target_table):
         values = []
         for row in file_data:
             for attribute in row:
-                attribute = f"'{attribute}'"
+                if not attribute.isnumeric():
+                    attribute = f"'{attribute}'" 
                 values.append(attribute)
             query = value_query.format(','.join(values))
             print(query)
+            cursor.execute(query)
+            print("query successfully executed")
             values.clear()
                 
 
@@ -117,9 +121,9 @@ def new_database(flag):
         cursor.execute(SQL.create_table(csv_planets_table, planet_csv_datatypes))
         cursor.execute(SQL.create_table(csv_species_table, specie_csv_datatypes))
         print("CSV tables created.\nTime to parse data...")
-        parse_csv_file("data\planets.csv", csv_planets_table)  # Read data into newly created tables
+        parse_csv_file(cursor, "data\planets.csv", csv_planets_table)  # Read data into newly created tables
         print("CSV file data read and inserted csv_planets.")
-        parse_csv_file(csv_species_file, csv_species_table)
+        parse_csv_file(cursor, csv_species_file, csv_species_table)
         print("CSV file data read and inserted into CSV tables.")
         
         # skin_color, hair_color and eye_color columns shall be removed from csv_species
@@ -151,7 +155,7 @@ def new_database(flag):
         return True
     except:
         print("\nERROR |\nA new database could not be created.")
-        cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
+       # cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
         print("Schema dropped!\nShutting down..")
         return False
 
