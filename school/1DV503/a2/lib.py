@@ -33,7 +33,7 @@ def get_datatypes(file):
 
 
 planet_csv_datatypes = [["name", "varchar(20)", "PRIMARY KEY"], ["rotation_period", "int"], 
-                       ["orbital_period", "int"], ["diameter","long"], ["climate", "varchar(40)"],
+                       ["orbital_period", "int"], ["diameter","bigint"], ["climate", "varchar(40)"],
                        ["gravity", "varchar(40)"],     # temporarily change decimal(2,2) to varchar
                        ["terrain", "varchar(30)"], ["surface_water", "int"], ["population", "bigint"]]
 

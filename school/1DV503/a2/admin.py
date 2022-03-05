@@ -1,4 +1,5 @@
 from stat import FILE_ATTRIBUTE_NO_SCRUB_DATA
+from tkinter import E
 import mysql.connector
 import csv
 import sql_statements as SQL
@@ -74,29 +75,31 @@ def parse_csv_file(path, target_table):
         print(f"HEADER: {header}")
         query = f"INSERT INTO {target_table}({{0}}) VALUES ({{1}});"  
         org_query = query
-        print("copy ==> "+org_query)
         query = query.format(','.join(header), ','.join('?' * len(header)))
         #cursor.execute(query)
         #print("query ===> "+query)
         for row in file_data:
             for attribute in row:
+                #print(attribute)    
                 if len(attribute.split(',')) > 1:       # if multivalue
-                    print(attribute)
                     list_pos = row.index(attribute)
                     first_attr = attribute.split(',')[0]
-                    second_attr = attribute.split(',')[1]   
-                    #print(f"FIRST ATTRIBUTE ==> {first_attr}\nSECOND ATTRIBUTE ==> {second_attr}\nlist_pos ==> {list_pos}")
+                    first_attr = f"'{first_attr}'"
+                    second_attr = attribute.split(',')[1]
+                    second_attr = f"'{second_attr}'"
+                    multivalued_queue = [[list_pos, second_attr]]   # [ INDEX, ATTRIBUTE_VALUE ]
                     row.remove(attribute)
                     row.insert(list_pos, first_attr)
-                    print(f"Removed {second_attr} from {row}!")
                     query = org_query.format(','.join(header), ','.join(row))
-                    row.remove(first_attr)
-                    row.insert(list_pos, second_attr)
-                    print(f"Removed {first_attr} from {row}!")
-                    query = org_query.format(','.join(header), ','.join(row))
-            query = org_query.format(','.join(header), ','.join(row))
-            print("AFTER FORMAT +>  "+query)
-            cursor.execute(query, row)
+                   # row.remove(first_attr)
+                   # row.insert(list_pos, second_attr)
+                   # query = org_query.format(','.join(header), ','.join(row))
+            else:
+                attribute = f"'{attribute}'"
+                query = org_query.format(','.join(header), ','.join(row))
+                print("AFTER FORMAT +>  "+query)
+                attribute = f"'{attribute}'"
+                cursor.execute(query, row)
         cursor.commit()
 
 
@@ -160,7 +163,7 @@ def new_database(flag):
 
         return True
     except:
-        print("A new database could not be created.")
+        print("\nERROR |\nA new database could not be created.")
         cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
         print("Schema dropped!\nShutting down..")
         return False
