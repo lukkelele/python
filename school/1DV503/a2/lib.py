@@ -87,3 +87,5 @@ skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(14)"]
 
 
 
+planet_columns = ["p_name", "rotation_period", "orbital_period", "diameter", "gravity", "surface_water", "population"]
+specie_columns = ["s_name", "classification", "designation", "average_height", "average_lifespan", "language", "homeworld"]
