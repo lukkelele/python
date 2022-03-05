@@ -154,11 +154,22 @@ def new_database(flag):
         #cursor.execute(SQL.copy_column(csv_species_table, "Skin_Color", "skin_color", "s_name", "s_name"))
         #print("Columns copied temporary CSV tables to other tables")
        
+        cursor.execute(SQL.duplicate_table(csv_planets_table, "Terrain"))
+        cursor.execute(SQL.copy_table(csv_planets_table, "Terrain"))
+        cursor.execute(SQL.duplicate_table(csv_planets_table, "Environment"))
+        cursor.execute(SQL.copy_table(csv_planets_table, "Environment"))
+        drop_columns("Terrain", planet_csv_datatypes, ["p_name", "terrain"], cursor)
+        drop_columns("Environment", planet_csv_datatypes, ["p_name", "climate"], cursor)
         # Remove all but hair_color and s_name
         cursor.execute(SQL.duplicate_table(csv_species_table, "Hair_Color"))
-        print("Hair_Color DUPLICATE")
         cursor.execute(SQL.copy_table(csv_species_table, "Hair_Color"))
-        
+        cursor.execute(SQL.duplicate_table(csv_species_table, "Eye_Color"))
+        cursor.execute(SQL.copy_table(csv_species_table, "Eye_Color"))
+        cursor.execute(SQL.duplicate_table(csv_species_table, "Skin_Color"))
+        cursor.execute(SQL.copy_table(csv_species_table, "Skin_Color"))
+        drop_columns("Hair_Color", specie_csv_datatypes, ["s_name", "hair_color"], cursor)
+        drop_columns("Skin_Color", specie_csv_datatypes, ["s_name", "skin_color"], cursor)
+        drop_columns("Eye_Color" , specie_csv_datatypes, ["s_name", "eye_color"], cursor)
         cursor.execute(SQL.drop_column(csv_planets_table, "terrain"))
         cursor.execute(SQL.drop_column(csv_planets_table, "climate"))
         #
