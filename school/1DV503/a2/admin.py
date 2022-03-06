@@ -53,6 +53,7 @@ def add_FOREIGN_KEY(cursor, table, attr, target_table, target_key):
     cursor.execute(query)
     print(f"New foreign key on table {table} added onto {attr}!")
 
+
 def list_planets(cursor):
     cursor.execute(SQL.list_planets())
     for planet in cursor:
@@ -69,13 +70,16 @@ def drop_columns(table, table_columns, ignored_columns, cursor):
         if flag == False:   # If the column name doesn't match any column to be ignored, drop it
             print("DROPPING "+col)
             cursor.execute(SQL.drop_column(table, col))
-        
 
 
 def get_tables(cursor):
     cursor.execute("SHOW TABLES;")
     for table in cursor:
         print(table)
+
+
+def adjust_columns(table, column):
+        print("Adjusting columns")
 
 
 def parse_csv_file(cursor, path, target_table):
