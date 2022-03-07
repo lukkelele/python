@@ -187,7 +187,7 @@ def new_database(flag):
         cursor.execute(f"""INSERT INTO Hair_Color 
                         SELECT s_name, hair_color
                         FROM csv_species
-                        ;""")
+                        );""")
 
 
         print("After update hair color")
