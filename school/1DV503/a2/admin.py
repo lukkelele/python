@@ -80,13 +80,25 @@ def get_tables(cursor):
 
 def adjust_multivalued_entity(table, column, cursor):
         print("Adjusting..")
-        if len(column) > 1: # if more than one attribute
-            for attribute in column:
-                print(f"INSERT INTO {table} ({column}) VALUES ({attribute});")
-                cursor.execute(f"INSERT INTO {table} ({column}) VALUES ({attribute});")
-                print(f"Added {attribute} as a single attribute.")
-            cursor.execute("ALTER TABLE {table} DROP COLUMN {column};")
-            print(f"Dropped {column} from {table}!")
+        rows = []
+        cursor.execute(f"SELECT * FROM {table};")
+        for col in cursor:
+            rows.append(col)
+        print("Execution done")
+        for attribute in rows:
+            key = str(attribute[0])
+            attr = str(attribute[1])
+            if len(attr.split(',')) > 1:
+                #print(f"delete from {table} where {column}=\"{attr}\";")
+                # If attribute is a multivalued one
+                for a in attr.split(","):
+                  #  print(f"INSERT INTO {table} VALUES('{key}','{a}');")
+                    cursor.execute(f"INSERT INTO {table} VALUES(\"{key}\",\"{a}\");")
+                    cursor.execute(f"DELETE FROM {table} WHERE {column}=\"{attr}\";")
+        cursor.execute("SELECT * FROM Terrain;")
+        for x in cursor:
+            print(x)
+
 
 def parse_csv_file(cursor, path, target_table):
     with open(path, 'r') as file:
@@ -115,7 +127,6 @@ def parse_csv_file(cursor, path, target_table):
                 values.clear()
         print(f"Parsing from file {path} done.")
                 
-
 
 
 def new_database(flag):
@@ -171,14 +182,25 @@ def new_database(flag):
         drop_columns("Specie" , specie_csv_datatypes, specie_columns, cursor)
         print("Planet and Specie tables created.")
 
+        # DROP PRIMARY KEYS FROM CSV MOLDS
+        cursor.execute("ALTER TABLE Terrain DROP Primary Key;")
+        cursor.execute("ALTER TABLE Environment DROP Primary Key;")
+        cursor.execute("ALTER TABLE Hair_Color DROP Primary Key;")
+        cursor.execute("ALTER TABLE Eye_Color DROP Primary Key;")
+        cursor.execute("ALTER TABLE Skin_Color DROP Primary Key;")
+        
         print("Dropping excess tables..")
         cursor.execute(f"DROP TABLE {csv_planets_table};")
         cursor.execute(f"DROP TABLE {csv_species_table};")
-        
+        cursor.execute("SELECT * FROM Terrain;")
+        for k in cursor:
+            print(k)
         # Set references
         #cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
         #cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY eyecolor  (eye_color)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
         #cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY skincolor (skin_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
+
+        adjust_multivalued_entity('Terrain', "terrain", cursor)
 
         print("New database successfully created!")
         return True
