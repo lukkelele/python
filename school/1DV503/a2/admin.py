@@ -81,7 +81,9 @@ def get_tables(cursor):
 def adjust_multivalued_entity(table, column, cursor, new_table, new_table_types):
         first_attr = new_table_types[0]
         second_attr = new_table_types[1]
-        cursor.execute(f"CREATE NEW TABLE {new_table} {{ {first_attr} , {second_attr}}};")
+        print("create new table ... "+"\nfirst =="+first_attr+"\nsecond =="+second_attr)
+        cursor.execute("CREATE TABLE "+new_table+" ("+first_attr+", "+second_attr+");")
+        print("new table created")
         rows = []
         cursor.execute(f"SELECT * FROM {table};")
         for col in cursor:
@@ -95,10 +97,12 @@ def adjust_multivalued_entity(table, column, cursor, new_table, new_table_types)
                 # If attribute is a multivalued one
                 for a in attr.split(","):
                     print(f"ATTR = {a}")
-                    print(f"INSERT INTO {table} values('{key}','{a}');")
-                    cursor.execute(f"INSERT INTO {table} VALUES(\"{key}\",\"{a}\");")
+                    print(f"INSERT INTO {new_table} values('{key}','{a}');")
+                    #cursor.execute(f"INSERT INTO {table} VALUES(\"{key}\",\"{a}\");")
+                    cursor.execute(f"INSERT INTO {new_table} VALUES(\"{key}\",\"{a}\");")
                     cursor.execute(f"DELETE FROM {table} WHERE {column}=\"{attr}\";")
-        cursor.execute(f"SELECT * FROM {table};")
+                    cursor.commit()
+        cursor.execute(f"SELECT * FROM {new_table};")
         for x in cursor:
             print(x)
 
