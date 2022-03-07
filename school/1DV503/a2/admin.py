@@ -81,12 +81,7 @@ def get_tables(cursor):
         print(table)
 
 
-def adjust_multivalued_entity(table, column, cursor, new_table, new_table_types):
-        first_attr = new_table_types[0]
-        second_attr = new_table_types[1]
-    #    print("create new table ... "+"\nfirst =="+first_attr+"\nsecond =="+second_attr)
-     #   cursor.execute("CREATE TABLE "+new_table+" ("+first_attr+", "+second_attr+");")
-        print("new table created")
+def adjust_multivalued_entity(table, column, cursor):
         rows = []
         cursor.execute(f"SELECT * FROM {table};")
         for col in cursor:
@@ -96,15 +91,12 @@ def adjust_multivalued_entity(table, column, cursor, new_table, new_table_types)
             attr = str(attribute[1])
             print(f"KEY = {key}")
             if len(attr.split(',')) > 1:
-                #print(f"delete from {table} where {column}=\"{attr}\";")
                 # If attribute is a multivalued one
                 for a in attr.split(","):
                     print(f"ATTR = {a}")
                     print(f"INSERT INTO {table} values('{key}','{a}');")
-                    #cursor.execute(f"INSERT INTO {table} VALUES(\"{key}\",\"{a}\");")
                     cursor.execute(f"INSERT INTO {table} VALUES(\"{key}\",\"{a}\");")
                     cursor.execute(f"DELETE FROM {table} WHERE {column}=\"{attr}\";")
-     #   db.commit()
 
 
 def parse_csv_file(cursor, path, target_table):
@@ -199,13 +191,17 @@ def new_database(flag):
         cursor.execute(f"DROP TABLE {csv_planets_table};")
         cursor.execute(f"DROP TABLE {csv_species_table};")
 
+
+        adjust_multivalued_entity("Environment", "climate", cursor)
+        adjust_multivalued_entity("Terrain", "terrain", cursor)
+        adjust_multivalued_entity("Hair_Color", "hair_color", cursor)
+        adjust_multivalued_entity("Hair_Color", "eye_color", cursor)
+        adjust_multivalued_entity("Hair_Color", "skin_color", cursor)
+
         # Set references
         #cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
         #cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY eyecolor  (eye_color)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
         #cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY skincolor (skin_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
-
-        adjust_multivalued_entity("Terrain", "terrain", cursor, "TTerrain", ["p_name varchar(15)", "terrain varchar(20)"])
-        adjust_multivalued_entity("Hair_Color", "hair_color", cursor, "HHair_Color", ["s_name varchar(20)", "hair_color varchar(15)"])
 
         print("New database successfully created!")
         db.commit()
