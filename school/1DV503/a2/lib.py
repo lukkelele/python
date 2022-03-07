@@ -59,7 +59,7 @@ def get_column_names(entity):
 
 
 planet_csv_datatypes = [["p_name", "varchar(20)", "PRIMARY KEY"], ["rotation_period", "int"], 
-                       ["orbital_period", "int"], ["diameter","bigint"], ["climate", "varchar(40)"],
+                       ["orbital_period", "int"], ["diameter","bigint"], ["climate", "varchar(50)"],
                        ["gravity", "varchar(50)"],     # temporarily change decimal(2,2) to varchar
                        ["terrain", "varchar(50)"], ["surface_water", "int"], ["population", "bigint"]]
 # TERRAIN AND GRAVITY --> varchar(50) to make sure space is available

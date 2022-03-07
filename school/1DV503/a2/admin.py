@@ -25,9 +25,6 @@ csv_species_file = lib.get_file("species.csv", "linux")
 # Planets.csv ==> climate, terrain
 # Species.csv ==> skin_colors, hair_colors, eye_colors
 
-# TABLES TO CREATE:
-# Planet, Specie, Environment, Color
-
 # Fetch the attribute names and datatypes for the table creations
 planet_csv_datatypes = lib.get_datatypes("planet_csv")
 specie_csv_datatypes = lib.get_datatypes("specie_csv")
@@ -50,13 +47,13 @@ def user_input():
 def add_FOREIGN_KEY(cursor, table, attr, target_table, target_key):
     query = f"ALTER TABLE {table} ADD FOREIGN KEY {attr}_FK ({attr}) REFERENCES {target_table}({target_key}) ON DELETE CASCADE;"
     cursor.execute(query)
-    print(f"New foreign key on table {table} added onto {attr}!")
+    #print(f"New foreign key on table {table} added onto {attr}!")
 
 
 def insert_to_table(target, source, attributes, cursor):
-    cursor.execute(f"""INSERT INTO {target} 
-                       SELECT {attributes}
-                       FROM {source};""")
+    print("entered insert")
+    cursor.execute(f"""INSERT INTO {target} SELECT {attributes} FROM {source};""")
+    print("exit insert")
 
 def list_planets(cursor):
     cursor.execute(SQL.list_planets())
@@ -171,8 +168,8 @@ def new_database(flag):
         drop_columns("Specie" , specie_csv_datatypes, specie_columns, cursor)
         
         print("Dropping excess tables..")
-        cursor.execute(f"DROP TABLE {csv_planets_table};")
-        cursor.execute(f"DROP TABLE {csv_species_table};")
+        #cursor.execute(f"DROP TABLE {csv_planets_table};")
+        #cursor.execute(f"DROP TABLE {csv_species_table};")
 
         # Set references
         #cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
