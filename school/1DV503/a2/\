@@ -140,9 +140,8 @@ def new_database(flag):
         cursor.execute(f"CREATE TABLE Terrain     (p_name varchar(20), terrain varchar(50));")
         # Move the data
         #insert_to_table("Environment", csv_planets_table, "p_name, climate", cursor)
-        #insert_to_table("Terrain",     csv_planets_table, "p_name, terrain", cursor)
         cursor.execute("INSERT INTO Environment SELECT p_name, climate FROM csv_planets WHERE NOT climate=\"NULL\";")
-        cursor.execute("INSERT INTO Terrain     SELECT p_name, terrain FROM csv_planets WHERE NOT terrain=\"NULL\";")
+        insert_to_table("Terrain",     csv_planets_table, "p_name, terrain", cursor)
         adjust_multivalued_entity("Environment", "climate", cursor)
         adjust_multivalued_entity("Terrain",     "terrain", cursor)
         # Create the color entities
