@@ -53,6 +53,11 @@ def add_FOREIGN_KEY(cursor, table, attr, target_table, target_key):
     print(f"New foreign key on table {table} added onto {attr}!")
 
 
+def insert_to_table(target, source, attributes, cursor):
+    cursor.execute(f"""INSERT INTO {target} 
+                       SELECT {attributes}
+                       FROM {source};""")
+
 def list_planets(cursor):
     cursor.execute(SQL.list_planets())
     for planet in cursor:
@@ -71,11 +76,6 @@ def drop_columns(table, table_columns, ignored_columns, cursor):
             cursor.execute(SQL.drop_column(table, col))
 
 
-def get_tables(cursor):
-    cursor.execute("SHOW TABLES;")
-    for table in cursor:
-        print(table)
-
 
 def adjust_multivalued_entity(table, column, cursor):
         print("Adjusting..")
@@ -86,19 +86,14 @@ def adjust_multivalued_entity(table, column, cursor):
         for attribute in rows:
             key = str(attribute[0])
             attr = str(attribute[1])
-            print(f"KEY = {key}")
             if len(attr.split(',')) > 1:
-                #print(f"delete from {table} where {column}=\"{attr}\";")
                 # If attribute is a multivalued one
                 for a in attr.split(","):
-                    print(f"ATTR = {attr}")
-                    print(f"INSERT INTO {table} values('{key}','{a}');")
+                    a = a.replace(" ", "")  # remove spaces
+                    #print(f"INSERT INTO {table} values('{key}','{a}');")
                     cursor.execute(f"INSERT INTO {table} VALUES(\"{key}\",\"{a}\");")
-                    cursor.commit()
                     cursor.execute(f"DELETE FROM {table} WHERE {column}=\"{attr}\";")
-        cursor.execute(f"SELECT * FROM {table};")
-        for x in cursor:
-            print(x)
+
 
 def parse_csv_file(cursor, path, target_table):
     with open(path, 'r') as file:
@@ -165,30 +160,9 @@ def new_database(flag):
                         s_name varchar(15),
                         hair_color varchar(50)
                 );""")
-        print("AFTER hair color")
     
-        #cursor.execute(f"""CREATE TABLE Eye_Color (
-         #               s_name varchar(20),
-          #              eye_color varchar(14)
-           #     );""")
-
-        #cursor.execute(f"""CREATE TABLE Skin_Color (
-        #                s_name varchar(20),
-        #                skin_color varchar(14)
-        #        );""")
-        
-        #cursor.execute(f"""UPDATE Hair_Color 
-        #                SET s_name = (
-        #                SELECT s_name
-        #                FROM csv_species_table
-        #                );""")
-
-
-        cursor.execute(f"""INSERT INTO Hair_Color 
-                        SELECT s_name, hair_color
-                        FROM csv_species
-                        ;""")
-
+        insert_to_table("Hair_Color", csv_species_table, "s_name, hair_color", cursor)  
+        adjust_multivalued_entity("Hair_Color", "hair_color", cursor)
 
         print("After update hair color")
         #cursor.execute(SQL.duplicate_table(csv_species_table, "Hair_Color"))
