@@ -78,9 +78,15 @@ def get_tables(cursor):
         print(table)
 
 
-def adjust_columns(table, column):
-        print("Adjusting columns")
-
+def adjust_multivalued_entity(table, column, cursor):
+        print("Adjusting..")
+        if len(column) > 1: # if more than one attribute
+            for attribute in column:
+                print(f"INSERT INTO {table} ({column}) VALUES ({attribute});")
+                cursor.execute(f"INSERT INTO {table} ({column}) VALUES ({attribute});")
+                print(f"Added {attribute} as a single attribute.")
+            cursor.execute("ALTER TABLE {table} DROP COLUMN {column};")
+            print(f"Dropped {column} from {table}!")
 
 def parse_csv_file(cursor, path, target_table):
     with open(path, 'r') as file:
@@ -165,6 +171,10 @@ def new_database(flag):
         drop_columns("Specie" , specie_csv_datatypes, specie_columns, cursor)
         print("Planet and Specie tables created.")
 
+        print("Dropping excess tables..")
+        cursor.execute(f"DROP TABLE {csv_planets_table};")
+        cursor.execute(f"DROP TABLE {csv_species_table};")
+        
         # Set references
         #cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
         #cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY eyecolor  (eye_color)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
