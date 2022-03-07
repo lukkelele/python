@@ -145,6 +145,7 @@ def new_database(flag):
         cursor.execute("INSERT INTO Terrain     SELECT p_name, terrain FROM csv_planets WHERE NOT terrain=\"NULL\";")
         adjust_multivalued_entity("Environment", "climate", cursor)
         adjust_multivalued_entity("Terrain",     "terrain", cursor)
+        cursor.execute("ALTER TABLE Environment ADD PRIMARY KEY (p_name, climate);")
         # Create the color entities
         cursor.execute(f"CREATE TABLE Hair_Color (s_name varchar(15), hair_color varchar(50));")
         cursor.execute(f"CREATE TABLE Eye_Color  (s_name varchar(15), eye_color  varchar(50));")
@@ -172,6 +173,8 @@ def new_database(flag):
         cursor.execute(f"DROP TABLE {csv_species_table};")
 
         # Set references
+        cursor.execute("ALTER TABLE Environment ADD FOREIGN KEY (p_name) REFERENCES Planet(p_name) ON DELETE CASCADE;")
+        cursor.execute("ALTER TABLE Terrain     ADD FOREIGN KEY (p_name) REFERENCES Planet(p_name) ON DELETE CASCADE;")
         #cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
         #cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY eyecolor  (eye_color)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
         #cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY skincolor (skin_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
