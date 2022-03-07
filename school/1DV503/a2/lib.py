@@ -64,7 +64,7 @@ planet_csv_datatypes = [["p_name", "varchar(20)", "PRIMARY KEY"], ["rotation_per
                        ["terrain", "varchar(50)"], ["surface_water", "int"], ["population", "bigint"]]
 # TERRAIN AND GRAVITY --> varchar(50) to make sure space is available
 
-specie_csv_datatypes = [["s_name", "varchar(15)", "PRIMARY KEY"], ["classification", "varchar(15)"],
+specie_csv_datatypes = [["s_name", "varchar(20)", "PRIMARY KEY"], ["classification", "varchar(15)"],
                         ["designation", "varchar(14)"] ,["average_height", "int"], ["skin_color", "varchar(50)"],
                         ["hair_color", "varchar(50)"], ["eye_color", "varchar(50)"], ["average_lifespan", "int"],
                         ["language", "varchar(18)"], ["homeworld", "varchar(14)"]]

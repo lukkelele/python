@@ -72,13 +72,11 @@ def drop_columns(table, table_columns, ignored_columns, cursor):
             if col == ignored_col: # if current column is one to be ignored
                 flag = True
         if flag == False:   # If the column name doesn't match any column to be ignored, drop it
-            print("DROPPING "+col)
             cursor.execute(SQL.drop_column(table, col))
 
 
 
 def adjust_multivalued_entity(table, column, cursor):
-        print("Adjusting..")
         rows = []
         cursor.execute(f"SELECT * FROM {table};")
         for col in cursor:
@@ -103,7 +101,6 @@ def parse_csv_file(cursor, path, target_table):
         query = f"INSERT INTO {target_table}({{0}}) VALUES ({{1}});"  
         value_query = f"INSERT INTO {target_table} VALUES ({{0}});"      
         query = query.format(','.join(header), ','.join('?' * len(header)))
-
         values = []
         for row in file_data:
             if row[0] == "NA":  # IF PRIMARY KEY IS NULL, SKIP
@@ -117,10 +114,8 @@ def parse_csv_file(cursor, path, target_table):
                             attribute = f"\"{attribute}\"" 
                     values.append(attribute)
                 query = value_query.format(','.join(values))
-        #        print(query)
                 cursor.execute(query)
                 values.clear()
-        print(f"Parsing from file {path} done.")
                 
 
 
@@ -143,37 +138,27 @@ def new_database(flag):
         cursor.execute(SQL.create_table(csv_planets_table, planet_csv_datatypes))
         cursor.execute(SQL.create_table(csv_species_table, specie_csv_datatypes))
         parse_csv_file(cursor, csv_planets_file, csv_planets_table)  # Read data into newly created tables
-        print("CSV file data read and inserted csv_planets.")
         parse_csv_file(cursor, csv_species_file, csv_species_table)
         print("CSV file data read and inserted into CSV tables.")
         
-        # Create the environment and terraint entity
-        cursor.execute(SQL.duplicate_table(csv_planets_table, "Terrain"))
-        cursor.execute(SQL.copy_table(csv_planets_table, "Terrain"))
-        cursor.execute(SQL.duplicate_table(csv_planets_table, "Environment"))
-        cursor.execute(SQL.copy_table(csv_planets_table, "Environment"))
-        drop_columns("Terrain", planet_csv_datatypes, ["p_name", "terrain"], cursor)
-        drop_columns("Environment", planet_csv_datatypes, ["p_name", "climate"], cursor)
-        print("Before hair color")
+        cursor.execute(f"CREATE TABLE Environment (p_name varchar(20), climate varchar(50));")
+        cursor.execute(f"CREATE TABLE Terrain     (p_name varchar(20), terrain varchar(50));")
+        # Move the data
+        insert_to_table("Environment", csv_planets_table, "p_name, climate", cursor)
+        insert_to_table("Terrain",     csv_planets_table, "p_name, terrain", cursor)
+        adjust_multivalued_entity("Environment", "climate", cursor)
+        adjust_multivalued_entity("Terrain",     "terrain", cursor)
         # Create the color entities
-        cursor.execute(f"""CREATE TABLE Hair_Color (
-                        s_name varchar(15),
-                        hair_color varchar(50)
-                );""")
-    
+        cursor.execute(f"CREATE TABLE Hair_Color (s_name varchar(15), hair_color varchar(50));")
+        cursor.execute(f"CREATE TABLE Eye_Color  (s_name varchar(15), eye_color  varchar(50));")
+        cursor.execute(f"CREATE TABLE Skin_Color (s_name varchar(15), skin_color varchar(50));")
+        # Move the data
         insert_to_table("Hair_Color", csv_species_table, "s_name, hair_color", cursor)  
+        insert_to_table("Eye_Color",  csv_species_table, "s_name, eye_color" , cursor)  
+        insert_to_table("Skin_Color", csv_species_table, "s_name, skin_color", cursor)  
         adjust_multivalued_entity("Hair_Color", "hair_color", cursor)
-
-        print("After update hair color")
-        #cursor.execute(SQL.duplicate_table(csv_species_table, "Hair_Color"))
-        #cursor.execute(SQL.copy_table(csv_species_table, "Hair_Color"))
-        #cursor.execute(SQL.duplicate_table(csv_species_table, "Eye_Color"))
-        #cursor.execute(SQL.copy_table(csv_species_table, "Eye_Color"))
-        #cursor.execute(SQL.duplicate_table(csv_species_table, "Skin_Color"))
-        #cursor.execute(SQL.copy_table(csv_species_table, "Skin_Color"))
-        #drop_columns("Hair_Color", specie_csv_datatypes, ["s_name", "hair_color"], cursor)
-        #drop_columns("Skin_Color", specie_csv_datatypes, ["s_name", "skin_color"], cursor)
-        #drop_columns("Eye_Color" , specie_csv_datatypes, ["s_name", "eye_color"], cursor)
+        adjust_multivalued_entity("Eye_Color",  "eye_color",  cursor)
+        adjust_multivalued_entity("Skin_Color", "skin_color", cursor)
 
         # Create intended tables
         cursor.execute(SQL.duplicate_table(csv_planets_table, "Planet"))
@@ -184,28 +169,20 @@ def new_database(flag):
         specie_columns = ["s_name", "classification", "designation", "average_height", "average_lifespan", "language", "homeworld"]
         drop_columns("Planet" , planet_csv_datatypes, planet_columns, cursor)
         drop_columns("Specie" , specie_csv_datatypes, specie_columns, cursor)
-        print("Planet and Specie tables created.")
-
-        # DROP PRIMARY KEYS FROM CSV MOLDS
-        #cursor.execute("ALTER TABLE Terrain DROP Primary Key;")
-        #cursor.execute("ALTER TABLE Environment DROP Primary Key;")
-        #cursor.execute("ALTER TABLE Hair_Color DROP Primary Key;")
-        #cursor.execute("ALTER TABLE Eye_Color DROP Primary Key;")
-        #cursor.execute("ALTER TABLE Skin_Color DROP Primary Key;")
         
         print("Dropping excess tables..")
-        #cursor.execute(f"DROP TABLE {csv_planets_table};")
-        #cursor.execute(f"DROP TABLE {csv_species_table};")
+        cursor.execute(f"DROP TABLE {csv_planets_table};")
+        cursor.execute(f"DROP TABLE {csv_species_table};")
 
         # Set references
         #cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
         #cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY eyecolor  (eye_color)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
         #cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY skincolor (skin_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
 
-       # adjust_multivalued_entity('Terrain', "terrain", cursor)
-       # adjust_multivalued_entity('Hair_Color', "hair_color", cursor)
-
         print("New database successfully created!")
+        db.commit()
+        cursor.close()
+        db.close()
         return True
     except:
         print("\n| ERROR |\nA new database could not be created.")
