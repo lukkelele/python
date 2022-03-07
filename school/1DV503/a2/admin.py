@@ -40,6 +40,7 @@ hair_color_datatypes = lib.get_datatypes("hair_color")
 eye_color_datatypes = lib.get_datatypes("eye_color")
 skin_color_datatypes = lib.get_datatypes("skin_color")
 
+global db
 
 def user_input():
     menu_input = input("ENTER A NUMBER: ")
@@ -52,6 +53,7 @@ def add_FOREIGN_KEY(cursor, table, attr, target_table, target_key):
     query = f"ALTER TABLE {table} ADD FOREIGN KEY {attr}_FK ({attr}) REFERENCES {target_table}({target_key}) ON DELETE CASCADE;"
     cursor.execute(query)
     print(f"New foreign key on table {table} added onto {attr}!")
+    db.commit()
 
 
 def list_planets(cursor):
@@ -70,6 +72,7 @@ def drop_columns(table, table_columns, ignored_columns, cursor):
         if flag == False:   # If the column name doesn't match any column to be ignored, drop it
             print("DROPPING "+col)
             cursor.execute(SQL.drop_column(table, col))
+    #db.commit()
 
 
 def get_tables(cursor):
@@ -81,8 +84,8 @@ def get_tables(cursor):
 def adjust_multivalued_entity(table, column, cursor, new_table, new_table_types):
         first_attr = new_table_types[0]
         second_attr = new_table_types[1]
-        print("create new table ... "+"\nfirst =="+first_attr+"\nsecond =="+second_attr)
-        cursor.execute("CREATE TABLE "+new_table+" ("+first_attr+", "+second_attr+");")
+    #    print("create new table ... "+"\nfirst =="+first_attr+"\nsecond =="+second_attr)
+     #   cursor.execute("CREATE TABLE "+new_table+" ("+first_attr+", "+second_attr+");")
         print("new table created")
         rows = []
         cursor.execute(f"SELECT * FROM {table};")
@@ -97,14 +100,11 @@ def adjust_multivalued_entity(table, column, cursor, new_table, new_table_types)
                 # If attribute is a multivalued one
                 for a in attr.split(","):
                     print(f"ATTR = {a}")
-                    print(f"INSERT INTO {new_table} values('{key}','{a}');")
+                    print(f"INSERT INTO {table} values('{key}','{a}');")
                     #cursor.execute(f"INSERT INTO {table} VALUES(\"{key}\",\"{a}\");")
-                    cursor.execute(f"INSERT INTO {new_table} VALUES(\"{key}\",\"{a}\");")
+                    cursor.execute(f"INSERT INTO {table} VALUES(\"{key}\",\"{a}\");")
                     cursor.execute(f"DELETE FROM {table} WHERE {column}=\"{attr}\";")
-                    cursor.commit()
-        cursor.execute(f"SELECT * FROM {new_table};")
-        for x in cursor:
-            print(x)
+     #   db.commit()
 
 
 def parse_csv_file(cursor, path, target_table):
@@ -208,10 +208,16 @@ def new_database(flag):
         adjust_multivalued_entity("Hair_Color", "hair_color", cursor, "HHair_Color", ["s_name varchar(20)", "hair_color varchar(15)"])
 
         print("New database successfully created!")
+        db.commit()
+        cursor.close()
+        db.close()
         return True
     except:
         print("\n| ERROR |\nA new database could not be created.")
         cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
+        db.commit()
+        cursor.close()
+        db.close()
         print("Schema dropped!\nShutting down..")
         return False
 
@@ -231,7 +237,6 @@ except:
     flag = new_database(flag)
 
 
-
 if flag == False:
     print("error")
 
@@ -246,6 +251,7 @@ else:
         )
     cursor = db.cursor()    # Create cursor object
     cursor.execute("USE {}".format(DB_name))              
+    db.commit()
     ui.main_menu()
     user = input()
     while user != 'Q':      # Loop until Q is entered 
