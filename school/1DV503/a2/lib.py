@@ -74,15 +74,15 @@ planet_datatypes = [["p_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["rota
                     ["orbital_period", "int"], ["diameter","bigint"], ["gravity", "varchar(20)"],
                     ["surface_water", "int"], ["population", "bigint"]]
 
-specie_datatypes = [["s_name", "varchar(15)", "NOT NULL", "PRIMARY KEY"], ["classification", "varchar(15)"],
+specie_datatypes = [["s_name", "varchar(20)", "NOT NULL", "PRIMARY KEY"], ["classification", "varchar(15)"],
                     ["designation", "varchar(14)"] ,["average_height", "int"], 
                     ["average_lifespan", "int"], ["language", "varchar(18)"], ["homeworld", "varchar(14)"]]
 
-environment_datatypes = [["p_name", "varchar(14)"], ["climate", "varchar(12)"]]
-terrain_datatypes = [["p_name", "varchar(14)"], ["terrain", "varchar(50)"]]      # FIX
-hair_color_datatypes = [["s_name", "varchar(20)"], ["hair_color", "varchar(14)"]]
-eye_color_datatypes =  [["s_name", "varchar(20)"], ["eye_color",  "varchar(14)"]]
-skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(14)"]]
+environment_datatypes = [["p_name", "varchar(20)"], ["climate", "varchar(20)"]]
+terrain_datatypes = [["p_name", "varchar(20)"], ["terrain", "varchar(20)"]]      # FIX
+hair_color_datatypes = [["s_name", "varchar(20)"], ["hair_color", "varchar(20)"]]
+eye_color_datatypes =  [["s_name", "varchar(20)"], ["eye_color",  "varchar(20)"]]
+skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(20)"]]
 
 # environment_datatypes = [["p_name", "varchar(14)"], ["climate", "varchar(12)"]]
 # terrain_datatypes = [["p_name", "varchar(14)"], ["terrain", "varchar(50)"]]      # FIX

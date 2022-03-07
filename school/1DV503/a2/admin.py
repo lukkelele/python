@@ -146,18 +146,25 @@ def new_database(flag):
         adjust_multivalued_entity("Environment", "climate", cursor)
         adjust_multivalued_entity("Terrain",     "terrain", cursor)
         cursor.execute("ALTER TABLE Environment ADD PRIMARY KEY (p_name, climate);")
+        cursor.execute("ALTER TABLE Terrain     ADD PRIMARY KEY (p_name, terrain);")
         # Create the color entities
-        cursor.execute(f"CREATE TABLE Hair_Color (s_name varchar(15), hair_color varchar(50));")
-        cursor.execute(f"CREATE TABLE Eye_Color  (s_name varchar(15), eye_color  varchar(50));")
-        cursor.execute(f"CREATE TABLE Skin_Color (s_name varchar(15), skin_color varchar(50));")
+        cursor.execute(f"CREATE TABLE Hair_Color (s_name varchar(20), hair_color varchar(50));")
+        cursor.execute(f"CREATE TABLE Eye_Color  (s_name varchar(20), eye_color  varchar(50));")
+        cursor.execute(f"CREATE TABLE Skin_Color (s_name varchar(20), skin_color varchar(50));")
         # Move the data
-        insert_to_table("Hair_Color", csv_species_table, "s_name, hair_color", cursor)  
+        cursor.execute("INSERT INTO Hair_Color SELECT s_name, hair_color FROM csv_species WHERE NOT hair_color=\"NULL\";")
+        cursor.execute("INSERT INTO Eye_Color  SELECT s_name, eye_color  FROM csv_species WHERE NOT eye_color=\"NULL\";")
+        cursor.execute("INSERT INTO Skin_Color SELECT s_name, skin_color FROM csv_species WHERE NOT skin_color=\"NULL\";")
+       # insert_to_table("Hair_Color", csv_species_table, "s_name, hair_color", cursor)  
         insert_to_table("Eye_Color",  csv_species_table, "s_name, eye_color" , cursor)  
         insert_to_table("Skin_Color", csv_species_table, "s_name, skin_color", cursor)  
         adjust_multivalued_entity("Hair_Color", "hair_color", cursor)
         adjust_multivalued_entity("Eye_Color",  "eye_color",  cursor)
         adjust_multivalued_entity("Skin_Color", "skin_color", cursor)
-
+        cursor.execute("ALTER TABLE Hair_Color ADD PRIMARY KEY (s_name, hair_color);")
+        
+        #cursor.execute("ALTER TABLE Eye_Color  ADD PRIMARY KEY (s_name, eye_color );")
+        #cursor.execute("ALTER TABLE Skin_Color ADD PRIMARY KEY (s_name, skin_color);")
         # Create intended tables
         cursor.execute(SQL.duplicate_table(csv_planets_table, "Planet"))
         cursor.execute(SQL.duplicate_table(csv_species_table, "Specie"))
