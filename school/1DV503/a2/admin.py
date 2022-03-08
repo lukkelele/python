@@ -55,12 +55,8 @@ def add_FOREIGN_KEY(cursor, table, attr, target_table, target_key):
 def insert_to_table(target, source, attributes, cursor):
     cursor.execute(f"""INSERT INTO {target} SELECT {attributes} FROM {source};""")
 
-def list_planets(cursor):
-    cursor.execute(SQL.list_planets())
-    for planet in cursor:
-        print(planet)
 
-
+# Deletes desired columns from a table
 def drop_columns(table, table_columns, ignored_columns, cursor):
     for column in table_columns:
         col = column[0]
@@ -139,7 +135,7 @@ def parse_csv_file(cursor, path, target_table):
 
 def new_database(flag):
     try:
-        print(f"\nNo database found going by name {DB_name}.\nConnecting without a specified database instead.")
+        print(f"\nNo database found going by name {DB_name}.")
         db = connect_db("root", "root", "127.0.0.1", DB_name)
         cursor = db.cursor()
         print(f"Creating new database named {DB_name}.")
@@ -151,21 +147,21 @@ def new_database(flag):
         csv_species_table = "csv_species"
         cursor.execute(SQL.create_table(csv_planets_table, planet_csv_datatypes))
         cursor.execute(SQL.create_table(csv_species_table, specie_csv_datatypes))
-        parse_csv_file(cursor, csv_planets_file, csv_planets_table)  # Read data into newly created tables
+        # Read the CSV files and move the corresponding data to the new tables
+        parse_csv_file(cursor, csv_planets_file, csv_planets_table)  
         parse_csv_file(cursor, csv_species_file, csv_species_table)
         print("CSV file data read and inserted into CSV tables.")
         
         cursor.execute(f"CREATE TABLE Environment (p_name varchar(20), climate varchar(50));")
         cursor.execute(f"CREATE TABLE Terrain     (p_name varchar(20), terrain varchar(50));")
         # Move the data
-        #insert_to_table("Environment", csv_planets_table, "p_name, climate", cursor)
-        #insert_to_table("Terrain",     csv_planets_table, "p_name, terrain", cursor)
         cursor.execute("INSERT INTO Environment SELECT p_name, climate FROM csv_planets WHERE NOT climate=\"NULL\";")
         cursor.execute("INSERT INTO Terrain     SELECT p_name, terrain FROM csv_planets WHERE NOT terrain=\"NULL\";")
         adjust_multivalued_entity("Environment", "climate", cursor)
         adjust_multivalued_entity("Terrain",     "terrain", cursor)
         cursor.execute("ALTER TABLE Environment ADD PRIMARY KEY (p_name, climate);")
         cursor.execute("ALTER TABLE Terrain     ADD PRIMARY KEY (p_name, terrain);")
+
         # Create the color entities
         cursor.execute(f"CREATE TABLE Hair_Color (s_name varchar(20), hair_color varchar(50));")
         cursor.execute(f"CREATE TABLE Eye_Color  (s_name varchar(20), eye_color  varchar(50));")
@@ -181,6 +177,7 @@ def new_database(flag):
         cursor.execute("ALTER TABLE Hair_Color ADD PRIMARY KEY (s_name, hair_color);")
         cursor.execute("ALTER TABLE Eye_Color  ADD PRIMARY KEY (s_name, eye_color );")
         cursor.execute("ALTER TABLE Skin_Color ADD PRIMARY KEY (s_name, skin_color);")
+
         # Create intended tables
         cursor.execute(SQL.duplicate_table(csv_planets_table, "Planet"))
         cursor.execute(SQL.duplicate_table(csv_species_table, "Specie"))
@@ -215,12 +212,7 @@ def new_database(flag):
 
 flag = False
 try:
-    db = mysql.connector.connect(
-            host="127.0.0.1",
-            user="root",
-            passwd="root",
-            database=DB_name
-            )
+    db = connect_db("root", "root", "127.0.0.1", DB_name)
     print("Database named "+DB_name)
     flag = True
 except:
@@ -232,54 +224,57 @@ if flag == False:
     print("error")
 
 else:
-    # If database doesn't exist, one is created with the same property DB_name
-    # This makes it possible to reconnect the cursor with the database selected
-    db = mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        passwd="root",
-        database=DB_name
-        )
+    db = connect_db("root", "root", "127.0.0.1", DB_name)
+
     cursor = db.cursor()    # Create cursor object
     cursor.execute("USE {}".format(DB_name))              
     ui.main_menu()
     user = input()
     while user != 'Q':      # Loop until Q is entered 
+        # LIST ALL PLANETS
         if user == '1':
             cursor.execute("SELECT p_name FROM Planet;")
             for planet in cursor:
                 print(planet)
 
+        # SEARCH FOR SPECIFIC DETAILS
         elif user == '2':
             print("Search for planet details")
             search = input("Search for:     (Planet) (Specie)")
             detail = input("Detail: ")
             query = ui.search_details(search, detail)
-            print(query)
             if query != "":     # if a match was found
-                cursor.execute(query)
-                for result in cursor:
-                    print(result)
+                try:
+                    cursor.execute(query)
+                    for result in cursor:
+                        print(result)
+                except:
+                    print("There was an error fetching details from your specific search.")
+
         elif user == '3':
             min_height = input("Enter a minimun height: ")
-            cursor.execute(f"SELECT s_name FROM Specie WHERE average_height > {min_height};")
-            for s in cursor:
-                print(s)
+            if min_height.isalpha():
+                print("A height can only contain numbers!")
+            else:
+                cursor.execute(f"SELECT s_name FROM Specie WHERE average_height > {min_height};")
+                for s in cursor:
+                    print(s)
 
         elif user == '4':
             searched_specie = input("Enter a specie: ")
-            cursor.execute(f"SELECT S.s_name, E.climate FROM Environment AS E, Specie AS S WHERE S.s_name=\"{searched_specie}\" AND E.p_name=S.homeworld;")
+            cursor.execute(f"""SELECT S.s_name, E.climate
+                               FROM Environment AS E, Specie AS S
+                               WHERE S.s_name=\"{searched_specie}\" AND E.p_name=S.homeworld;""")
             for result in cursor:
                 print(result)
 
         elif user == '5':
-            query = f"""SELECT S.classification, AVG(S.average_lifespan)
-                        FROM Specie AS S
-                        GROUP BY S.classification;
-                     """
-            cursor.execute(query)
+            cursor.execute(f"""SELECT S.classification, AVG(S.average_lifespan)
+                               FROM Specie AS S
+                               GROUP BY S.classification;""")
             for k in cursor:
                 print(k)
+
         ui.main_menu()
         user = input()
         
