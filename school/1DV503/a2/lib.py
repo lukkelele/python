@@ -25,6 +25,7 @@ csv_planets_file_linux = "./data/planets.csv"     # on linux
 csv_species_file_linux = "./data/species.csv"     # on linux
 
 
+
 def get_file(filename, os):
     if filename == "planets.csv":
         if os == "linux":
@@ -89,7 +90,6 @@ skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(20)"]
 # hair_color_datatypes = [["s_name", "varchar(20)"], ["hair_color", "varchar(14)", "PRIMARY KEY"]]
 # eye_color_datatypes =  [["s_name", "varchar(20)"], ["eye_color",  "varchar(14)", "PRIMARY KEY"]]
 # skin_color_datatypes = [["s_name", "varchar(20)"], ["skin_color", "varchar(14)", "PRIMARY KEY"]]
-
 
 
 

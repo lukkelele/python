@@ -6,13 +6,12 @@ import lib
 
 
 global db
-
 DB_name = "lukas"
 DEFAULT_DB_NAME = "lukas"
 
+
 csv_planets_file = lib.get_file("planets.csv", "linux")
 csv_species_file = lib.get_file("species.csv", "linux")
-
 # Schema
 # =======================================
 # Planet(attributes)    
@@ -96,7 +95,6 @@ def connect_db(user, passwd, addr, db_name):
     if db_name == "":
         db_name = DEFAULT_DB_NAME
     try: 
-        print("22312HEJ")
         db = mysql.connector.connect(
                 host=addr,
                 user=user,
@@ -104,7 +102,6 @@ def connect_db(user, passwd, addr, db_name):
                 database=db_name
                 )
     except:
-        print("HEJ")
         db = mysql.connector.connect(
                 host=addr,
                 user=user,
@@ -177,10 +174,7 @@ def new_database(flag):
         cursor.execute("INSERT INTO Hair_Color SELECT s_name, hair_color FROM csv_species WHERE NOT hair_color=\"NULL\";")
         cursor.execute("INSERT INTO Eye_Color  SELECT s_name, eye_color  FROM csv_species WHERE NOT eye_color=\"NULL\";")
         cursor.execute("INSERT INTO Skin_Color SELECT s_name, skin_color FROM csv_species WHERE NOT skin_color=\"NULL\";")
-        db.commit()
-       # insert_to_table("Hair_Color", csv_species_table, "s_name, hair_color", cursor)  
-        #insert_to_table("Eye_Color",  csv_species_table, "s_name, eye_color" , cursor)  
-        #insert_to_table("Skin_Color", csv_species_table, "s_name, skin_color", cursor)  
+
         adjust_multivalued_entity("Hair_Color", "hair_color", cursor)
         adjust_multivalued_entity("Eye_Color",  "eye_color",  cursor)
         adjust_multivalued_entity("Skin_Color", "skin_color", cursor)
@@ -192,10 +186,8 @@ def new_database(flag):
         cursor.execute(SQL.duplicate_table(csv_species_table, "Specie"))
         cursor.execute(SQL.copy_table(csv_planets_table, "Planet"))
         cursor.execute(SQL.copy_table(csv_species_table, "Specie"))
-        planet_columns = ["p_name", "rotation_period", "orbital_period", "diameter", "gravity", "surface_water", "population"]
-        specie_columns = ["s_name", "classification", "designation", "average_height", "average_lifespan", "language", "homeworld"]
-        drop_columns("Planet" , planet_csv_datatypes, planet_columns, cursor)
-        drop_columns("Specie" , specie_csv_datatypes, specie_columns, cursor)
+        drop_columns("Planet" , planet_csv_datatypes, lib.get_column_names("planet"), cursor)
+        drop_columns("Specie" , specie_csv_datatypes, lib.get_column_names("specie"), cursor)
         
         print("Dropping excess tables..")
         cursor.execute(f"DROP TABLE {csv_planets_table};")
@@ -291,7 +283,3 @@ else:
         ui.main_menu()
         user = input()
         
-
-# SELECT S.s_name, C.hair_color
-#FROM Specie AS S, Hair_Color AS C
-#WHERE S.s_name = C.s_name;

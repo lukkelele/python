@@ -29,7 +29,6 @@ def search_details(search, detail):
     if search == "planet" or search == "specie":
         columns = lib.get_column_names(search)
         search = search.capitalize()
-        print(f"=---> {search}")
         for column_name in columns:
             if re.search(detail, column_name):
                 print(f"Match found ==> {column_name}")
