@@ -259,8 +259,13 @@ else:
                 print(result)
 
         elif user == '5':
-            new_database(flag)
-
+            query = f"""SELECT S.classification, AVG(S.average_lifespan)
+                        FROM Specie AS S
+                        GROUP BY S.classification;
+                     """
+            cursor.execute(query)
+            for k in cursor:
+                print(k)
         ui.main_menu()
         user = input()
         
