@@ -5,7 +5,10 @@ import ui
 import lib
 
 
+global db
+
 DB_name = "lukas"
+DEFAULT_DB_NAME = "lukas"
 
 csv_planets_file = lib.get_file("planets.csv", "linux")
 csv_species_file = lib.get_file("species.csv", "linux")
@@ -70,7 +73,7 @@ def drop_columns(table, table_columns, ignored_columns, cursor):
             cursor.execute(SQL.drop_column(table, col))
 
 
-
+# Take and sort multivalued attributes and insert them individually
 def adjust_multivalued_entity(table, column, cursor):
         rows = []
         cursor.execute(f"SELECT * FROM {table};")
@@ -88,13 +91,36 @@ def adjust_multivalued_entity(table, column, cursor):
                     cursor.execute(f"DELETE FROM {table} WHERE {column}=\"{attr}\";")
 
 
+
+def connect_db(user, passwd, addr, db_name):
+    if db_name == "":
+        db_name = DEFAULT_DB_NAME
+    try: 
+        print("22312HEJ")
+        db = mysql.connector.connect(
+                host=addr,
+                user=user,
+                passwd=passwd,
+                database=db_name
+                )
+    except:
+        print("HEJ")
+        db = mysql.connector.connect(
+                host=addr,
+                user=user,
+                passwd=passwd
+                )
+    return db
+
+
+# Read CSV data and insert into a table
 def parse_csv_file(cursor, path, target_table):
     with open(path, 'r') as file:
         file_data = csv.reader(file)
         print("File opened at path --> "+path)
         header = next(file_data)       # the attributes or column names
         query = f"INSERT INTO {target_table}({{0}}) VALUES ({{1}});"  
-        value_query = f"INSERT INTO {target_table} VALUES ({{0}});"      
+        value_query = f"INSERT INTO {target_table} VALUES ({{0}});"
         query = query.format(','.join(header), ','.join('?' * len(header)))
         values = []
         for row in file_data:
@@ -117,11 +143,7 @@ def parse_csv_file(cursor, path, target_table):
 def new_database(flag):
     try:
         print(f"\nNo database found going by name {DB_name}.\nConnecting without a specified database instead.")
-        db = mysql.connector.connect(
-            host="127.0.0.1",
-            user="root",
-            passwd="root"
-            )
+        db = connect_db("root", "root", "127.0.0.1", DB_name)
         cursor = db.cursor()
         print(f"Creating new database named {DB_name}.")
         cursor.execute("CREATE DATABASE {};".format(DB_name))
@@ -193,7 +215,7 @@ def new_database(flag):
         return True
     except:
         print("\n| ERROR |\nA new database could not be created.")
-        cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
+#        cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
         print("Schema dropped!\nShutting down..")
         return False
 
