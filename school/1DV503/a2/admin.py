@@ -182,9 +182,9 @@ def new_database(flag):
         # Set references
         cursor.execute("ALTER TABLE Environment ADD FOREIGN KEY (p_name) REFERENCES Planet(p_name) ON DELETE CASCADE;")
         cursor.execute("ALTER TABLE Terrain     ADD FOREIGN KEY (p_name) REFERENCES Planet(p_name) ON DELETE CASCADE;")
-        #cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (hair_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
-        #cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY eyecolor  (eye_color)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
-        #cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY skincolor (skin_color) REFERENCES Specie(s_name) ON DELETE CASCADE;")
+        cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (s_name)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
+        cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY eyecolor  (s_name)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
+        cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY skincolor (s_name)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
 
         print("New database successfully created!")
         db.commit()
@@ -247,15 +247,17 @@ else:
                 for result in cursor:
                     print(result)
         elif user == '3':
-            print("3")
-            drop_columns("Hair_Color", specie_csv_datatypes, ["s_name", "hair_color"], cursor)
-        
+            min_height = input("Enter a minimun height: ")
+            cursor.execute(f"SELECT s_name FROM Specie WHERE average_height > {min_height};")
+            for s in cursor:
+                print(s)
+
         elif user == '4':
-            print("4")
-            cursor.execute("SELECT * FROM Hair_Color;")
-            for l in cursor:
-                print(l)
-            
+            searched_specie = input("Enter a specie: ")
+            cursor.execute(f"SELECT S.s_name, E.climate FROM Environment AS E, Specie AS S WHERE S.s_name=\"{searched_specie}\" AND E.p_name=S.homeworld;")
+            for result in cursor:
+                print(result)
+
         elif user == '5':
             new_database(flag)
 
