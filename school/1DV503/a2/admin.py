@@ -3,7 +3,7 @@ import csv
 import sql_statements as SQL
 import ui
 import lib
-import tools as t
+import tools
 
 
 global db
@@ -42,44 +42,6 @@ skin_color_datatypes = lib.get_datatypes("skin_color")
 
 
 
-def add_FOREIGN_KEY(cursor, table, attr, target_table, target_key):
-    query = f"ALTER TABLE {table} ADD FOREIGN KEY {attr}_FK ({attr}) REFERENCES {target_table}({target_key}) ON DELETE CASCADE;"
-    cursor.execute(query)
-    #print(f"New foreign key on table {table} added onto {attr}!")
-
-
-def insert_to_table(target, source, attributes, cursor):
-    cursor.execute(f"""INSERT INTO {target} SELECT {attributes} FROM {source};""")
-
-
-# Deletes desired columns from a table
-def drop_columns(table, table_columns, ignored_columns, cursor):
-    for column in table_columns:
-        col = column[0]
-        flag = False
-        for ignored_col in ignored_columns:
-            if col == ignored_col: # if current column is one to be ignored
-                flag = True
-        if flag == False:   # If the column name doesn't match any column to be ignored, drop it
-            cursor.execute(SQL.drop_column(table, col))
-
-
-# Take and sort multivalued attributes and insert them individually
-def adjust_multivalued_entity(table, column, cursor):
-        rows = []
-        cursor.execute(f"SELECT * FROM {table};")
-        for col in cursor:
-            rows.append(col)
-        for attribute in rows:
-            key = str(attribute[0])
-            attr = str(attribute[1])
-            if len(attr.split(',')) > 1:
-                # If attribute is a multivalued one
-                for a in attr.split(","):
-                    a = a.replace(" ", "")  # remove spaces
-                    #print(f"INSERT INTO {table} values('{key}','{a}');")
-                    cursor.execute(f"INSERT INTO {table} VALUES(\"{key}\",\"{a}\");")
-                    cursor.execute(f"DELETE FROM {table} WHERE {column}=\"{attr}\";")
 
 
 def connect_db(user, passwd, addr, db_name):
@@ -101,96 +63,52 @@ def connect_db(user, passwd, addr, db_name):
     return db
 
 
-# Read CSV data and insert into a table
-def parse_csv_file(cursor, path, target_table):
-    with open(path, 'r') as file:
-        file_data = csv.reader(file)
-        header = next(file_data)       # the attributes or column names
-        query = f"INSERT INTO {target_table}({{0}}) VALUES ({{1}});"  
-        value_query = f"INSERT INTO {target_table} VALUES ({{0}});"
-        query = query.format(','.join(header), ','.join('?' * len(header)))
-        values = []
-        for row in file_data:
-            if row[0] == "NA":  # IF PRIMARY KEY IS NULL, SKIP
-                pass
-            else:
-                for attribute in row:
-                    if not attribute.isnumeric():
-                        if attribute == "NA" or attribute == "indefinite":
-                            attribute = "null"
-                        else:
-                            attribute = f"\"{attribute}\"" 
-                    values.append(attribute)
-                query = value_query.format(','.join(values))
-                cursor.execute(query)
-                values.clear()
-                
-
 
 def new_database():
     try:
         print(f"\nNo database found going by name {DB_name}.")
         db = connect_db("root", "root", "127.0.0.1", DB_name)
         cursor = db.cursor()
-        print(f"Creating new database named {DB_name}.")
-        cursor.execute("CREATE DATABASE {};".format(DB_name))
-        cursor.execute("USE {}".format(DB_name))                # Set new database as default
-        
+
+        tools.create_new_database(cursor, DB_name) 
+        db.commit()
         # Create temporary tables for parsing the CSV files
         csv_planets_table = "csv_planets"
         csv_species_table = "csv_species"
-        cursor.execute(SQL.create_table(csv_planets_table, planet_csv_datatypes))
-        cursor.execute(SQL.create_table(csv_species_table, specie_csv_datatypes))
+        tools.create_Table(cursor, csv_planets_table, planet_csv_datatypes)
+        tools.create_Table(cursor, csv_species_table, specie_csv_datatypes)
+
+        print("Parsing files..")
         # Read the CSV files and move the corresponding data to the new tables
-        parse_csv_file(cursor, csv_planets_file, csv_planets_table)  
-        parse_csv_file(cursor, csv_species_file, csv_species_table)
-        print("CSV file data read and inserted into CSV tables.")
+        tools.parse_csv_file(cursor, csv_planets_file, csv_planets_table)  
+        tools.parse_csv_file(cursor, csv_species_file, csv_species_table)
         
-        cursor.execute(f"CREATE TABLE Environment (p_name varchar(20), climate varchar(50));")
-        cursor.execute(f"CREATE TABLE Terrain     (p_name varchar(20), terrain varchar(50));")
-        # Move the data
-        cursor.execute("INSERT INTO Environment SELECT p_name, climate FROM csv_planets WHERE NOT climate=\"NULL\";")
-        cursor.execute("INSERT INTO Terrain     SELECT p_name, terrain FROM csv_planets WHERE NOT terrain=\"NULL\";")
-        adjust_multivalued_entity("Environment", "climate", cursor)
-        adjust_multivalued_entity("Terrain",     "terrain", cursor)
-        cursor.execute("ALTER TABLE Environment ADD PRIMARY KEY (p_name, climate);")
-        cursor.execute("ALTER TABLE Terrain     ADD PRIMARY KEY (p_name, terrain);")
-
+        print("Creating environment and terrain..")
+        tools.create_Environment(cursor)
+        tools.create_Terrain(cursor)
         # Create the color entities
-        cursor.execute(f"CREATE TABLE Hair_Color (s_name varchar(20), hair_color varchar(50));")
-        cursor.execute(f"CREATE TABLE Eye_Color  (s_name varchar(20), eye_color  varchar(50));")
-        cursor.execute(f"CREATE TABLE Skin_Color (s_name varchar(20), skin_color varchar(50));")
-        # Move the data
-        cursor.execute("INSERT INTO Hair_Color SELECT s_name, hair_color FROM csv_species WHERE NOT hair_color=\"NULL\";")
-        cursor.execute("INSERT INTO Eye_Color  SELECT s_name, eye_color  FROM csv_species WHERE NOT eye_color=\"NULL\";")
-        cursor.execute("INSERT INTO Skin_Color SELECT s_name, skin_color FROM csv_species WHERE NOT skin_color=\"NULL\";")
-            
-        t.adjust_multivalued_entity("Hair_Color", "hair_color", cursor)
-        #adjust_multivalued_entity("Hair_Color", "hair_color", cursor)
-        adjust_multivalued_entity("Eye_Color",  "eye_color",  cursor)
-        adjust_multivalued_entity("Skin_Color", "skin_color", cursor)
-        cursor.execute("ALTER TABLE Hair_Color ADD PRIMARY KEY (s_name, hair_color);")
-        cursor.execute("ALTER TABLE Eye_Color  ADD PRIMARY KEY (s_name, eye_color );")
-        cursor.execute("ALTER TABLE Skin_Color ADD PRIMARY KEY (s_name, skin_color);")
+        print("Creating color entities..")
+        tools.create_Hair_Color(cursor)
+        tools.create_Eye_Color(cursor)
+        tools.create_Skin_Color(cursor)
 
+        print("Duplicating....")
         # Create intended tables
-        cursor.execute(SQL.duplicate_table(csv_planets_table, "Planet"))
-        cursor.execute(SQL.duplicate_table(csv_species_table, "Specie"))
-        cursor.execute(SQL.copy_table(csv_planets_table, "Planet"))
-        cursor.execute(SQL.copy_table(csv_species_table, "Specie"))
-        drop_columns("Planet" , planet_csv_datatypes, lib.get_column_names("planet"), cursor)
-        drop_columns("Specie" , specie_csv_datatypes, lib.get_column_names("specie"), cursor)
+        tools.duplicate_entity(cursor, csv_planets_table, "Planet")
+        tools.duplicate_entity(cursor, csv_species_table, "Specie")
         
-        print("Dropping excess tables..")
-        cursor.execute(f"DROP TABLE {csv_planets_table};")
-        cursor.execute(f"DROP TABLE {csv_species_table};")
+        print("Dropping excess entities..")
+        #print("Dropping excess tables..")
+        tools.drop_table(cursor, csv_planets_table)
+        tools.drop_table(cursor, csv_species_table)
 
+        print("Referencing entities..")
         # Set references
-        cursor.execute("ALTER TABLE Environment ADD FOREIGN KEY (p_name) REFERENCES Planet(p_name) ON DELETE CASCADE;")
-        cursor.execute("ALTER TABLE Terrain     ADD FOREIGN KEY (p_name) REFERENCES Planet(p_name) ON DELETE CASCADE;")
-        cursor.execute("ALTER TABLE Hair_Color ADD FOREIGN KEY haircolor (s_name)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
-        cursor.execute("ALTER TABLE Eye_Color  ADD FOREIGN KEY eyecolor  (s_name)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
-        cursor.execute("ALTER TABLE Skin_Color ADD FOREIGN KEY skincolor (s_name)  REFERENCES Specie(s_name) ON DELETE CASCADE;")
+        tools.reference_table(cursor, "Environment", "Planet(p_name)", "p_name")
+        tools.reference_table(cursor, "Terrain",     "Planet(p_name)", "p_name")
+        tools.reference_table(cursor, "Hair_Color",  "Specie(s_name)", "s_name")
+        tools.reference_table(cursor, "Eye_Color",   "Specie(s_name)", "s_name")
+        tools.reference_table(cursor, "Skin_Color",  "Specie(s_name)", "s_name")
 
         print("New database successfully created!")
         db.commit()
@@ -199,7 +117,7 @@ def new_database():
         return True
     except:
         print("\n| ERROR |\nA new database could not be created.")
-#        cursor.execute("DROP SCHEMA {}".format(DB_name))  # Deletes schema so it hasn't to be deleted manually in MySQLWorkbench
+        #cursor.execute("DROP SCHEMA {}".format(DB_name))  
         print("Schema dropped!\nShutting down..")
         return False
 
@@ -207,63 +125,47 @@ def new_database():
 
 
 db = connect_db("root", "root", "127.0.0.1", DB_name)
-print("Database named "+DB_name)
-
-
 if db_flag == False:
     db_flag = new_database()
 
-db = connect_db("root", "root", "127.0.0.1", DB_name)
-cursor = db.cursor()    # Create cursor object
-cursor.execute("USE {}".format(DB_name))                # Set new database as default
-ui.main_menu()
-user = input()
-while user != 'Q':      # Loop until Q is entered 
+if db_flag == True:
 
-    # LIST ALL PLANETS
-    if user == '1':
-        cursor.execute("SELECT p_name FROM Planet;")
-        for planet in cursor:
-            print(planet)
-
-    # SEARCH FOR SPECIFIC DETAILS
-    elif user == '2':
-        print("Search for planet details")
-        search = input("Search for:     (Planet) (Specie)")
-        detail = input("Detail: ")
-        query = ui.search_details(search, detail)
-        if query != "":     # if a match was found
-            try:
-                cursor.execute(query)
-                for result in cursor:
-                    print(result)
-            except:
-                print("There was an error fetching details from your specific search.")
-
-    elif user == '3':
-        min_height = input("Enter a minimun height: ")
-        if min_height.isalpha():
-            print("A height can only contain numbers!")
-        else:
-            cursor.execute(f"SELECT s_name FROM Specie WHERE average_height > {min_height};")
-            for s in cursor:
-                print(s)
-
-    elif user == '4':
-        searched_specie = input("Enter a specie: ")
-        cursor.execute(f"""SELECT S.s_name, E.climate
-                           FROM Environment AS E, Specie AS S
-                           WHERE S.s_name=\"{searched_specie}\" AND E.p_name=S.homeworld;""")
-        for result in cursor:
-            print(result)
-
-    elif user == '5':
-        cursor.execute(f"""SELECT S.classification, AVG(S.average_lifespan)
-                           FROM Specie AS S
-                           GROUP BY S.classification;""")
-        for k in cursor:
-            print(k)
-
+    db = connect_db("root", "root", "127.0.0.1", DB_name)
+    cursor = db.cursor()    # Create cursor object
     ui.main_menu()
     user = input()
-        
+
+    while user != 'Q':
+        # LIST ALL PLANETS
+        if user == '1':
+            tools.list_planets(cursor)
+
+        # SEARCH FOR SPECIFIC DETAILS
+        elif user == '2':
+            print("Search for planet details")
+            search = input("Search for:")
+            detail = input("Detail: ")
+            query = ui.search_details(search, detail)
+            if query != "":     # if a match was found
+                try:
+                    tools.search_detail(cursor, query)
+                except:
+                    print("There was an error fetching details from your specific search.")
+
+        elif user == '3':
+            min_height = input("Enter a minimun height: ")
+            if min_height.isalpha():
+                print("A height can only contain numbers!")
+            else:
+                tools.display_min_height(cursor, min_height)
+
+        elif user == '4':
+            searched_specie = input("Enter a specie: ")
+            tools.estimate_climate(cursor, searched_specie)
+
+        elif user == '5':
+            tools.display_avg_lifespan(cursor)
+
+        ui.main_menu()
+        user = input()
+            
