@@ -9,7 +9,6 @@ import tools
 global db
 global db_flag
 
-db_flag = False
 DB_name = "lukas"
 
 csv_planets_file = lib.get_file("planets.csv", "linux")
@@ -61,22 +60,18 @@ def connect_db(user, passwd, addr, db_name):
                 passwd=passwd
                 )
         db_flag = False
-    return db
+    return [db, db_flag]
 
 
 
 def new_database():
     try:
         print(f"\nNo database found going by name {DB_name}.")
-        db = connect_db("root", "root", "127.0.0.1", DB_name)
-        print(f"Creating database cursor.")
-        cursor = db.cursor()
         print(f"New database being created...")
+        db = connect_db("root", "root", "127.0.0.1", DB_name)[0]    # index 0 --> from connect_db
+        cursor = db.cursor()
         tools.create_new_database(cursor, DB_name) 
 
-        print(f"Commit ...")
-        db.commit()
-        print(f"Commit done..")
         # Create temporary tables for parsing the CSV files
         csv_planets_table = "csv_planets"
         csv_species_table = "csv_species"
@@ -118,22 +113,29 @@ def new_database():
         db.close()
         return True
     except:
-        print("\n| ERROR |\nA new database could not be created.")
+        print("A new database could not be created.")
         cursor.execute("DROP SCHEMA {}".format(DB_name))  
         print("Schema dropped!\nShutting down..")
         return False
 
 # ---------------------------------------------------------------------
 
-
+# connect_db returns a list with the database object on index 0 
+# and a boolean value on index 1. This boolean value sets the 
+# db_flag. If no database is found, the flag is set to False and
+# a new database is created.
 db = connect_db("root", "root", "127.0.0.1", DB_name)
+db_flag = db[1] # index 1 --> db_flag boolean value
+db = db[0]      # index 0 --> set db to the newly created database object
+
 if db_flag == False:
+    # If connection failed from connect_db, create new database
     db_flag = new_database()
 
 if db_flag == True:
-
-    db = connect_db("root", "root", "127.0.0.1", DB_name)
-    cursor = db.cursor()    # Create cursor object
+    # If connection was successful, proceed to main menu
+    cursor = db.cursor()
+    cursor.execute(f"USE {DB_name};")
     ui.main_menu()
     user = input()
 
