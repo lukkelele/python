@@ -119,7 +119,6 @@ def copy_table(source_table, target_table):
     query = f"INSERT INTO {target_table} SELECT * FROM {source_table};"
     return query
 
-
 def duplicate_table(source_table, new_table):
     query = f"CREATE TABLE {new_table} LIKE {source_table};"
     return query

@@ -155,13 +155,20 @@ if db_flag == True:
         elif user == '2':   # Search for details regarding a planet or specie
             print("Search for planet details")
             search = input("Search for:")
-            detail = input("Detail: ")
-            query = ui.search_details(search, detail)
-            if query != "": # if a match was found with the provided user input
-                try:
-                    tools.search_detail(cursor, query)
-                except:
-                    print("There was an error fetching details from your specific search.")
+            try:
+                planets = []
+                cursor.execute("SELECT p_name FROM Planet;")
+                for planet in cursor:
+                    planet_name = str(planet)
+                    planet_name = planet_name[2:-3]
+                    planets.append(planet_name)
+                query = ui.show_planet_details(search, planets)
+                cursor.execute(query)
+                print("\n====== PLANET DETAILS ======")
+                for planet_result in cursor:
+                    print(planet_result)
+            except:
+                print("There was an error fetching details from your specific search.")
 
         elif user == '3':
             min_height = input("Enter a minimun height: ")
