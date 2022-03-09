@@ -3,12 +3,14 @@ import csv
 import sql_statements as SQL
 import ui
 import lib
+import tools as t
 
 
 global db
-DB_name = "lukas"
-DEFAULT_DB_NAME = "lukas"
+global db_flag
 
+db_flag = False
+DB_name = "lukas"
 
 csv_planets_file = lib.get_file("planets.csv", "linux")
 csv_species_file = lib.get_file("species.csv", "linux")
@@ -38,12 +40,6 @@ hair_color_datatypes = lib.get_datatypes("hair_color")
 eye_color_datatypes = lib.get_datatypes("eye_color")
 skin_color_datatypes = lib.get_datatypes("skin_color")
 
-
-def user_input():
-    menu_input = input("ENTER A NUMBER: ")
-    while menu_input.isnumeric == False:
-        menu_input = input("ONLY numbers are allowed!\nENTER A NUMBER: ") 
-    return menu_input
 
 
 def add_FOREIGN_KEY(cursor, table, attr, target_table, target_key):
@@ -86,10 +82,7 @@ def adjust_multivalued_entity(table, column, cursor):
                     cursor.execute(f"DELETE FROM {table} WHERE {column}=\"{attr}\";")
 
 
-
 def connect_db(user, passwd, addr, db_name):
-    if db_name == "":
-        db_name = DEFAULT_DB_NAME
     try: 
         db = mysql.connector.connect(
                 host=addr,
@@ -97,12 +90,14 @@ def connect_db(user, passwd, addr, db_name):
                 passwd=passwd,
                 database=db_name
                 )
+        db_flag = True
     except:
         db = mysql.connector.connect(
                 host=addr,
                 user=user,
                 passwd=passwd
                 )
+        db_flag = False
     return db
 
 
@@ -110,7 +105,6 @@ def connect_db(user, passwd, addr, db_name):
 def parse_csv_file(cursor, path, target_table):
     with open(path, 'r') as file:
         file_data = csv.reader(file)
-        print("File opened at path --> "+path)
         header = next(file_data)       # the attributes or column names
         query = f"INSERT INTO {target_table}({{0}}) VALUES ({{1}});"  
         value_query = f"INSERT INTO {target_table} VALUES ({{0}});"
@@ -133,7 +127,7 @@ def parse_csv_file(cursor, path, target_table):
                 
 
 
-def new_database(flag):
+def new_database():
     try:
         print(f"\nNo database found going by name {DB_name}.")
         db = connect_db("root", "root", "127.0.0.1", DB_name)
@@ -170,8 +164,9 @@ def new_database(flag):
         cursor.execute("INSERT INTO Hair_Color SELECT s_name, hair_color FROM csv_species WHERE NOT hair_color=\"NULL\";")
         cursor.execute("INSERT INTO Eye_Color  SELECT s_name, eye_color  FROM csv_species WHERE NOT eye_color=\"NULL\";")
         cursor.execute("INSERT INTO Skin_Color SELECT s_name, skin_color FROM csv_species WHERE NOT skin_color=\"NULL\";")
-
-        adjust_multivalued_entity("Hair_Color", "hair_color", cursor)
+            
+        t.adjust_multivalued_entity("Hair_Color", "hair_color", cursor)
+        #adjust_multivalued_entity("Hair_Color", "hair_color", cursor)
         adjust_multivalued_entity("Eye_Color",  "eye_color",  cursor)
         adjust_multivalued_entity("Skin_Color", "skin_color", cursor)
         cursor.execute("ALTER TABLE Hair_Color ADD PRIMARY KEY (s_name, hair_color);")
@@ -210,71 +205,65 @@ def new_database(flag):
 
 # ---------------------------------------------------------------------
 
-flag = False
-try:
-    db = connect_db("root", "root", "127.0.0.1", DB_name)
-    print("Database named "+DB_name)
-    flag = True
-except:
-    flag = new_database(flag)
+
+db = connect_db("root", "root", "127.0.0.1", DB_name)
+print("Database named "+DB_name)
 
 
+if db_flag == False:
+    db_flag = new_database()
 
-if flag == False:
-    print("error")
+db = connect_db("root", "root", "127.0.0.1", DB_name)
+cursor = db.cursor()    # Create cursor object
+cursor.execute("USE {}".format(DB_name))                # Set new database as default
+ui.main_menu()
+user = input()
+while user != 'Q':      # Loop until Q is entered 
 
-else:
-    db = connect_db("root", "root", "127.0.0.1", DB_name)
+    # LIST ALL PLANETS
+    if user == '1':
+        cursor.execute("SELECT p_name FROM Planet;")
+        for planet in cursor:
+            print(planet)
 
-    cursor = db.cursor()    # Create cursor object
-    cursor.execute("USE {}".format(DB_name))              
+    # SEARCH FOR SPECIFIC DETAILS
+    elif user == '2':
+        print("Search for planet details")
+        search = input("Search for:     (Planet) (Specie)")
+        detail = input("Detail: ")
+        query = ui.search_details(search, detail)
+        if query != "":     # if a match was found
+            try:
+                cursor.execute(query)
+                for result in cursor:
+                    print(result)
+            except:
+                print("There was an error fetching details from your specific search.")
+
+    elif user == '3':
+        min_height = input("Enter a minimun height: ")
+        if min_height.isalpha():
+            print("A height can only contain numbers!")
+        else:
+            cursor.execute(f"SELECT s_name FROM Specie WHERE average_height > {min_height};")
+            for s in cursor:
+                print(s)
+
+    elif user == '4':
+        searched_specie = input("Enter a specie: ")
+        cursor.execute(f"""SELECT S.s_name, E.climate
+                           FROM Environment AS E, Specie AS S
+                           WHERE S.s_name=\"{searched_specie}\" AND E.p_name=S.homeworld;""")
+        for result in cursor:
+            print(result)
+
+    elif user == '5':
+        cursor.execute(f"""SELECT S.classification, AVG(S.average_lifespan)
+                           FROM Specie AS S
+                           GROUP BY S.classification;""")
+        for k in cursor:
+            print(k)
+
     ui.main_menu()
     user = input()
-    while user != 'Q':      # Loop until Q is entered 
-        # LIST ALL PLANETS
-        if user == '1':
-            cursor.execute("SELECT p_name FROM Planet;")
-            for planet in cursor:
-                print(planet)
-
-        # SEARCH FOR SPECIFIC DETAILS
-        elif user == '2':
-            print("Search for planet details")
-            search = input("Search for:     (Planet) (Specie)")
-            detail = input("Detail: ")
-            query = ui.search_details(search, detail)
-            if query != "":     # if a match was found
-                try:
-                    cursor.execute(query)
-                    for result in cursor:
-                        print(result)
-                except:
-                    print("There was an error fetching details from your specific search.")
-
-        elif user == '3':
-            min_height = input("Enter a minimun height: ")
-            if min_height.isalpha():
-                print("A height can only contain numbers!")
-            else:
-                cursor.execute(f"SELECT s_name FROM Specie WHERE average_height > {min_height};")
-                for s in cursor:
-                    print(s)
-
-        elif user == '4':
-            searched_specie = input("Enter a specie: ")
-            cursor.execute(f"""SELECT S.s_name, E.climate
-                               FROM Environment AS E, Specie AS S
-                               WHERE S.s_name=\"{searched_specie}\" AND E.p_name=S.homeworld;""")
-            for result in cursor:
-                print(result)
-
-        elif user == '5':
-            cursor.execute(f"""SELECT S.classification, AVG(S.average_lifespan)
-                               FROM Specie AS S
-                               GROUP BY S.classification;""")
-            for k in cursor:
-                print(k)
-
-        ui.main_menu()
-        user = input()
         
