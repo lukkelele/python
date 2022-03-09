@@ -185,7 +185,8 @@ def search_detail(cursor, query):
     for row in cursor:
         print(row)
 
+
 def list_planets(cursor):
     cursor.execute("SELECT p_name FROM Planet;")
     for planet in cursor:
-        print(planet)
+        print("   |  "+str(planet)[2:-3])
