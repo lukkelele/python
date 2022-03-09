@@ -5,14 +5,6 @@ import ui
 import lib
 import tools
 
-
-global db
-global db_flag
-
-DB_name = "lukas"
-
-csv_planets_file = lib.get_file("planets.csv", "linux")
-csv_species_file = lib.get_file("species.csv", "linux")
 # Schema
 # =======================================
 # Planet(attributes)    
@@ -24,9 +16,15 @@ csv_species_file = lib.get_file("species.csv", "linux")
 # Eye_Color(s_name PRIMARY KEY, color)
 # =======================================
 
-# MULTIVALUED ATTRIBUTES INCLUDE:
-# Planets.csv ==> climate, terrain
-# Species.csv ==> skin_colors, hair_colors, eye_colors
+
+global db
+global db_flag
+global cursor
+
+DB_name = "lukas"
+
+csv_planets_file = lib.get_file("planets.csv", "linux")
+csv_species_file = lib.get_file("species.csv", "linux")
 
 # Fetch the attribute names and datatypes for the table creations
 planet_csv_datatypes = lib.get_datatypes("planet_csv")
@@ -66,41 +64,48 @@ def connect_db(user, passwd, addr, db_name):
 
 def new_database():
     try:
-        print(f"\nNo database found going by name {DB_name}.")
-        print(f"New database being created...")
+        print(f"\nNo database found going by name {DB_name}.\nCreating new database named {DB_name}.")
         db = connect_db("root", "root", "127.0.0.1", DB_name)[0]    # index 0 --> from connect_db
         cursor = db.cursor()
+        # Create the new database 
         tools.create_new_database(cursor, DB_name) 
 
-        # Create temporary tables for parsing the CSV files
+        # Create temporary tables for parsing the CSV files into
         csv_planets_table = "csv_planets"
         csv_species_table = "csv_species"
         tools.create_Table(cursor, csv_planets_table, planet_csv_datatypes)
         tools.create_Table(cursor, csv_species_table, specie_csv_datatypes)
 
-        # Read the CSV files and move the corresponding data to the new tables
+        # Read the CSV files and move the data to the new tables
         print("Parsing files..")
         tools.parse_csv_file(cursor, csv_planets_file, csv_planets_table)  
         tools.parse_csv_file(cursor, csv_species_file, csv_species_table)
         
+        # Create the tables for the multivalued attributes from planets.csv
         print("Creating environment and terrain entities...")
         tools.create_Environment(cursor)
         tools.create_Terrain(cursor)
-        # Create the color entities
+
+        # Create the tables for the multivalued attributes from species.csv
         print("Creating color entities...")
         tools.create_Hair_Color(cursor)
         tools.create_Eye_Color(cursor)
         tools.create_Skin_Color(cursor)
 
-        # Create intended tables
+        # Create the Planet and Specie entity by copying the already created
+        # csv_planet and csv_specie tables.
         tools.duplicate_entity(cursor, csv_planets_table, "Planet")
         tools.duplicate_entity(cursor, csv_species_table, "Specie")
+        # Remove the columns from Planet and Specie that held multivalued attributes.
         tools.drop_columns(cursor, "Planet", lib.get_column_names("csv_planet"), lib.get_column_names("planet")) 
         tools.drop_columns(cursor, "Specie", lib.get_column_names("csv_specie"), lib.get_column_names("specie")) 
+        # When done with the new Planet and Specie table and all data is correctly moved,
+        # delete the initial csv_planet and csv_species tables.
         tools.drop_table(cursor, csv_planets_table)
         tools.drop_table(cursor, csv_species_table)
 
-        # Set references
+        # Set the references for the entities created for dealing with the
+        # multivalued attributes.
         print("Referencing entities..")
         tools.reference_table(cursor, "Environment", "Planet(p_name)", "p_name")
         tools.reference_table(cursor, "Terrain",     "Planet(p_name)", "p_name")
@@ -108,9 +113,10 @@ def new_database():
         tools.reference_table(cursor, "Eye_Color",   "Specie(s_name)", "s_name")
         tools.reference_table(cursor, "Skin_Color",  "Specie(s_name)", "s_name")
 
+        # Commit the changes made.
         db.commit()
         cursor.close()
-        db.close()
+        #db.close()
         return True
     except:
         print("A new database could not be created.")
@@ -133,24 +139,25 @@ if db_flag == False:
     db_flag = new_database()
 
 if db_flag == True:
-    # If connection was successful, proceed to main menu
+    # If connection was successful, proceed
     cursor = db.cursor()
-    cursor.execute(f"USE {DB_name};")
-    ui.main_menu()
-    user = input()
+    cursor.execute(f"USE {DB_name};")   # Select database to manage
+    ui.main_menu()                      # Display a menu in the terminal
+    user = input()                      # Take user input
+    
+    # While user doesn't enter 'Q' or 'q',
+    # keep the program running
+    while user.lower() != 'q':
 
-    while user != 'Q':
-        # LIST ALL PLANETS
-        if user == '1':
+        if user == '1':     # List all planets in the database
             tools.list_planets(cursor)
 
-        # SEARCH FOR SPECIFIC DETAILS
-        elif user == '2':
+        elif user == '2':   # Search for details regarding a planet or specie
             print("Search for planet details")
             search = input("Search for:")
             detail = input("Detail: ")
             query = ui.search_details(search, detail)
-            if query != "":     # if a match was found
+            if query != "": # if a match was found with the provided user input
                 try:
                     tools.search_detail(cursor, query)
                 except:

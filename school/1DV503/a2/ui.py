@@ -23,20 +23,27 @@ def main_menu():
 
 
 def search_details(search, detail):
-    #columns = lib.get_column_names(search) # granted no input errors are included
-    search = search.lower()
-    detail = detail.lower()
-    if search == "planet" or search == "specie":
-        columns = lib.get_column_names(search)
-        search = search.capitalize()
-        for column_name in columns:
-            if re.search(detail, column_name):
-                print(f"Match found ==> {column_name}")
-                if search[0] == "P":    # if search == planet
-                    primary_key = "p_name"
-                elif search[0] == "S":
-                    primary_key = "s_name"
-                return f"SELECT {primary_key}, {column_name} FROM {search};"
+    # If the search is a string that contains letters, proceed
+    if search.isacii():
+        search = search.lower() # Lowercase to reduce risk of errors within function
+        detail = detail.lower()  
+        if search == "planet" or search == "specie":
+            columns = lib.get_column_names(search)  # Get all column names for the desired entity
+            search = search.capitalize()    # Column names all begin with an uppercase letter
+            for column_name in columns:     
+                # Loop through the columns to see if the attribute that was
+                # entered by the user is found within one of the column names
+                if re.search(detail, column_name):
+                    # When a match is found, sort out what type of entity the initial search
+                    # was for and then return a string with the correct query to execute.
+                    if search[0] == "P":    # if search == planet
+                        primary_key = "p_name"
+                    elif search[0] == "S":
+                        primary_key = "s_name"
+                    return f"SELECT {primary_key}, {column_name} FROM {search};"
+        else:
+            print("No information can be found by your search, check your spelling and try again!\n")
+            return ""
     else:
-        print("No information can be found by your search, check your spelling and try again!\n")
+        print("Make sure that the input provided doesn't contain digits or symbols.")
         return ""
