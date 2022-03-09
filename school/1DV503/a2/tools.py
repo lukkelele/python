@@ -4,16 +4,17 @@ import csv
 
 DEFAULT_DB_NAME = "lukas"
 
+planet_csv_datatypes = [["p_name", "varchar(20)", "PRIMARY KEY"], ["rotation_period", "int"], 
+                       ["orbital_period", "int"], ["diameter","bigint"], ["climate", "varchar(50)"],
+                       ["gravity", "varchar(50)"],     # temporarily change decimal(2,2) to varchar
+                       ["terrain", "varchar(50)"], ["surface_water", "int"], ["population", "bigint"]]
+# TERRAIN AND GRAVITY --> varchar(50) to make sure space is available
 
-def drop_columns(cursor, table, table_columns, ignored_columns):
-    for column in table_columns:
-        col = column[0]
-        flag = False
-        for ignored_col in ignored_columns:
-            if col == ignored_col: # if current column is one to be ignored
-                flag = True
-        if flag == False:   # If the column name doesn't match any column to be ignored, drop it
-            cursor.execute(f"ALTER TABLE {table} DROP COLUMN {col};")
+specie_csv_datatypes = [["s_name", "varchar(20)", "PRIMARY KEY"], ["classification", "varchar(15)"],
+                        ["designation", "varchar(14)"] ,["average_height", "int"], ["skin_color", "varchar(50)"],
+                        ["hair_color", "varchar(50)"], ["eye_color", "varchar(50)"], ["average_lifespan", "int"],
+                        ["language", "varchar(18)"], ["homeworld", "varchar(14)"]]
+
 
 
 # Take and sort multivalued attributes and insert them individually
@@ -32,7 +33,6 @@ def adjust_multivalued_entity(table, column, cursor):
                     #print(f"INSERT INTO {table} values('{key}','{a}');")
                     cursor.execute(f"INSERT INTO {table} VALUES(\"{key}\",\"{a}\");")
                     cursor.execute(f"DELETE FROM {table} WHERE {column}=\"{attr}\";")
-
 
 
 # Read CSV data and insert into a table
@@ -59,6 +59,18 @@ def parse_csv_file(cursor, path, target_table):
                 query = value_query.format(','.join(values))
                 cursor.execute(query)
                 values.clear()
+
+
+def drop_columns(cursor, table, table_columns, ignored_columns):
+    for column in table_columns:
+        col = column[0]
+        flag = False
+        for ignored_col in ignored_columns:
+            if col == ignored_col: # if current column is one to be ignored
+                flag = True
+        if flag == False:   # If the column name doesn't match any column to be ignored, drop it
+            cursor.execute(f"ALTER TABLE {table} DROP COLUMN {col};")
+
 
 def create_Environment(cursor):
     cursor.execute(f"CREATE TABLE Environment (p_name varchar(20), climate varchar(50));")
@@ -93,9 +105,6 @@ def create_Skin_Color(cursor):
 def duplicate_entity(cursor, source, target):
     cursor.execute(f"CREATE TABLE {target} LIKE {source};")
     cursor.execute(f"INSERT INTO {target} SELECT * FROM {source};")
-    print("dropping")
-    drop_columns(target, source, lib.get_column_names(target.lower()), cursor)
-    print("dropping done")
 
 def reference_table(cursor, source, target, pk):
     cursor.execute(f"ALTER TABLE {source} ADD FOREIGN KEY ({pk}) REFERENCES {target} ON DELETE CASCADE;")
@@ -118,10 +127,8 @@ def duplicate_table(source_table, new_table):
 def create_new_database(cursor, db_name):
     print(f"Creating new database named {db_name}.")
     cursor.execute("CREATE DATABASE {};".format(db_name))
-    print("New sasddatabase created!")
     cursor.execute("USE {}".format(db_name))                # Set new database as default
-    print("New database created!")
-
+    print(f"New database named {db_name} has been created.\n{db_name} set to default schema.")
 
 def new_table(table, attributes):
     len_attributes = len(attributes)
@@ -136,12 +143,10 @@ def new_table(table, attributes):
             if len(attribute) > 3:                  # if primary key notation as an example
                 key_property = attribute[3]
         if attributes.index(attribute) == (len_attributes - 1):     # if last attribute, dont add a ','
-            #query += name + " " + attr_type + " " + constraint + end_statement
             query += f"{name} {attr_type} {constraint} {key_property} \n);"
             break
         else:
             query += f"{name} {attr_type} {constraint} {key_property},\n"
-    #print(query)
     return query 
 
 

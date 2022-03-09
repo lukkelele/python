@@ -57,6 +57,10 @@ def get_column_names(entity):
         return planet_columns
     elif entity == "specie":
         return specie_columns
+    elif entity == "csv_planet":
+        return planet_csv_datatypes
+    elif entity == "csv_specie":
+        return specie_csv_datatypes
 
 
 planet_csv_datatypes = [["p_name", "varchar(20)", "PRIMARY KEY"], ["rotation_period", "int"], 

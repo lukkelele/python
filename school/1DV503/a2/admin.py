@@ -42,18 +42,19 @@ skin_color_datatypes = lib.get_datatypes("skin_color")
 
 
 
-
-
 def connect_db(user, passwd, addr, db_name):
     try: 
+        print(f"Connecting to {db_name} at {addr} as {user}.")
         db = mysql.connector.connect(
                 host=addr,
                 user=user,
                 passwd=passwd,
                 database=db_name
                 )
+        print(f"Connection successful.")
         db_flag = True
     except:
+        print(f"Connection unsuccesful, provided database not available.")
         db = mysql.connector.connect(
                 host=addr,
                 user=user,
@@ -68,56 +69,57 @@ def new_database():
     try:
         print(f"\nNo database found going by name {DB_name}.")
         db = connect_db("root", "root", "127.0.0.1", DB_name)
+        print(f"Creating database cursor.")
         cursor = db.cursor()
-
+        print(f"New database being created...")
         tools.create_new_database(cursor, DB_name) 
+
+        print(f"Commit ...")
         db.commit()
+        print(f"Commit done..")
         # Create temporary tables for parsing the CSV files
         csv_planets_table = "csv_planets"
         csv_species_table = "csv_species"
         tools.create_Table(cursor, csv_planets_table, planet_csv_datatypes)
         tools.create_Table(cursor, csv_species_table, specie_csv_datatypes)
 
-        print("Parsing files..")
         # Read the CSV files and move the corresponding data to the new tables
+        print("Parsing files..")
         tools.parse_csv_file(cursor, csv_planets_file, csv_planets_table)  
         tools.parse_csv_file(cursor, csv_species_file, csv_species_table)
         
-        print("Creating environment and terrain..")
+        print("Creating environment and terrain entities...")
         tools.create_Environment(cursor)
         tools.create_Terrain(cursor)
         # Create the color entities
-        print("Creating color entities..")
+        print("Creating color entities...")
         tools.create_Hair_Color(cursor)
         tools.create_Eye_Color(cursor)
         tools.create_Skin_Color(cursor)
 
-        print("Duplicating....")
         # Create intended tables
         tools.duplicate_entity(cursor, csv_planets_table, "Planet")
         tools.duplicate_entity(cursor, csv_species_table, "Specie")
-        
-        print("Dropping excess entities..")
-        #print("Dropping excess tables..")
+        tools.drop_columns(cursor, "Planet", lib.get_column_names("csv_planet"), lib.get_column_names("planet")) 
+        tools.drop_columns(cursor, "Specie", lib.get_column_names("csv_specie"), lib.get_column_names("specie")) 
         tools.drop_table(cursor, csv_planets_table)
         tools.drop_table(cursor, csv_species_table)
 
-        print("Referencing entities..")
         # Set references
+        print("Referencing entities..")
         tools.reference_table(cursor, "Environment", "Planet(p_name)", "p_name")
         tools.reference_table(cursor, "Terrain",     "Planet(p_name)", "p_name")
         tools.reference_table(cursor, "Hair_Color",  "Specie(s_name)", "s_name")
         tools.reference_table(cursor, "Eye_Color",   "Specie(s_name)", "s_name")
         tools.reference_table(cursor, "Skin_Color",  "Specie(s_name)", "s_name")
 
-        print("New database successfully created!")
         db.commit()
         cursor.close()
         db.close()
         return True
     except:
         print("\n| ERROR |\nA new database could not be created.")
-        #cursor.execute("DROP SCHEMA {}".format(DB_name))  
+        cursor.execute("DROP SCHEMA {}".format(DB_name))  
         print("Schema dropped!\nShutting down..")
         return False
 
