@@ -11,3 +11,19 @@ import admin as a
 # has_published(author_id, isbn)
 # loans(user_id, isbn, start_date, end_date)
 # works_at(emp_id, lib_number, hire_date)
+#
+#
+# =====================================================================
+
+user = "root"
+passwd = "root"
+host = "localhost"
+db_name = "library_db"
+
+
+
+db = a.Admin(user, passwd, host, db_name)
+db.start()
+
+while True:
+    print("Main Menu")
