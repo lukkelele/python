@@ -1,6 +1,17 @@
 import mysql.connector as mysql
 import sql_handler as query
 
+# 1. At least 3 queries should query data from more than one table, i.e., you should use at
+# least two multirelation queries
+# 2. You should make use of SQL JOIN
+# 3. You should make use of Aggregation and Grouping
+# 4. Create and use a View
+
+# Queries:
+# See if a book is available
+# Check employees at a particular library
+# Check library details as a user --> create a view with sensitive information removed
+
 class Admin:
 
     def __init__(self, user, passwd, url, db_name):
