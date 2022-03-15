@@ -9,4 +9,4 @@ A library must keep track of books and their current status (if a person has bee
 - Book(<u>isbn</u>, title, genre, price, publication)
 - Author(<u>author_id</u>, name)
 ---
-![](./img/library_db_ER.png =200x200) 
+<img src="./img/library_db_ER.png" height=200px width=200px>
