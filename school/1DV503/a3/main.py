@@ -9,7 +9,7 @@ import admin as a
 # Author (author_id, f_name, l_name)
 # 
 # has_published(author_id, isbn)
-# loans(user_id, isbn, start_date, end_date)
+# loans(user_id, isbn, issued, due_date, fine)
 # works_at(emp_id, lib_number, hire_date)
 #
 #
