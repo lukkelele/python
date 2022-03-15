@@ -66,15 +66,18 @@ class Admin:
 
     def initialize_db(self):    # Hard coded data
         self.cursor.execute(query.create_table("Librarian", query.get_attributes("Librarian")))
-        self.cursor.execute("insert into Librarian values (1, \"Lukas\", \"Gunnarsson\");")
-        self.cursor.execute(query.insert_to_table("Librarian", "1, \"Migge\", \"Holm\""))
+        self.cursor.execute(query.create_table("Library", query.get_attributes("Library")))
+        self.cursor.execute(query.create_table("User", query.get_attributes("User")))
+        self.cursor.execute(query.create_table("Author", query.get_attributes("Author")))
+        print("Created with sql.create_table")
+        self.db.commit()
 
 
 
-if __name__ == "__main__":
-    admin = Admin("root", "root", "localhost", "library_db")
-    admin.start()
-    admin.check_database_existance()
-    admin.db.commit()
-    print("Exiting...")
+#if __name__ == "__main__":
+    #admin = Admin("root", "root", "localhost", "library_db")
+    #admin.start()
+    #admin.check_database_existance()
+    #admin.db.commit()
+    #print("Exiting...")
 

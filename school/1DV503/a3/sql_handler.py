@@ -44,11 +44,31 @@ has_published_attr = """author_id int,
                         FOREIGN KEY author_key (author_id) REFERENCES Author(author_id),
                         FOREIGN KEY isbn_key (isbn) REFERENCES Book(isbn)"""
 
+loans_attr = """user_id int,
+                isbn int,
+                issued date,
+                due_date date,
+                PRIMARY KEY (user_id, isbn)"""
+
+works_at_attr = """emp_id int,
+                   lib_id int,
+                   hire_date date,
+                   PRIMARY KEY (emp_id, lib_id)"""
+
 
 def get_attributes(entity):
     entity = entity.lower() 
-    if entity == "librarian": return librarian_attr
-    if entity == "book":      return book_attr
+    if   entity == "librarian": return librarian_attr
+    elif entity == "book":      return book_attr
+    elif entity == "user":      return user_attr
+    elif entity == "library":   return library_attr
+    elif entity == "author":    return author_attr
+    elif entity == "has_published": return has_published_attr
+    elif entity == "loans":     return loans_attr
+    elif entity == "works_at":  return works_at_attr
+    else:
+        print("Nothing to return..")
+        return ""
 
 
 def create_table(name, attributes):
