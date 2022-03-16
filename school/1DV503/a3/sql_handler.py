@@ -11,6 +11,12 @@ author_data1 = '(1, "JK", "Rowling")'
 author_data2 = '(2, "Stan", "Lee")'
 author_data3 = '(3, "Stephen", "King")'
 author_data = ",".join([author_data1, author_data2, author_data3])
+# LIBRARIAN
+librarian_data1 = '(1, "Tommy", "Green", "male", "0708312182", "Los Santos Boulevard 9")'
+librarian_data2 = '(2, "Ellen", "Dorito", "female", "0773813209", "Rainbow Road 7")'
+librarian_data2 = '(3, "Monty", "Python", "male", "0873018467", "Silicon Valley 2")'
+librarian_data = ",".join([librarian_data1, librarian_data2])
+
 
 
 user_attr = """user_id int,
@@ -19,7 +25,7 @@ user_attr = """user_id int,
                 gender varchar(10),
                 email varchar(32),
                 phone int,
-                address varchar(20),
+                address varchar(30),
                 PRIMARY KEY (user_id)"""
 
 librarian_attr = """emp_id int,
@@ -27,7 +33,7 @@ librarian_attr = """emp_id int,
                     l_name varchar(20),
                     gender varchar(10),
                     phone int,
-                    address varchar(20),
+                    address varchar(30),
                     PRIMARY KEY (emp_id)"""
 
 book_attr = """isbn int, 
@@ -74,6 +80,8 @@ works_at_attr = """emp_id int,
 def get_data(entity):
     entity = entity.lower()
     if entity == "user": return user_data
+    elif entity == "librarian": return librarian_data
+    elif entity == "author": return author_data
 
 
 def get_attributes(entity):
