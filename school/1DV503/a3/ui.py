@@ -14,7 +14,9 @@ def get_input():
 def main_menu():
     print_border(size)
     show_option("(1) Search")
-    show_option("(2) Show all tables")
+    show_option("(2) Display all tables")
+    show_option("(3) Display all books")
+    show_option("(4) Get employee information")
 
     print_border(size)
     

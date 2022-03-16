@@ -16,6 +16,11 @@ import ui
 #
 # =====================================================================
 
+# Query Ideas
+# Select the authors names who's books are borrowed at the moment
+# Select the price of books who are borrowed at the moment
+# Select the names of users that are also employees if they have borrowed any books
+
 user = "root"
 passwd = "root"
 host = "localhost"
@@ -28,7 +33,6 @@ db.start()
 db.check_database_existance()
 
 while True:
-    print("Main Menu")
     ui.main_menu()
     user_input = ui.get_input()
     
@@ -39,6 +43,13 @@ while True:
 
     elif user_input == '2':
         db.show_tables()
+    elif user_input == '3':
+        db.show_books()
+    elif user_input == '4':
+        isbn = ui.get_input()
+        db.check_status(isbn)
+    elif user_input == '8':
+        db.get_employed_users()
 
-    elif user_input == '5':
+    elif user_input == '10':
         db.insert_data()

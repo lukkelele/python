@@ -20,26 +20,36 @@ librarian_data3 = '(3, "Monty", "Python", "male", 14, 44000, "0873018467", "Sili
 librarian_data = ",".join([librarian_data1, librarian_data2, librarian_data3])
 # Library
 library_data1 = '(5, "Bibblan", "Downtown road 5", "Kalimdor", 52451, "Coop")'
-library_data2 = '(14, "Lib-town", "Eastern 52", "Outlands", 21451, "ICA")'
-library_data = ",".join([librarian_data1, librarian_data2])
+#library_data2 = '(14, "Lib-town", "Eastern 52", "Outlands", 21451, "ICA")'
+library_data = ",".join([library_data1])
 # Book
-book_data1 = '(23, "Harry Potter and the Chamber of Secrets", "Fantasy", 200, 1)' # author_id == JK Rowling
-book_data2 = '(19, "Harry Potter and the Prisoner of Azkaban", "Fantasy", 200, 1)' # author_id == JK Rowling
-book_data2 = '(37, "SQL and its Crazy Rave Culture", "Comedy", 100, 6)' 
-book_data3 = '(310, "Yatzy Rules", "Manual", 40, NULL)' 
-book_data4 = '(212, "Poker guide for newbies", "Manual", 45, NULL)' 
+book_data1 = '(23, "Harry Potter and the Chamber of Secrets", "Fantasy", 200, 1, 5)' # author_id == JK Rowling
+book_data2 = '(19, "Harry Potter and the Prisoner of Azkaban", "Fantasy", 200, 1, 5)' # author_id == JK Rowling
+book_data2 = '(37, "SQL and its Crazy Rave Culture", "Comedy", 100, 6, 5)' 
+book_data3 = '(310, "Yatzy Rules", "Manual", 40, NULL, 5)' 
+book_data4 = '(212, "Poker guide for newbies", "Manual", 45, NULL, 5)' 
 book_data = ",".join([book_data1, book_data2, book_data3, book_data4])
 # Loans
 loans_data1 = '(12, 310, "2022-04-20", "2022-05-20")'   # Migge --> Yatzy
 loans_data2 = '(12, 212, "2022-04-22", "2022-05-22")'   # Migge --> Poker
-loans_data3 = '(1,  19,  "2022-04-20", "2022-05-20")'   # Lukas --> Poker
-loans_data4 = '(54,  37,  "2022-06-09", "2022-07-04")'
-loans_data = ",".join([loans_data1, loans_data2, loans_data3, loans_data4])
+loans_data3 = '(30,  19,  "2022-04-20", "2022-05-20")'   # Lukas --> Poker
+#loans_data4 = '(54,  37,  "2022-06-09", "2022-07-04")'
+loans_data = ",".join([loans_data1, loans_data2, loans_data3])
 # Works at
 works_at_data1 = '(1, 5, "2019-09-16")'
 works_at_data2 = '(3, 5, "2020-02-05")'
 works_at_data3 = '(2, 14, "2010-01-29")'
 works_at_data = ",".join([works_at_data1, works_at_data2, works_at_data3])
+# Stored in
+stored_in_data1 = '(23, 5)' # isbn 23 stored in library with id 5
+stored_in_data2 = '(23, 14)'
+stored_in_data3 = '(37, 14)'
+stored_in_data4 = '(310, 14)'
+stored_in_data5 = '(310, 5)'
+stored_in_data6 = '(212, 5)'
+stored_in_data7 = '(19, 5)'
+stored_in_data8 = '(19, 14)'
+stored_in_data = ",".join([stored_in_data1, stored_in_data2,stored_in_data3,stored_in_data4,stored_in_data5,stored_in_data6,stored_in_data7,stored_in_data8])
 # ========= DATA END ===========================================================================
 
 # Query Ideas
@@ -71,6 +81,7 @@ book_attr = """isbn int,
                genre varchar(20),
                price int,
                author_id int,
+               lib_id int,
                PRIMARY KEY (isbn)"""
 
 library_attr = """lib_id int,
@@ -94,6 +105,7 @@ loans_attr = """user_id int,
                 due_date date,
                 PRIMARY KEY (user_id, isbn)"""
 
+stored_in_attr = "isbn int, lib_id int, PRIMARY KEY(isbn, lib_id)"
 
 def add_FK(table, target_table, key):
     query = f"""alter table {table} add foreign key ({key}) references {target_table}({key});"""
@@ -121,15 +133,28 @@ def get_avg_salary():
     return query
 
 
+def get_all_books():
+    query = "select Book.title, Author.f_name, Author.l_name, Book.genre from Book JOIN Author ON Book.author_id=Author.author_id;"
+    return query
+
+def book_status(isbn):
+    query = f"select issued, due_date from loans where isbn={isbn};"
+    return query
+
+def count_books(isbn):
+    query = f"SELECT COUNT(*) from Book WHERE isbn={isbn};"
+    return query
 
 def get_data(entity):
     entity = entity.lower()
     if entity == "user": return user_data
     elif entity == "librarian": return librarian_data
+    elif entity == "library":   return library_data
     elif entity == "author":    return author_data
     elif entity == "book":      return book_data
     elif entity == "loans":     return loans_data
     elif entity == "works_at":  return works_at_data
+    elif entity == "stored_in": return stored_in_data
 
 def get_attributes(entity):
     entity = entity.lower() 
@@ -139,6 +164,7 @@ def get_attributes(entity):
     elif entity == "library":   return library_attr
     elif entity == "author":    return author_attr
     elif entity == "loans":     return loans_attr
+    elif entity == "stored_in": return stored_in_attr
     else:
         print("Nothing to return..")
         return ""
@@ -155,7 +181,7 @@ def create_table(name, attributes):
 
 def insert_to_table(name, value):
     query = f"INSERT INTO {name} VALUES{value};"
-    print(query)
+    #print(query)
     return query
 
 
