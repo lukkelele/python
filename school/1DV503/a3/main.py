@@ -1,4 +1,5 @@
 import admin as a
+import ui
 
 # ---- Relation Schema ----
 # ======================================================================
@@ -28,6 +29,16 @@ db.check_database_existance()
 
 while True:
     print("Main Menu")
-    user_input = input("Input: ")
-    if user_input == '5':
+    ui.main_menu()
+    user_input = ui.get_input()
+    
+    if user_input == '1':
+        ui.show_option(" Search for a book!")
+        booksearch = ui.get_input()
+        db.search_book(booksearch)
+
+    elif user_input == '2':
+        db.show_tables()
+
+    elif user_input == '5':
         db.insert_data()

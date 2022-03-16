@@ -95,6 +95,9 @@ loans_attr = """user_id int,
                 PRIMARY KEY (user_id, isbn)"""
 
 
+def add_FK(table, target_table, key):
+    query = f"""alter table {table} add foreign key ({key}) references {target_table}({key});"""
+    return query
 
 def get_amount_genres():
     query = "SELECT Book.genre, COUNT(*) FROM Book GROUP BY Book.genre HAVING COUNT(*) > 1;"

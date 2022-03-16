@@ -79,6 +79,8 @@ class Admin:
         print("loans created.")
         self.db.commit()
         print("Tables created!")
+        self.cursor.execute(query.add_FK("loans", "User", "user_id"))
+        print("Foreign key added to loans --> User(user_id)")
 
 
 
@@ -95,3 +97,39 @@ class Admin:
 
         self.db.commit()
         print("Data inserted.")
+
+
+    def search_book(self, booktitle):
+        booktitle = booktitle.lower().capitalize()
+        self.cursor.execute(f"select title from Book where title=\"{booktitle}\";")
+        for book in self.cursor:
+            print(book)
+
+
+    def show_tables(self):
+        self.cursor.execute("show tables;")
+        print("\n====================================\n| TABLES:")
+        for table in self.cursor:
+            print("| "+str(table)[2:-3])
+        print("====================================\n")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -7,12 +7,17 @@ def get_input():
     s = input("| INPUT: ")
     len_string = len(s)
     padding = size - len_string - 1
-    s = s + padding*" " + "|"
+    print_s = s + padding*" " + "|"
+    print(print_s)
     return s
 
 def main_menu():
     print_border(size)
-    print("")
+    show_option("(1) Search")
+    show_option("(2) Show all tables")
+
+    print_border(size)
+    
 
 # Enclose the menu in terminal
 def show_option(option):
@@ -28,8 +33,3 @@ def print_border(x):
 
 
 
-print_border(size)
-show_option("(1) Search")
-show_option("(2) Show all tables")
-show_option("(3) Settings")
-print(get_input())
