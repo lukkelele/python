@@ -42,7 +42,7 @@ loans_data4 = '(54,  37,  "2022-06-09", "2022-07-04")'
 loans_data = ",".join([loans_data1, loans_data2, loans_data3, loans_data4])
 # ========= DATA END ===========================================================================
 
-
+# === Datatypes for the different entites
 user_attr =  """user_id int, f_name varchar(12), l_name varchar(20),
                 gender varchar(10), email varchar(40), phone int,
                 address varchar(30),

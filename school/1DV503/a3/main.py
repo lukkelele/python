@@ -16,16 +16,10 @@ import ui
 #
 # =====================================================================
 
-# Query Ideas
-# Select the authors names who's books are borrowed at the moment
-# Select the price of books who are borrowed at the moment
-# Select the names of users that are also employees if they have borrowed any books
-
 user = "root"
 passwd = "root"
 host = "localhost"
 db_name = "library_db"
-
 
 
 db = a.Admin(user, passwd, host, db_name)
@@ -42,7 +36,6 @@ while user_input != 'q':
         ui.show_option(" Search for a book!")
         booksearch = ui.get_input()
         db.search_book(booksearch)
-
     elif user_input == '2':
         db.show_tables()
     elif user_input == '3':
@@ -53,12 +46,13 @@ while user_input != 'q':
     elif user_input == '5':
         db.get_employees()
     elif user_input == '6':
-        # Check employees, create view and exclude salary
         db.get_employed_users()
-
-
+    elif user_input == '7':
+        db.avg_price_borrowed()
     elif user_input == '8':
-        db.get_employed_users()
-
+        db.get_avg_salary()
+    elif user_input == '9':
+        db.get_borrowed_books()
     elif user_input == '10':
-        db.insert_data()
+        db.display_genres()
+

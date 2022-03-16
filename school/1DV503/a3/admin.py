@@ -146,17 +146,41 @@ class Admin:
                 print("====================================\n")
                 return False
             else:
-                print("The book is not available anywhere.")
+                print("The book is not available.")
                 print("====================================\n")
                 return True
 
+    # Get the average salary of all employees
+    def get_avg_salary(self):
+        self.cursor.execute(query.get_avg_salary())
+        print("\n====================================\n| AVERAGE SALARY:")
+        for result in self.cursor:  # if borrowed, count the amount
+            print(str(result)[2:-3])
+        print("====================================\n")
 
+    # Display all borrowed booys
+    def get_borrowed_books(self):
+        self.cursor.execute(query.get_users_loaned())
+        print("\n====================================\n| BOOKS OUT ON LOAN:")
+        for result in self.cursor:  # if borrowed, count the amount
+            print(str(result)[2:-3])
+        print("====================================\n")
 
+    # Display all genres and count them
+    def display_genres(self):
+        self.cursor.execute(query.get_amount_genres())
+        print("\n====================================\n| GENRES:")
+        for result in self.cursor:  # if borrowed, count the amount
+            print(str(result)[2:-3])
+        print("====================================\n")
 
-
-
-
-
+    
+    def avg_price_borrowed(self):
+        self.cursor.execute(query.get_amount_genres())
+        print("\n====================================\n| AVG PRICE ON LOANED BOOK:")
+        for result in self.cursor:  # if borrowed, count the amount
+            print(str(result)[2:-3])
+        print("====================================\n")
 
 
 
