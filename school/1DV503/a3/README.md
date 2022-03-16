@@ -26,4 +26,4 @@ My tables don't hold that much of different data and those that do don't really 
 
 
 ---
-<img src="./img/library_db_ER.png" height=620px width=960px>
+<img src="./img/ER_diagram.png" height=620px width=960px>
