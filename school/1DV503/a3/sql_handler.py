@@ -4,7 +4,7 @@
 # ----
 # User
 user_data1= '(1, "Lukas", "Gunnarsson", "male", "lg222xf@student.lnu.se", "0707385418", "Fabriksgatan 13A")'
-user_data2 = '(12, "Migge", "Holm", "male", "migge_rickross@gmail.com", "0723941234", "Bakarvägen 22")'
+user_data2 = '(12, "Migge", "Holm", "male", "migge_rickross@gmail.com", "0723941234", "Bakarvagen 22")'
 user_data = user_data1 + "," + user_data2
 # Author
 author_data1 = '(1, "JK", "Rowling")'
@@ -27,11 +27,15 @@ book_data3 = '(310, "Yatzy Rules", "Manual", 40, NULL)'
 book_data4 = '(212, "Poker guide for newbies", "Manual", 45, NULL)' 
 book_data = ",".join([book_data1, book_data2, book_data3, book_data4])
 # Loans
-loans_data1 = '(12, 310, 2022-04-20, 2022-05-20)'   # Migge --> Yatzy
-loans_data2 = '(12, 212, 2022-04-22, 2022-05-22)'   # Migge --> Poker
-loans_data3 = '(1,  19,  2022-04-20, 2022-05-20)'   # Migge --> Poker
+loans_data1 = '(12, 310, "2022-04-20", "2022-05-20")'   # Migge --> Yatzy
+loans_data2 = '(12, 212, "2022-04-22", "2022-05-22")'   # Migge --> Poker
+loans_data3 = '(1,  19,  "2022-04-20", "2022-05-20")'   # Migge --> Poker
 loans_data = ",".join([loans_data1, loans_data2, loans_data3])
-
+# Works at
+works_at_data1 = '(1, 5, "2019-09-16")'
+works_at_data2 = '(3, 5, "2020-02-05")'
+works_at_data3 = '(2, 14, "2010-01-29")'
+works_at_data = ",".join([works_at_data1, works_at_data2, works_at_data3])
 
 
 user_attr = """user_id int,
@@ -92,10 +96,10 @@ def get_data(entity):
     entity = entity.lower()
     if entity == "user": return user_data
     elif entity == "librarian": return librarian_data
-    elif entity == "author": return author_data
-    elif entity == "book":   return book_data
-    elif entity == "loans":  return loans_data
-
+    elif entity == "author":    return author_data
+    elif entity == "book":      return book_data
+    elif entity == "loans":     return loans_data
+    elif entity == "works_at":  return works_at_data
 
 def get_attributes(entity):
     entity = entity.lower() 
