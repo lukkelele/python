@@ -32,7 +32,9 @@ db = a.Admin(user, passwd, host, db_name)
 db.start()
 db.check_database_existance()
 
-while True:
+
+user_input = '0' # to enter loop
+while user_input != 'q':
     ui.main_menu()
     user_input = ui.get_input()
     
@@ -48,6 +50,13 @@ while True:
     elif user_input == '4':
         isbn = ui.get_input()
         db.check_status(isbn)
+    elif user_input == '5':
+        db.get_employees()
+    elif user_input == '6':
+        # Check employees, create view and exclude salary
+        db.get_employed_users()
+
+
     elif user_input == '8':
         db.get_employed_users()
 

@@ -71,20 +71,21 @@ class Admin:
         self.cursor.execute(query.create_table("Author", query.get_attributes("Author")))
         self.cursor.execute(query.create_table("Book", query.get_attributes("Book")))
         self.cursor.execute(query.create_table("loans", query.get_attributes("loans")))
-#        self.cursor.execute(query.create_table("stored_in", query.get_attributes("stored_in")))
         self.db.commit()
         print("Tables created!")
         self.cursor.execute(query.add_FK("loans", "User", "user_id"))
         print("Foreign key added to loans --> User(user_id)")
         self.cursor.execute(query.add_FK("Book", "Author", "author_id"))
         print("Foreign key added to Book --> Author(author_id)")
-#        self.cursor.execute(query.add_FK("stored_in", "Book", "isbn"))
-#        print("Foreign key added to stored_in --> Book(isbn)")
-#        self.cursor.execute(query.add_FK("stored_in", "Library", "lib_id"))
-#        print("Foreign key added to stored_in --> Library(lib_id)")
-#        self.db.commit()
         self.insert_data()      # add data
         
+
+    def get_employees(self):
+        self.cursor.execute(query.employee_view())
+        self.db.commit()
+        self.cursor.execute(query.get_employees())
+        for employee in self.cursor:
+            print(employee)
 
 
     def insert_data(self):
@@ -140,15 +141,15 @@ class Admin:
             borrowed_books += 1
         self.cursor.execute(query.count_books(isbn))
         for count in self.cursor:
-            print(str(count)[1:-2])
             count = (int) (str(count)[1:-2])
             if borrowed_books < count:
                 print("Book available")
+                print("====================================\n")
                 return False
             else:
                 print("The book is not available anywhere.")
+                print("====================================\n")
                 return True
-        print("====================================\n")
 
 
 

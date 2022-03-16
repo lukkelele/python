@@ -107,6 +107,15 @@ loans_attr = """user_id int,
 
 stored_in_attr = "isbn int, lib_id int, PRIMARY KEY(isbn, lib_id)"
 
+
+def employee_view():
+    query = "CREATE VIEW employee_view AS SELECT f_name, l_name, gender FROM Librarian;"
+    return query
+
+def get_employees():
+    query = "SELECT * FROM employee_view;"
+    return query
+
 def add_FK(table, target_table, key):
     query = f"""alter table {table} add foreign key ({key}) references {target_table}({key});"""
     return query
