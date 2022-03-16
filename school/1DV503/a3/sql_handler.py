@@ -2,21 +2,26 @@
 
 # Data
 # ----
-# USER
+# User
 user_data1= '(1, "Lukas", "Gunnarsson", "male", "lg222xf@student.lnu.se", "0707385418", "Fabriksgatan 13A")'
 user_data2 = '(2, "Migge", "Holm", "male", "migge_rickross@gmail.com", "0723941234", "Bakarvägen 22")'
 user_data = user_data1 + "," + user_data2
-# AUTHOR
+# Author
 author_data1 = '(1, "JK", "Rowling")'
 author_data2 = '(2, "Stan", "Lee")'
 author_data3 = '(3, "Stephen", "King")'
 author_data = ",".join([author_data1, author_data2, author_data3])
-# LIBRARIAN
+# Librarian
 librarian_data1 = '(1, "Tommy", "Green", "male", "0708312182", "Los Santos Boulevard 9")'
 librarian_data2 = '(2, "Ellen", "Dorito", "female", "0773813209", "Rainbow Road 7")'
 librarian_data2 = '(3, "Monty", "Python", "male", "0873018467", "Silicon Valley 2")'
 librarian_data = ",".join([librarian_data1, librarian_data2])
-
+# Library
+library_data1 = '(5, "Bibblan", "Downtown road 5", "Kalimdor", 52451, "Coop")'
+library_data2 = '(14, "Lib-town", "Eastern 52", "Outlands", 21451, "ICA")'
+library_data = ",".join([librarian_data1, librarian_data2])
+# Book
+book_data1 = '(23, "Harry Potter and the Chamber of Secrets", "Fantasy", )'
 
 
 user_attr = """user_id int,
@@ -37,8 +42,8 @@ librarian_attr = """emp_id int,
                     PRIMARY KEY (emp_id)"""
 
 book_attr = """isbn int, 
-               title varchar(16),
-               genre varchar(12),
+               title varchar(32),
+               genre varchar(20),
                price int,
                publication int, 
                PRIMARY KEY (isbn)"""

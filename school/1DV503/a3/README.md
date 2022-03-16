@@ -12,4 +12,9 @@ A library must keep track of books and their current status (if a person has bee
 - loans(<u>user_id</u>, <u>isbn</u>, issued, due_date, fine)
 - works_at(<u>emp_id</u>, <u>lib_number</u>, hire_date)
 ---
+Having an ID on *Library* only makes sense if the library in turn is owned by a company that has multiple libraries. I might change the key for *Library* for that reason.  
+
+A book can have more than one genre, therefore genre in *Book* is a potential multivalued attribute. Having book details in a separate table could be a solution. For this assignment I'm just going to acknowledge it but keep things as they are.  
+
+---
 <img src="./img/library_db_ER.png" height=620px width=960px>
