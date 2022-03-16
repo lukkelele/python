@@ -75,8 +75,6 @@ class Admin:
         print("Author created.")
         self.cursor.execute(query.create_table("Book", query.get_attributes("Book")))
         print("Book created.")
-        self.cursor.execute(query.create_table("has_published", query.get_attributes("has_published")))
-        print("has_published created.")
         self.cursor.execute(query.create_table("loans", query.get_attributes("loans")))
         print("loans created.")
         self.cursor.execute(query.create_table("works_at", query.get_attributes("works_at")))
@@ -87,7 +85,7 @@ class Admin:
 
 
     def insert_data(self):
-        tables = ["User", "Librarian", "Library", "Author", "Book", "has_published", "loans", "works_at"]
+        tables = ["User", "Librarian", "Library", "Author", "Book", "loans", "works_at"]
         for table in tables:
             print(f"Current table: {table}")
             table_data = query.get_data(table)

@@ -4,7 +4,7 @@
 # ----
 # User
 user_data1= '(1, "Lukas", "Gunnarsson", "male", "lg222xf@student.lnu.se", "0707385418", "Fabriksgatan 13A")'
-user_data2 = '(2, "Migge", "Holm", "male", "migge_rickross@gmail.com", "0723941234", "Bakarvägen 22")'
+user_data2 = '(12, "Migge", "Holm", "male", "migge_rickross@gmail.com", "0723941234", "Bakarvägen 22")'
 user_data = user_data1 + "," + user_data2
 # Author
 author_data1 = '(1, "JK", "Rowling")'
@@ -26,6 +26,13 @@ book_data2 = '(19, "Harry Potter and the Prisoner of Azkaban", "Fantasy", 200, 1
 book_data3 = '(310, "Yatzy Rules", "Manual", 40, NULL)' 
 book_data4 = '(212, "Poker guide for newbies", "Manual", 45, NULL)' 
 book_data = ",".join([book_data1, book_data2, book_data3, book_data4])
+# Loans
+loans_data1 = '(12, 310, 2022-04-20, 2022-05-20)'   # Migge --> Yatzy
+loans_data2 = '(12, 212, 2022-04-22, 2022-05-22)'   # Migge --> Poker
+loans_data3 = '(1,  19,  2022-04-20, 2022-05-20)'   # Migge --> Poker
+loans_data = ",".join([loans_data1, loans_data2, loans_data3])
+
+
 
 user_attr = """user_id int,
                 f_name varchar(12),
@@ -65,13 +72,6 @@ author_attr = """author_id int,
                  PRIMARY KEY (author_id)"""
 
 # Fix references..
-has_published_attr = """author_id int,
-                        isbn int,
-                        publisher varchar(20),
-                        publish_date date,
-                        PRIMARY KEY (author_id, isbn),
-                        FOREIGN KEY author_key (author_id) REFERENCES Author(author_id),
-                        FOREIGN KEY isbn_key (isbn) REFERENCES Book(isbn)"""
 
 loans_attr = """user_id int,
                 isbn int,
@@ -86,12 +86,15 @@ works_at_attr = """emp_id int,
 
 
 
+
+
 def get_data(entity):
     entity = entity.lower()
     if entity == "user": return user_data
     elif entity == "librarian": return librarian_data
     elif entity == "author": return author_data
     elif entity == "book":   return book_data
+    elif entity == "loans":  return loans_data
 
 
 def get_attributes(entity):
@@ -101,7 +104,6 @@ def get_attributes(entity):
     elif entity == "user":      return user_attr
     elif entity == "library":   return library_attr
     elif entity == "author":    return author_attr
-    elif entity == "has_published": return has_published_attr
     elif entity == "loans":     return loans_attr
     elif entity == "works_at":  return works_at_attr
     else:
