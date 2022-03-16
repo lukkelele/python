@@ -1,5 +1,18 @@
 # SQL queries
 
+# Data
+# ----
+# USER
+user_data1= '(1, "Lukas", "Gunnarsson", "male", "lg222xf@student.lnu.se", "0707385418", "Fabriksgatan 13A")'
+user_data2 = '(2, "Migge", "Holm", "male", "migge_rickross@gmail.com", "0723941234", "Bakarvägen 22")'
+user_data = user_data1 + "," + user_data2
+# AUTHOR
+author_data1 = '(1, "JK", "Rowling")'
+author_data2 = '(2, "Stan", "Lee")'
+author_data3 = '(3, "Stephen", "King")'
+author_data = ",".join([author_data1, author_data2, author_data3])
+
+
 user_attr = """user_id int,
                 f_name varchar(12),
                 l_name varchar(20),
@@ -56,13 +69,7 @@ works_at_attr = """emp_id int,
                    hire_date date,
                    PRIMARY KEY (emp_id, lib_id)"""
 
-# Data
-user_data = []
-user_data1= '(1, "Lukas", "Gunnarsson", "male", "lg222xf@student.lnu.se", "0707385418", "Fabriksgatan 13A")'
-user_data2 = '(2, "Migge", "Holm", "male", "migge_rickross@gmail.com", "0723941234", "Bakarvägen 22")'
 
-user_data.append(user_data1)
-user_data.append(user_data2)
 
 def get_data(entity):
     entity = entity.lower()
@@ -95,4 +102,5 @@ def create_table(name, attributes):
 
 def insert_to_table(name, value):
     query = f"INSERT INTO {name} VALUES{value};"
+    print(query)
     return query

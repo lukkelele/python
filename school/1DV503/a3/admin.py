@@ -88,11 +88,14 @@ class Admin:
 
     def insert_data(self):
         tables = ["User", "Librarian", "Library", "Book", "Author", "has_published", "loans", "works_at"]
-       # for table in tables:
-        #    self.cursor.execute(query.insert_to_table(table, query.get_data(table)))
-        user_data = query.get_data("User")
-        for data in user_data:
-            print(data)
-            self.cursor.execute(query.insert_to_table("User", data))
+        for table in tables:
+            print(f"Current table: {table}")
+            table_data = query.get_data(table)
+            print(f"Current data: {table_data}")
+            if table_data == None:
+                pass
+            else:
+                self.cursor.execute(query.insert_to_table(table, query.get_data(table)))
+
         self.db.commit()
         print("Data inserted.")
