@@ -7,17 +7,20 @@ user_data2 = '(12, "Migge", "Holm", "male", "migge_rickross@gmail.com", "0723941
 user_data3 = '(54, "Ellen", "Dorito", "female", "dancing_dorito@hotmail.com", "0773813209", "Rainbow Road 7")'
 user_data4 = '(30, "Bengt", "Eldorado", "male", "Bingo_Bengan@outlook.com", "0853538563", "Lyckogatan 21")'
 user_data = ",".join([user_data1, user_data2, user_data3, user_data4])
+
 # Author(author_id, f_name, l_name)
 author_data1 = '(1, "JK", "Rowling")'
 author_data2 = '(2, "Stan", "Lee")'
 author_data3 = '(3, "Stephen", "King")'
 author_data4 = '(6, "Lukas", "Gunnarsson")'
 author_data = ",".join([author_data1, author_data2, author_data3, author_data4])
+
 # Librarian(emp_id, f_name, l_name, gender, lib_id, salary, phone, address)
 librarian_data1 = '(1, "Tommy", "Green", "male", 5, 62000, "0708312182", "Los Santos Boulevard 9")'
 librarian_data2 = '(2, "Ellen", "Dorito", "female", 5, 50000,"0773813209", "Rainbow Road 7")'
 librarian_data3 = '(3, "Monty", "Python", "male", 14, 44000, "0873018467", "Silicon Valley 2")'
 librarian_data = ",".join([librarian_data1, librarian_data2, librarian_data3])
+
 # Library(lib_id, lib_name, address, country, zipcode, company)
 library_data1 = '(5, "Bibblan", "Downtown road 5", "Kalimdor", 52451, "Coop")'
 #library_data2 = '(14, "Lib-town", "Eastern 52", "Outlands", 21451, "ICA")'
@@ -30,6 +33,7 @@ book_data2 = '(37, "SQL and its Crazy Rave Culture", "Comedy", 100, 6, 5)'
 book_data3 = '(310, "Yatzy Rules", "Manual", 40, NULL, 5)' 
 book_data4 = '(212, "Poker guide for newbies", "Manual", 45, NULL, 5)' 
 book_data = ",".join([book_data1, book_data2, book_data3, book_data4])
+
 # Loans(user_id, isbn, issued, due_date)
 loans_data1 = '(12, 310, "2022-04-20", "2022-05-20")'   # Migge --> Yatzy
 loans_data2 = '(12, 212, "2022-04-22", "2022-05-22")'   # Migge --> Poker
@@ -65,19 +69,22 @@ loans_attr = """user_id int, isbn int, issued date, due_date date,
                 PRIMARY KEY (user_id, isbn)"""
 
 
-
+# Creates a view of the employee table
 def employee_view():
     query = "CREATE VIEW employee_view AS SELECT f_name, l_name, gender FROM Librarian;"
     return query
 
+# Query to return all rows from the employee view
 def get_employees():
     query = "SELECT * FROM employee_view;"
     return query
 
+# Query to add a new foreign key
 def add_FK(table, target_table, key):
     query = f"{table} ADD FOREIGN KEY({key}) REFERENCES {target_table}({key});"
     return query
 
+# Query to return all book genres and counts the times each genre occurs
 def get_amount_genres():
     query = "SELECT Book.genre, COUNT(*) FROM Book GROUP BY Book.genre HAVING COUNT(*) > 1;"
     return query
@@ -99,22 +106,27 @@ def get_avg_salary():
     query = f"""SELECT AVG(salary) FROM Librarian;"""
     return query
 
+# Calculates the average price of all the borrowed books
 def avg_price_borrowed_books():
     query = "SELECT AVG(Book.price) FROM Book, loans WHERE Book.isbn=loans.isbn;"
     return query
 
+# Displays all books 
 def get_all_books():
     query = "SELECT Book.title, Author.f_name, Author.l_name, Book.genre FROM Book JOIN Author ON Book.author_id=Author.author_id;"
     return query
 
+# Returns the issue and return date for a passed isbn number
 def book_status(isbn):
     query = f"SELECT issued, due_date FROM loans WHERE isbn={isbn};"
     return query
 
+# Counts the books of a given isbn number
 def count_books(isbn):
     query = f"SELECT COUNT(*) from Book WHERE isbn={isbn};"
     return query
 
+# Returns data for different tables
 def get_data(entity):
     entity = entity.lower()
     if entity == "user": return user_data
@@ -124,6 +136,7 @@ def get_data(entity):
     elif entity == "book":      return book_data
     elif entity == "loans":     return loans_data
 
+# Returns the datatypes for different entities
 def get_attributes(entity):
     entity = entity.lower() 
     if   entity == "librarian": return librarian_attr
@@ -136,12 +149,12 @@ def get_attributes(entity):
         print("Nothing to return..")
         return ""
 
-
+# Query to create new table
 def create_table(name, attributes):
     query = f"CREATE TABLE {name} ({attributes});"
     return query
 
-
+# Query to insert data into table
 def insert_to_table(name, value):
     query = f"INSERT INTO {name} VALUES{value};"
     return query

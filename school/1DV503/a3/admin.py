@@ -1,16 +1,6 @@
 import mysql.connector as mysql
 import sql_handler as query
 
-# 1. At least 3 queries should query data from more than one table, i.e., you should use at
-# least two multirelation queries
-# 2. You should make use of SQL JOIN
-# 3. You should make use of Aggregation and Grouping
-# 4. Create and use a View
-
-# Queries:
-# See if a book is available
-# Check employees at a particular library
-# Check library details as a user --> create a view with sensitive information removed
 
 class Admin:
 
@@ -20,7 +10,10 @@ class Admin:
         self.url = url
         self.db_name = db_name
         self.connection_flag = False
-
+    
+    
+    # Connect to database with passed parameters.
+    # If passed database name isn't valid, connect without one specified.
     def connect_database(self):
         try:
             print(f"Connecting to {self.db_name} as {self.user} at {self.url}..")
@@ -41,13 +34,16 @@ class Admin:
                     )
             print(f"Connected without database specified.\nCredentials:\nuser: {self.user}\nurl: {self.url}")
         return db
-    
 
+
+    # Start the database.
     def start(self):
         self.db = self.connect_database()
         self.cursor = self.db.cursor()
 
 
+    # Method to check database existance.
+    # If no database is found, create a new one.
     def check_database_existance(self):
         if self.connection_flag == False:
             self.cursor.execute("create database library_db;")
@@ -63,7 +59,7 @@ class Admin:
             except: # if error raised then database already selected
                 pass
 
-
+    # Create all tables and insert data.
     def initialize_db(self):    # Hard coded data
         self.cursor.execute(query.create_table("Librarian", query.get_attributes("Librarian")))
         self.cursor.execute(query.create_table("Library", query.get_attributes("Library")))
@@ -80,6 +76,8 @@ class Admin:
         self.insert_data()      # add data
         
 
+    # Gets all employees via a view to create a virtual table without
+    # sensitive information about employees.
     def get_employees(self):
         self.cursor.execute(query.employee_view())
         self.db.commit()
@@ -88,6 +86,7 @@ class Admin:
             print(employee)
 
 
+    # Method to insert data into the database
     def insert_data(self):
         tables = ["User", "Librarian", "Library", "Author", "Book", "loans"]
         for table in tables:
@@ -101,14 +100,14 @@ class Admin:
         self.db.commit()
         print("Data inserted.")
 
-
+    # Search a book in the database
     def search_book(self, booktitle):
         booktitle = booktitle.lower().capitalize()
-        self.cursor.execute(f"select title from Book where title=\"{booktitle}\";")
+        self.cursor.execute(f"SELECT title FROM Book WHERE title=\"{booktitle}\";")
         for book in self.cursor:
             print(book)
 
-
+    # Displays all tables in the database
     def show_tables(self):
         self.cursor.execute("show tables;")
         print("\n====================================\n| TABLES:")
@@ -116,7 +115,7 @@ class Admin:
             print("| "+str(table)[2:-3])
         print("====================================\n")
 
-
+    # Displays all users that also are employed in the library
     def get_employed_users(self):
         self.cursor.execute(query.get_users_employed())
         print("\n====================================\n| EMPLOYED USERS:")
@@ -124,7 +123,7 @@ class Admin:
             print("| "+str(employed_user)[2:-3])
         print("====================================\n")
 
-
+    # Displays all books within the 'Book' entity
     def show_books(self):
         self.cursor.execute(query.get_all_books())
         print("\n====================================\n| ALL BOOKS:")
@@ -132,7 +131,7 @@ class Admin:
             print(result)
         print("====================================\n")
 
-
+    # Checks the passed isbn if any books with the same isbn are available 
     def check_status(self, isbn):
         borrowed_books = 0
         self.cursor.execute(query.book_status(isbn))
