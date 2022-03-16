@@ -66,11 +66,23 @@ class Admin:
 
     def initialize_db(self):    # Hard coded data
         self.cursor.execute(query.create_table("Librarian", query.get_attributes("Librarian")))
+        print("Librarian created.")
         self.cursor.execute(query.create_table("Library", query.get_attributes("Library")))
+        print("Library created.")
         self.cursor.execute(query.create_table("User", query.get_attributes("User")))
+        print("User created.")
         self.cursor.execute(query.create_table("Author", query.get_attributes("Author")))
-        print("Created with sql.create_table")
+        print("Author created.")
+        self.cursor.execute(query.create_table("Book", query.get_attributes("Book")))
+        print("Book created.")
+        self.cursor.execute(query.create_table("has_published", query.get_attributes("has_published")))
+        print("has_published created.")
+        self.cursor.execute(query.create_table("loans", query.get_attributes("loans")))
+        print("loans created.")
+        self.cursor.execute(query.create_table("works_at", query.get_attributes("works_at")))
+        print("works_at created.")
         self.db.commit()
+        print("Tables created!")
 
 
 

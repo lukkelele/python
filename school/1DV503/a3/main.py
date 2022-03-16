@@ -25,7 +25,6 @@ db_name = "library_db"
 db = a.Admin(user, passwd, host, db_name)
 db.start()
 db.check_database_existance()
-db.initialize_db()
 
 while True:
     print("Main Menu")
