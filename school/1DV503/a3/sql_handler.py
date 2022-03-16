@@ -1,111 +1,69 @@
 # SQL queries
 
 # ========= HARD CODED DATA ===================================================================
-# User
-user_data1= '(1, "Lukas", "Gunnarsson", "male", "lg222xf@student.lnu.se", "0707385418", "Fabriksgatan 13A")'
+# User(user_id, f_name, l_name, gender, email, phone, address)
+user_data1 = '(1, "Lukas", "Gunnarsson", "male", "lg222xf@student.lnu.se", "0707385418", "Fabriksgatan 13A")'
 user_data2 = '(12, "Migge", "Holm", "male", "migge_rickross@gmail.com", "0723941234", "Bakarvagen 22")'
 user_data3 = '(54, "Ellen", "Dorito", "female", "dancing_dorito@hotmail.com", "0773813209", "Rainbow Road 7")'
 user_data4 = '(30, "Bengt", "Eldorado", "male", "Bingo_Bengan@outlook.com", "0853538563", "Lyckogatan 21")'
 user_data = ",".join([user_data1, user_data2, user_data3, user_data4])
-# Author
+# Author(author_id, f_name, l_name)
 author_data1 = '(1, "JK", "Rowling")'
 author_data2 = '(2, "Stan", "Lee")'
 author_data3 = '(3, "Stephen", "King")'
 author_data4 = '(6, "Lukas", "Gunnarsson")'
 author_data = ",".join([author_data1, author_data2, author_data3, author_data4])
-# Librarian
+# Librarian(emp_id, f_name, l_name, gender, lib_id, salary, phone, address)
 librarian_data1 = '(1, "Tommy", "Green", "male", 5, 62000, "0708312182", "Los Santos Boulevard 9")'
 librarian_data2 = '(2, "Ellen", "Dorito", "female", 5, 50000,"0773813209", "Rainbow Road 7")'
 librarian_data3 = '(3, "Monty", "Python", "male", 14, 44000, "0873018467", "Silicon Valley 2")'
 librarian_data = ",".join([librarian_data1, librarian_data2, librarian_data3])
-# Library
+# Library(lib_id, lib_name, address, country, zipcode, company)
 library_data1 = '(5, "Bibblan", "Downtown road 5", "Kalimdor", 52451, "Coop")'
 #library_data2 = '(14, "Lib-town", "Eastern 52", "Outlands", 21451, "ICA")'
 library_data = ",".join([library_data1])
-# Book
+
+# Book(isbn, title, genre, price, author_id, lib_id)
 book_data1 = '(23, "Harry Potter and the Chamber of Secrets", "Fantasy", 200, 1, 5)' # author_id == JK Rowling
 book_data2 = '(19, "Harry Potter and the Prisoner of Azkaban", "Fantasy", 200, 1, 5)' # author_id == JK Rowling
 book_data2 = '(37, "SQL and its Crazy Rave Culture", "Comedy", 100, 6, 5)' 
 book_data3 = '(310, "Yatzy Rules", "Manual", 40, NULL, 5)' 
 book_data4 = '(212, "Poker guide for newbies", "Manual", 45, NULL, 5)' 
 book_data = ",".join([book_data1, book_data2, book_data3, book_data4])
-# Loans
+# Loans(user_id, isbn, issued, due_date)
 loans_data1 = '(12, 310, "2022-04-20", "2022-05-20")'   # Migge --> Yatzy
 loans_data2 = '(12, 212, "2022-04-22", "2022-05-22")'   # Migge --> Poker
-loans_data3 = '(30,  19,  "2022-04-20", "2022-05-20")'   # Lukas --> Poker
-#loans_data4 = '(54,  37,  "2022-06-09", "2022-07-04")'
-loans_data = ",".join([loans_data1, loans_data2, loans_data3])
-# Works at
-works_at_data1 = '(1, 5, "2019-09-16")'
-works_at_data2 = '(3, 5, "2020-02-05")'
-works_at_data3 = '(2, 14, "2010-01-29")'
-works_at_data = ",".join([works_at_data1, works_at_data2, works_at_data3])
-# Stored in
-stored_in_data1 = '(23, 5)' # isbn 23 stored in library with id 5
-stored_in_data2 = '(23, 14)'
-stored_in_data3 = '(37, 14)'
-stored_in_data4 = '(310, 14)'
-stored_in_data5 = '(310, 5)'
-stored_in_data6 = '(212, 5)'
-stored_in_data7 = '(19, 5)'
-stored_in_data8 = '(19, 14)'
-stored_in_data = ",".join([stored_in_data1, stored_in_data2,stored_in_data3,stored_in_data4,stored_in_data5,stored_in_data6,stored_in_data7,stored_in_data8])
+loans_data3 = '(30,  19,  "2022-02-12", "2022-03-12")'   # Lukas --> Poker
+loans_data4 = '(54,  37,  "2022-06-09", "2022-07-04")'
+loans_data = ",".join([loans_data1, loans_data2, loans_data3, loans_data4])
 # ========= DATA END ===========================================================================
 
-# Query Ideas
-# Select the authors names who's books are borrowed at the moment
-# Select the price of books who are borrowed at the moment
-# Select the names of users that are also employees if they have borrowed any books
 
-user_attr = """user_id int,
-                f_name varchar(12),
-                l_name varchar(20),
-                gender varchar(10),
-                email varchar(40),
-                phone int,
+user_attr =  """user_id int, f_name varchar(12), l_name varchar(20),
+                gender varchar(10), email varchar(40), phone int,
                 address varchar(30),
                 PRIMARY KEY (user_id)"""
 
-librarian_attr = """emp_id int,
-                    f_name varchar(12),
-                    l_name varchar(20),
-                    gender varchar(10),
-                    lib_id int,
-                    salary int,
-                    phone int,
+librarian_attr = """emp_id int, f_name varchar(12), l_name varchar(20),
+                    gender varchar(10), lib_id int, salary int, phone int,
                     address varchar(30),
                     PRIMARY KEY (emp_id)"""
 
-book_attr = """isbn int, 
-               title varchar(45),
-               genre varchar(20),
-               price int,
-               author_id int,
-               lib_id int,
+book_attr = """isbn int, title varchar(45), genre varchar(20),
+               price int, author_id int, lib_id int,
                PRIMARY KEY (isbn)"""
 
-library_attr = """lib_id int,
-                  lib_name varchar(18),
-                  address varchar(20),
-                  city varchar(16),
-                  zipcode int,
-                  company varchar(20),
+library_attr = """lib_id int, lib_name varchar(18), address varchar(20),
+                  city varchar(16), zipcode int, company varchar(20),
                   PRIMARY KEY (lib_id)"""
 
-author_attr = """author_id int,
-                 f_name varchar(12),
-                 l_name varchar(20),
+author_attr = """author_id int, f_name varchar(12), l_name varchar(20),
                  PRIMARY KEY (author_id)"""
 
-# Fix references..
 
-loans_attr = """user_id int,
-                isbn int,
-                issued date,
-                due_date date,
+loans_attr = """user_id int, isbn int, issued date, due_date date,
                 PRIMARY KEY (user_id, isbn)"""
 
-stored_in_attr = "isbn int, lib_id int, PRIMARY KEY(isbn, lib_id)"
 
 
 def employee_view():
@@ -117,7 +75,7 @@ def get_employees():
     return query
 
 def add_FK(table, target_table, key):
-    query = f"""alter table {table} add foreign key ({key}) references {target_table}({key});"""
+    query = f"{table} ADD FOREIGN KEY({key}) REFERENCES {target_table}({key});"
     return query
 
 def get_amount_genres():
@@ -141,13 +99,16 @@ def get_avg_salary():
     query = f"""SELECT AVG(salary) FROM Librarian;"""
     return query
 
+def avg_price_borrowed_books():
+    query = "SELECT AVG(Book.price) FROM Book, loans WHERE Book.isbn=loans.isbn;"
+    return query
 
 def get_all_books():
-    query = "select Book.title, Author.f_name, Author.l_name, Book.genre from Book JOIN Author ON Book.author_id=Author.author_id;"
+    query = "SELECT Book.title, Author.f_name, Author.l_name, Book.genre FROM Book JOIN Author ON Book.author_id=Author.author_id;"
     return query
 
 def book_status(isbn):
-    query = f"select issued, due_date from loans where isbn={isbn};"
+    query = f"SELECT issued, due_date FROM loans WHERE isbn={isbn};"
     return query
 
 def count_books(isbn):
@@ -162,8 +123,6 @@ def get_data(entity):
     elif entity == "author":    return author_data
     elif entity == "book":      return book_data
     elif entity == "loans":     return loans_data
-    elif entity == "works_at":  return works_at_data
-    elif entity == "stored_in": return stored_in_data
 
 def get_attributes(entity):
     entity = entity.lower() 
@@ -173,29 +132,18 @@ def get_attributes(entity):
     elif entity == "library":   return library_attr
     elif entity == "author":    return author_attr
     elif entity == "loans":     return loans_attr
-    elif entity == "stored_in": return stored_in_attr
     else:
         print("Nothing to return..")
         return ""
 
 
 def create_table(name, attributes):
-    query = f"""
-    CREATE TABLE {name} (
-        {attributes}
-    );
-    """
+    query = f"CREATE TABLE {name} ({attributes});"
     return query
 
 
 def insert_to_table(name, value):
     query = f"INSERT INTO {name} VALUES{value};"
-    #print(query)
     return query
-
-
-
-
-
 
 
