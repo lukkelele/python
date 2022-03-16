@@ -86,10 +86,13 @@ class Admin:
 
 
 
-#if __name__ == "__main__":
-    #admin = Admin("root", "root", "localhost", "library_db")
-    #admin.start()
-    #admin.check_database_existance()
-    #admin.db.commit()
-    #print("Exiting...")
-
+    def insert_data(self):
+        tables = ["User", "Librarian", "Library", "Book", "Author", "has_published", "loans", "works_at"]
+       # for table in tables:
+        #    self.cursor.execute(query.insert_to_table(table, query.get_data(table)))
+        user_data = query.get_data("User")
+        for data in user_data:
+            print(data)
+            self.cursor.execute(query.insert_to_table("User", data))
+        self.db.commit()
+        print("Data inserted.")

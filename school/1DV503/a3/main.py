@@ -29,3 +29,5 @@ db.check_database_existance()
 while True:
     print("Main Menu")
     user_input = input("Input: ")
+    if user_input == '5':
+        db.insert_data()
