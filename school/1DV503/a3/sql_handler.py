@@ -1,21 +1,21 @@
 # SQL queries
 
-# Data
-# ----
+# ========= HARD CODED DATA ===================================================================
 # User
 user_data1= '(1, "Lukas", "Gunnarsson", "male", "lg222xf@student.lnu.se", "0707385418", "Fabriksgatan 13A")'
 user_data2 = '(12, "Migge", "Holm", "male", "migge_rickross@gmail.com", "0723941234", "Bakarvagen 22")'
-user_data = user_data1 + "," + user_data2
+user_data3 = '(54, "Ellen", "Dorito", "female", "dancing_dorito@hotmail.com", "0773813209", "Rainbow Road 7")'
+user_data = ",".join([user_data1, user_data2, user_data3])
 # Author
 author_data1 = '(1, "JK", "Rowling")'
 author_data2 = '(2, "Stan", "Lee")'
 author_data3 = '(3, "Stephen", "King")'
 author_data = ",".join([author_data1, author_data2, author_data3])
 # Librarian
-librarian_data1 = '(1, "Tommy", "Green", "male", "0708312182", "Los Santos Boulevard 9")'
-librarian_data2 = '(2, "Ellen", "Dorito", "female", "0773813209", "Rainbow Road 7")'
-librarian_data2 = '(3, "Monty", "Python", "male", "0873018467", "Silicon Valley 2")'
-librarian_data = ",".join([librarian_data1, librarian_data2])
+librarian_data1 = '(1, "Tommy", "Green", "male", 5, 62000, "0708312182", "Los Santos Boulevard 9")'
+librarian_data2 = '(2, "Ellen", "Dorito", "female", 5, 50000,"0773813209", "Rainbow Road 7")'
+librarian_data3 = '(3, "Monty", "Python", "male", 14, 44000, "0873018467", "Silicon Valley 2")'
+librarian_data = ",".join([librarian_data1, librarian_data2, librarian_data3])
 # Library
 library_data1 = '(5, "Bibblan", "Downtown road 5", "Kalimdor", 52451, "Coop")'
 library_data2 = '(14, "Lib-town", "Eastern 52", "Outlands", 21451, "ICA")'
@@ -29,14 +29,14 @@ book_data = ",".join([book_data1, book_data2, book_data3, book_data4])
 # Loans
 loans_data1 = '(12, 310, "2022-04-20", "2022-05-20")'   # Migge --> Yatzy
 loans_data2 = '(12, 212, "2022-04-22", "2022-05-22")'   # Migge --> Poker
-loans_data3 = '(1,  19,  "2022-04-20", "2022-05-20")'   # Migge --> Poker
+loans_data3 = '(1,  19,  "2022-04-20", "2022-05-20")'   # Lukas --> Poker
 loans_data = ",".join([loans_data1, loans_data2, loans_data3])
 # Works at
 works_at_data1 = '(1, 5, "2019-09-16")'
 works_at_data2 = '(3, 5, "2020-02-05")'
 works_at_data3 = '(2, 14, "2010-01-29")'
 works_at_data = ",".join([works_at_data1, works_at_data2, works_at_data3])
-
+# ========= DATA END ===========================================================================
 
 user_attr = """user_id int,
                 f_name varchar(12),
@@ -51,6 +51,8 @@ librarian_attr = """emp_id int,
                     f_name varchar(12),
                     l_name varchar(20),
                     gender varchar(10),
+                    lib_id int,
+                    salary int,
                     phone int,
                     address varchar(30),
                     PRIMARY KEY (emp_id)"""
@@ -83,12 +85,19 @@ loans_attr = """user_id int,
                 due_date date,
                 PRIMARY KEY (user_id, isbn)"""
 
-works_at_attr = """emp_id int,
-                   lib_id int,
-                   hire_date date,
-                   PRIMARY KEY (emp_id, lib_id)"""
 
+# Fetch the employees that are also registered as a "user"
+def get_users_employed():
+    query = f"""SELECT user_id, U.f_name, U.l_name
+                FROM User AS U JOIN Librarian AS L
+                ON L.f_name=U.f_name AND L.l_name=U.l_name AND L.address=U.address;
+                """
+    return query
 
+# Salary only exists in Librarian therefore no parameters has to be passed to determine the table
+def get_avg_salary():
+    query = f"""SELECT AVG(salary) FROM Librarian;"""
+    return query
 
 
 
@@ -109,7 +118,6 @@ def get_attributes(entity):
     elif entity == "library":   return library_attr
     elif entity == "author":    return author_attr
     elif entity == "loans":     return loans_attr
-    elif entity == "works_at":  return works_at_attr
     else:
         print("Nothing to return..")
         return ""
@@ -128,3 +136,10 @@ def insert_to_table(name, value):
     query = f"INSERT INTO {name} VALUES{value};"
     print(query)
     return query
+
+
+
+
+
+
+

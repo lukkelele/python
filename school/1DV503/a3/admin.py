@@ -77,15 +77,13 @@ class Admin:
         print("Book created.")
         self.cursor.execute(query.create_table("loans", query.get_attributes("loans")))
         print("loans created.")
-        self.cursor.execute(query.create_table("works_at", query.get_attributes("works_at")))
-        print("works_at created.")
         self.db.commit()
         print("Tables created!")
 
 
 
     def insert_data(self):
-        tables = ["User", "Librarian", "Library", "Author", "Book", "loans", "works_at"]
+        tables = ["User", "Librarian", "Library", "Author", "Book", "loans"]
         for table in tables:
             print(f"Current table: {table}")
             table_data = query.get_data(table)
