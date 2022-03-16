@@ -30,8 +30,8 @@ library_data = ",".join([library_data1])
 book_data1 = '(23, "Harry Potter and the Chamber of Secrets", "Fantasy", 200, 1, 5)' # author_id == JK Rowling
 book_data2 = '(19, "Harry Potter and the Prisoner of Azkaban", "Fantasy", 200, 1, 5)' # author_id == JK Rowling
 book_data2 = '(37, "SQL and its Crazy Rave Culture", "Comedy", 100, 6, 5)' 
-book_data3 = '(310, "Yatzy Rules", "Manual", 40, NULL, 5)' 
-book_data4 = '(212, "Poker guide for newbies", "Manual", 45, NULL, 5)' 
+book_data3 = '(310, "Yatzy Rules", "Manual", 40, 2, 5)' 
+book_data4 = '(212, "Poker guide for newbies", "Manual", 45, 2, 5)' 
 book_data = ",".join([book_data1, book_data2, book_data3, book_data4])
 
 # Loans(user_id, isbn, issued, due_date)
@@ -81,7 +81,7 @@ def get_employees():
 
 # Query to add a new foreign key
 def add_FK(table, target_table, key):
-    query = f"{table} ADD FOREIGN KEY({key}) REFERENCES {target_table}({key});"
+    query = f"ALTER TABLE {table} ADD FOREIGN KEY({key}) REFERENCES {target_table}({key});"
     return query
 
 # Query to return all book genres and counts the times each genre occurs
@@ -90,7 +90,7 @@ def get_amount_genres():
     return query
 
 def get_users_loaned():
-    query = "SELECT DISTINCT U.f_name, U.l_name from User as U, loans as L WHERE U.user_id=L.user_id;"
+    query = "SELECT U.f_name, U.l_name, B.title FROM User as U, loans as L, Book as B WHERE U.user_id=L.user_id AND L.isbn=B.isbn;"
     return query
 
 # Fetch the employees that are also registered as a "user"
@@ -113,7 +113,7 @@ def avg_price_borrowed_books():
 
 # Displays all books 
 def get_all_books():
-    query = "SELECT Book.title, Author.f_name, Author.l_name, Book.genre FROM Book JOIN Author ON Book.author_id=Author.author_id;"
+    query = "SELECT Book.title, Author.f_name, Author.l_name, Book.genre, Book.isbn FROM Book JOIN Author ON Book.author_id=Author.author_id;"
     return query
 
 # Returns the issue and return date for a passed isbn number

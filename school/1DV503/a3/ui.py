@@ -1,4 +1,4 @@
-size = 50       # Size of menu border
+size = 84       # Size of menu border
 
 def get_input():
     show_option("")     # insert new line between menu options and input
@@ -11,7 +11,7 @@ def get_input():
 
 def main_menu():
     print_border(size)
-    show_option("(1)  Search")
+    show_option("(1)  Search book by title")
     show_option("(2)  Display all tables")
     show_option("(3)  Display all books")
     show_option("(4)  Check book status")

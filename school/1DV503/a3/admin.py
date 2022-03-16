@@ -120,7 +120,7 @@ class Admin:
         self.cursor.execute(query.get_users_employed())
         print("\n====================================\n| EMPLOYED USERS:")
         for employed_user in self.cursor:
-            print("| "+str(employed_user)[2:-3])
+            print("| "+str(employed_user)[2:-2])
         print("====================================\n")
 
     # Displays all books within the 'Book' entity
@@ -128,7 +128,7 @@ class Admin:
         self.cursor.execute(query.get_all_books())
         print("\n====================================\n| ALL BOOKS:")
         for result in self.cursor:
-            print(result)
+            print(str(result)[2:-2])
         print("====================================\n")
 
     # Checks the passed isbn if any books with the same isbn are available 
@@ -155,7 +155,7 @@ class Admin:
         self.cursor.execute(query.get_avg_salary())
         print("\n====================================\n| AVERAGE SALARY:")
         for result in self.cursor:  # if borrowed, count the amount
-            print(str(result)[2:-3])
+            print(str(result)[10:-4])
         print("====================================\n")
 
     # Display all borrowed booys
@@ -163,7 +163,7 @@ class Admin:
         self.cursor.execute(query.get_users_loaned())
         print("\n====================================\n| BOOKS OUT ON LOAN:")
         for result in self.cursor:  # if borrowed, count the amount
-            print(str(result)[2:-3])
+            print(str(result)[2:-2])
         print("====================================\n")
 
     # Display all genres and count them
@@ -171,15 +171,15 @@ class Admin:
         self.cursor.execute(query.get_amount_genres())
         print("\n====================================\n| GENRES:")
         for result in self.cursor:  # if borrowed, count the amount
-            print(str(result)[2:-3])
+            print(str(result)[2:-1])
         print("====================================\n")
 
     
     def avg_price_borrowed(self):
-        self.cursor.execute(query.get_amount_genres())
+        self.cursor.execute(query.avg_price_borrowed_books())
         print("\n====================================\n| AVG PRICE ON LOANED BOOK:")
         for result in self.cursor:  # if borrowed, count the amount
-            print(str(result)[2:-3])
+            print(str(result)[10:-4])
         print("====================================\n")
 
 
