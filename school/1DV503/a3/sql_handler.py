@@ -5,12 +5,14 @@
 user_data1= '(1, "Lukas", "Gunnarsson", "male", "lg222xf@student.lnu.se", "0707385418", "Fabriksgatan 13A")'
 user_data2 = '(12, "Migge", "Holm", "male", "migge_rickross@gmail.com", "0723941234", "Bakarvagen 22")'
 user_data3 = '(54, "Ellen", "Dorito", "female", "dancing_dorito@hotmail.com", "0773813209", "Rainbow Road 7")'
-user_data = ",".join([user_data1, user_data2, user_data3])
+user_data4 = '(30, "Bengt", "Eldorado", "male", "Bingo_Bengan@outlook.com", "0853538563", "Lyckogatan 21")'
+user_data = ",".join([user_data1, user_data2, user_data3, user_data4])
 # Author
 author_data1 = '(1, "JK", "Rowling")'
 author_data2 = '(2, "Stan", "Lee")'
 author_data3 = '(3, "Stephen", "King")'
-author_data = ",".join([author_data1, author_data2, author_data3])
+author_data4 = '(6, "Lukas", "Gunnarsson")'
+author_data = ",".join([author_data1, author_data2, author_data3, author_data4])
 # Librarian
 librarian_data1 = '(1, "Tommy", "Green", "male", 5, 62000, "0708312182", "Los Santos Boulevard 9")'
 librarian_data2 = '(2, "Ellen", "Dorito", "female", 5, 50000,"0773813209", "Rainbow Road 7")'
@@ -23,6 +25,7 @@ library_data = ",".join([librarian_data1, librarian_data2])
 # Book
 book_data1 = '(23, "Harry Potter and the Chamber of Secrets", "Fantasy", 200, 1)' # author_id == JK Rowling
 book_data2 = '(19, "Harry Potter and the Prisoner of Azkaban", "Fantasy", 200, 1)' # author_id == JK Rowling
+book_data2 = '(37, "SQL and its Crazy Rave Culture", "Comedy", 100, 6)' 
 book_data3 = '(310, "Yatzy Rules", "Manual", 40, NULL)' 
 book_data4 = '(212, "Poker guide for newbies", "Manual", 45, NULL)' 
 book_data = ",".join([book_data1, book_data2, book_data3, book_data4])
@@ -30,13 +33,19 @@ book_data = ",".join([book_data1, book_data2, book_data3, book_data4])
 loans_data1 = '(12, 310, "2022-04-20", "2022-05-20")'   # Migge --> Yatzy
 loans_data2 = '(12, 212, "2022-04-22", "2022-05-22")'   # Migge --> Poker
 loans_data3 = '(1,  19,  "2022-04-20", "2022-05-20")'   # Lukas --> Poker
-loans_data = ",".join([loans_data1, loans_data2, loans_data3])
+loans_data4 = '(54,  37,  "2022-06-09", "2022-07-04")'
+loans_data = ",".join([loans_data1, loans_data2, loans_data3, loans_data4])
 # Works at
 works_at_data1 = '(1, 5, "2019-09-16")'
 works_at_data2 = '(3, 5, "2020-02-05")'
 works_at_data3 = '(2, 14, "2010-01-29")'
 works_at_data = ",".join([works_at_data1, works_at_data2, works_at_data3])
 # ========= DATA END ===========================================================================
+
+# Query Ideas
+# Select the authors names who's books are borrowed at the moment
+# Select the price of books who are borrowed at the moment
+# Select the names of users that are also employees if they have borrowed any books
 
 user_attr = """user_id int,
                 f_name varchar(12),
@@ -85,6 +94,15 @@ loans_attr = """user_id int,
                 due_date date,
                 PRIMARY KEY (user_id, isbn)"""
 
+
+
+def get_amount_genres():
+    query = "SELECT Book.genre, COUNT(*) FROM Book GROUP BY Book.genre HAVING COUNT(*) > 1;"
+    return query
+
+def get_users_loaned():
+    query = "SELECT DISTINCT U.f_name, U.l_name from User as U, loans as L WHERE U.user_id=L.user_id;"
+    return query
 
 # Fetch the employees that are also registered as a "user"
 def get_users_employed():

@@ -1,6 +1,8 @@
 # Ignore list
 # '**/' to ignore in all directories
 
+**/*.odt
+**/*.odt#
 **/*.zip
 **/lg222xf_*/
 **/sims4_mod/
