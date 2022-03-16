@@ -11,7 +11,6 @@ class Admin:
         self.db_name = db_name
         self.connection_flag = False
     
-    
     # Connect to database with passed parameters.
     # If passed database name isn't valid, connect without one specified.
     def connect_database(self):

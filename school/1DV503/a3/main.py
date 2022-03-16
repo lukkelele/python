@@ -1,32 +1,18 @@
 import admin as a
 import ui
 
-# ---- Relation Schema ----
-# ======================================================================
-# User (user_id, f_name, l_name, gender, email, phone, address)
-# Librarian (emp_id, f_name, l_name, gender, phone, address)
-# Library (lib_id, lib_name, address, city, zipcode, country, company)
-# Book (isbn, title, genre, price, publication)
-# Author (author_id, f_name, l_name)
-# 
-# has_published(author_id, isbn)
-# loans(user_id, isbn, issued, due_date, fine)
-# works_at(emp_id, lib_number, hire_date)
-#
-#
-# =====================================================================
-
+# Login credentials
 user = "root"
 passwd = "root"
 host = "localhost"
 db_name = "library_db"
 
-
+# Connect to database
 db = a.Admin(user, passwd, host, db_name)
 db.start()
 db.check_database_existance()
 
-
+# Loop the main menu until user wants to quit
 user_input = '0' # to enter loop
 while user_input != 'q':
     ui.main_menu()
