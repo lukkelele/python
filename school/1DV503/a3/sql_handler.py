@@ -21,14 +21,17 @@ library_data1 = '(5, "Bibblan", "Downtown road 5", "Kalimdor", 52451, "Coop")'
 library_data2 = '(14, "Lib-town", "Eastern 52", "Outlands", 21451, "ICA")'
 library_data = ",".join([librarian_data1, librarian_data2])
 # Book
-book_data1 = '(23, "Harry Potter and the Chamber of Secrets", "Fantasy", )'
-
+book_data1 = '(23, "Harry Potter and the Chamber of Secrets", "Fantasy", 200, 1)' # author_id == JK Rowling
+book_data2 = '(19, "Harry Potter and the Prisoner of Azkaban", "Fantasy", 200, 1)' # author_id == JK Rowling
+book_data3 = '(310, "Yatzy Rules", "Manual", 40, NULL)' 
+book_data4 = '(212, "Poker guide for newbies", "Manual", 45, NULL)' 
+book_data = ",".join([book_data1, book_data2, book_data3, book_data4])
 
 user_attr = """user_id int,
                 f_name varchar(12),
                 l_name varchar(20),
                 gender varchar(10),
-                email varchar(32),
+                email varchar(40),
                 phone int,
                 address varchar(30),
                 PRIMARY KEY (user_id)"""
@@ -42,10 +45,10 @@ librarian_attr = """emp_id int,
                     PRIMARY KEY (emp_id)"""
 
 book_attr = """isbn int, 
-               title varchar(32),
+               title varchar(45),
                genre varchar(20),
                price int,
-               publication int, 
+               author_id int,
                PRIMARY KEY (isbn)"""
 
 library_attr = """lib_id int,
@@ -65,6 +68,7 @@ author_attr = """author_id int,
 has_published_attr = """author_id int,
                         isbn int,
                         publisher varchar(20),
+                        publish_date date,
                         PRIMARY KEY (author_id, isbn),
                         FOREIGN KEY author_key (author_id) REFERENCES Author(author_id),
                         FOREIGN KEY isbn_key (isbn) REFERENCES Book(isbn)"""
@@ -87,6 +91,7 @@ def get_data(entity):
     if entity == "user": return user_data
     elif entity == "librarian": return librarian_data
     elif entity == "author": return author_data
+    elif entity == "book":   return book_data
 
 
 def get_attributes(entity):

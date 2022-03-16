@@ -87,7 +87,7 @@ class Admin:
 
 
     def insert_data(self):
-        tables = ["User", "Librarian", "Library", "Book", "Author", "has_published", "loans", "works_at"]
+        tables = ["User", "Librarian", "Library", "Author", "Book", "has_published", "loans", "works_at"]
         for table in tables:
             print(f"Current table: {table}")
             table_data = query.get_data(table)
