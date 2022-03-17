@@ -1,6 +1,7 @@
 # Ignore list
 # '**/' to ignore in all directories
 
+**/*.pdf
 **/*.odt
 **/*.odt#
 **/*.zip
