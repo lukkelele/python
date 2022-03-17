@@ -9,20 +9,11 @@ class Solution:
             return False
         end = len_s - 1
         index = 0
-        flag = False
-        if s[index] == s[index+1]:
-            flag = True
-        while index < half and flag == False:
-            if s[index] != s[end-index]:
-                return False
-            index += 1
-        if flag == False: return True
-        else:
-            index = 0
-            if len_s == 2:
-                return True
-            while index < end:
-                if s[index] != s[index+1]:
-                    return False
+        while index < end:
+            if s[index] == s[index+1]:
                 index += 2
-            return True
+            else:
+                if s[index] != s[end-index]:
+                    return False
+                index += 1
+        return True
