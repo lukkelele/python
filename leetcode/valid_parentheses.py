@@ -3,43 +3,34 @@
 
 class Solution:
     def isValid(self, s: str) -> bool:
+        # Stack open brackets
+        brackets = ["(", "[", "{", ")", "]", "}"]
         closing = [")", "]", "}"]
-        brackets = ["(", "[", "{"]
+        opening = ["(", "[", "{"]
         len_s = len(s)
-        if len_s % 2 != 0:
-            return False
         half = (len_s/2) - 1
         end = len_s - 1
-        index = 0
-        try:
-            # if no error is raised the opening character is a closing bracket
-            closing.index(s[index])
+        stack = []
+        if len_s % 2 != 0:
             return False
-        except:
-            # IndexError -> not a closing bracket
-            print("First character was NOT a closing bracket.")
-            mirror = ""
-            sub_string = ""
-            res = ""
-            for character in s:
-                print(f"char: {character}")
-                if character == "(": mirror += ")"
-                elif character == "[": mirror += "]"
-                elif character == "{": mirror += "}"
-                for bracket in closing:
-                    if character == bracket:
-                        print(f"Closing bracket detected.\ns.index(character) = {s.index(character)}")
-                        sub_string = s[s.index(character):len(mirror)+s.index(character)]
-                        print(f"sub_string ==> {sub_string}\nmirror ==> {mirror}")
-                        if mirror == sub_string:
-                            return True
-                        else: return False
-
-
-
-
-
-
+        for closing_bracket in closing:
+            if s[0] == closing_bracket: return False
+        for opening_bracket in opening:
+            if s[end] == opening_bracket: return False
+        for c in s:
+            for bracket in brackets:
+                if c == "(" or c == "[" or c == "{": stack.append(c) 
+                elif c == ")":
+                    if stack[(len(stack)-1)] == "(": stack.pop(len(stack)-1)
+                    else: return False
+                elif c == "]":
+                    if stack[(len(stack)-1)] == "[": stack.pop(len(stack)-1)
+                    else: return False
+                elif c == "}":
+                    if stack[(len(stack)-1)] == "{": stack.pop(len(stack)-1)
+                    else: return False
+        if len(stack) > 0: return False
+        else: return True
 
 
 
@@ -50,4 +41,4 @@ s2 = "{[]}"
 s3 = "([)]"
 s4 = "({[)"
 
-print(sol.isValid(s4))
+print(sol.isValid(s1))
