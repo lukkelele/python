@@ -39,6 +39,7 @@ x_negative_values.sort(reverse=False)
 y_values.sort()
 y_negative_values.sort(reverse=False)
 
+# Feature vectors sorted
 X = x_negative_values + x_values
 Y = y_negative_values + y_values
 XY = []
