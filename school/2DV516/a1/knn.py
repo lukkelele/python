@@ -28,7 +28,7 @@ def calc_euclidean_distance(z):
     distances = []
     for row in x_values:        # row[0] and row[1] --> x0 , x1
         d = math.pow((z0 - float(row[1])), 2) + math.pow((z1 - float(row[1])), 2)
-        distances.append([d, row[0], row[1]])
+        distances.append([d, row[0], row[1], row[2]])
     # All distances calculated
     distances.sort()
     return distances
@@ -44,6 +44,13 @@ def find_neighbors(z, k):
     print("Neighbors found!")
     for n in neighbors:
         print(n)
+    return neighbors
+
+
+def get_point_y(z, k):
+    # Get neighbors
+    n = find_neighbors(z, k)
+
 
 
 with open('./A1_datasets/microchips.csv') as csv_data:
@@ -52,7 +59,7 @@ with open('./A1_datasets/microchips.csv') as csv_data:
         x0_val = row[0]
         x1_val = row[1]
         y_val = row[2]
-        x_values.append([x0_val, x1_val]) 
+        x_values.append([x0_val, x1_val, y_val]) 
 
 
 find_neighbors(chip1, 3)
