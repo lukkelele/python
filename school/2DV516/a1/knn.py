@@ -1,6 +1,8 @@
+from matplotlib import pyplot as p
+import math
 import csv
 import numpy as np
-from matplotlib import pyplot as p
+
 
 
 # Calculate distance for x
@@ -8,44 +10,49 @@ from matplotlib import pyplot as p
 # Select k rows 
 # Calculate the mean
 
+
+# PLOT THE ORIGINAL DATA
+x_values = []
+y_values = []
+
 chip1 = [-0.3, 1]
 chip2 = [-0.5, -0.1]
 chip3 = [0.6, 0]
 
-# PLOT THE ORIGINAL DATA
-x_values = []
-x_negative_values = []
 
-y_values = []
-y_negative_values = []
 
-z_values = []
-z_negative_values = []
+# Calc distance between point z and ALL other points in the data set
+def calc_euclidean_distance(z):
+    z0 = z[0]
+    z1 = z[1]
+    distances = []
+    for row in x_values:        # row[0] and row[1] --> x0 , x1
+        d = math.pow((z0 - float(row[1])), 2) + math.pow((z1 - float(row[1])), 2)
+        distances.append([d, row[0], row[1]])
+    # All distances calculated
+    distances.sort()
+    return distances
+
+# z is the point, k is the number of neighbors
+def find_neighbors(z, k):
+    i = 0
+    neighbors = []
+    d = calc_euclidean_distance(z)
+    while i < k:
+        neighbors.append(d[i])
+        i += 1
+    print("Neighbors found!")
+    for n in neighbors:
+        print(n)
 
 
 with open('./A1_datasets/microchips.csv') as csv_data:
     r = csv.reader(csv_data)
     for row in r:
-        x_val = float(row[0])
-        y_val = float(row[1])
-        z_val = row[2]
-        x_values.append(x_val) if x_val > 0 else x_negative_values.append(x_val)  # Fixed sorting
-        y_values.append(y_val) if y_val > 0 else y_negative_values.append(y_val)
-        
+        x0_val = row[0]
+        x1_val = row[1]
+        y_val = row[2]
+        x_values.append([x0_val, x1_val]) 
 
 
-x_values.sort()
-x_negative_values.sort(reverse=False)
-y_values.sort()
-y_negative_values.sort(reverse=False)
-
-# Feature vectors sorted
-X = x_negative_values + x_values
-Y = y_negative_values + y_values
-XY = []
-
-for x in X:
-    xy = {x, Y[X.index(x)]}
-    XY.append(xy)
-
-print(XY)
+find_neighbors(chip1, 3)
