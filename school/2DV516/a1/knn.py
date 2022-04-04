@@ -75,17 +75,16 @@ def print_result(z, k, s):
 # Run simulation with the list k that hold amount of neighbors per test
 def simulate(k):
     flag = True
-    for n in k:
-        # Check the provided list of k's
-        if n % 2 == 0:
+    for n in k: # Iterate the list k to make sure no even numbers are chosen as neighbor values
+        if n % 2 == 0:  # if even number
             print("Even numbers are not allowed to use as k!")
             flag = False
     if flag == True:
         for i in k: # iterate list k
-            print(f"\n--------------\n| RUNNING k = {i} |")
+            print(f"\n-----------------\n| RUNNING k = {i} |\n-----------------")
             for chip in chips:
                 find_neighbors(chip, i)
-            print(f"--------------")
+            print(f"-----------------")
 
 
 with open('./A1_datasets/microchips.csv') as csv_data:
@@ -94,8 +93,6 @@ with open('./A1_datasets/microchips.csv') as csv_data:
         # row[0] == x0_val  | row[1] == x1_val  | row[2] == y_val
         values.append([row[0], row[1], row[2]]) 
 
-
-#find_neighbors(chip1, 3)
 
 
 simulate(simulation_k)
