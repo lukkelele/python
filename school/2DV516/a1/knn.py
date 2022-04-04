@@ -44,9 +44,8 @@ def find_neighbors(z, k):
     while i < k:
         neighbors.append(d[i])
         i += 1
-    print("\nNeighbors found!\n")
     for n in neighbors:
-        s += n[2]
+        s += int(n[3])
     if s > 1: print(f"{z} ==> OK")
     else: print(f"{z} ==> Fail")
     return neighbors
@@ -61,8 +60,10 @@ def simulate(k):
             flag = False
     if flag == True:
         for i in k: # iterate list k
+            print(f"\n--------------\n| RUNNING k = {i} |")
             for chip in chips:
                 find_neighbors(chip, i)
+            print(f"--------------")
 
 
 with open('./A1_datasets/microchips.csv') as csv_data:
@@ -75,7 +76,7 @@ with open('./A1_datasets/microchips.csv') as csv_data:
 #find_neighbors(chip1, 3)
 
 
-simulate
+simulate(simulation_k)
 
 
 
