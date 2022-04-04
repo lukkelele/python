@@ -10,6 +10,8 @@ import numpy as np
 # Calculate the mean
 
 # PLOT THE ORIGINAL DATA
+csv_path = "./A1_datasets/microchips.csv"
+
 values = []
 y_values = []
 simulation_k = [1, 3, 5, 7]  # k's to be used when simulating
@@ -19,6 +21,17 @@ chip2 = [-0.5, -0.1]
 chip3 = [0.6, 0]
 chips = [chip1, chip2, chip3]
 
+
+
+# Open a csv file and read the data in to the list 'values'
+def open_csv_file(path):
+    try:
+        with open(path) as csv_data:
+            r = csv.reader(csv_data)
+            for row in r:
+                # row[0] == x0_val  | row[1] == x1_val  | row[2] == y_val
+                values.append([row[0], row[1], row[2]]) 
+    except: print("An error has occured!")
 
 # Calc distance between point z and ALL other points in the data set
 # Returns a list with distance for each calculated point
@@ -51,6 +64,7 @@ def find_neighbors(z, k):
     return neighbors
 
 
+
 # Print the result for point z with k neighbors and the sum s
 def print_result(z, k, s):
     if k == 1:
@@ -75,6 +89,9 @@ def print_result(z, k, s):
 # Run simulation with the list k that hold amount of neighbors per test
 def simulate(k):
     flag = True
+    try:
+        open_csv_file(csv_path)
+    except: flag = False  # if any error has occured with opening the file, dont start testing
     for n in k: # Iterate the list k to make sure no even numbers are chosen as neighbor values
         if n % 2 == 0:  # if even number
             print("Even numbers are not allowed to use as k!")
@@ -87,15 +104,7 @@ def simulate(k):
             print(f"-----------------")
 
 
-with open('./A1_datasets/microchips.csv') as csv_data:
-    r = csv.reader(csv_data)
-    for row in r:
-        # row[0] == x0_val  | row[1] == x1_val  | row[2] == y_val
-        values.append([row[0], row[1], row[2]]) 
-
-
 
 simulate(simulation_k)
-
 
 
