@@ -3,6 +3,7 @@ import math
 import csv
 import numpy as np
 
+
 # Calculate distance for x
 # Sort the distance starting with the lowest values
 # Select k rows 
@@ -46,11 +47,32 @@ def find_neighbors(z, k):
         i += 1
     for n in neighbors:
         s += int(n[3])
-    if s > 1: print(f"{z} ==> OK")
-    else: print(f"{z} ==> Fail")
+    print_result(z, k, s)
     return neighbors
 
 
+# Print the result for point z with k neighbors and the sum s
+def print_result(z, k, s):
+    if k == 1:
+        if s == 1: print(f"{z} ==> OK")
+        else: print(f"{z} ==> Fail")
+    elif k == 3:
+        if s > 1: print(f"{z} ==> OK")
+        else: print(f"{z} ==> Fail")
+    elif k == 5:
+        if s > 2: print(f"{z} ==> OK")
+        else: print(f"{z} ==> Fail")
+    elif k == 7:
+        if s > 3: print(f"{z} ==> OK")
+        else: print(f"{z} ==> Fail")
+    else:
+        print("The number could not be run as a value of neighbors.\n"+
+             +"Make sure the numbers are odd.")
+
+
+
+
+# Run simulation with the list k that hold amount of neighbors per test
 def simulate(k):
     flag = True
     for n in k:
