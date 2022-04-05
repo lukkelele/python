@@ -13,7 +13,8 @@ import numpy as np
 csv_path = "./A1_datasets/microchips.csv"
 
 values = []
-y_values = []
+x_axis = []
+y_axis = []
 simulation_k = [1, 3, 5, 7]  # k's to be used when simulating
 
 chip1 = [-0.3, 1]
@@ -81,9 +82,11 @@ def print_result(z, k, s):
         else: print(f"{z} ==> Fail")
     else:
         print("The number could not be run as a value of neighbors.\n"+
-             +"Make sure the numbers are odd.")
+              "Make sure the numbers are odd.")
 
 
+def plot_result(z, k, s):
+    print()
 
 
 # Run simulation with the list k that hold amount of neighbors per test
@@ -100,11 +103,27 @@ def simulate(k):
         for i in k: # iterate list k
             print(f"\n-----------------\n| RUNNING k = {i} |\n-----------------")
             for chip in chips:
-                find_neighbors(chip, i)
-            print(f"-----------------")
+               neighbors = find_neighbors(chip, i)
+               for neighbor in neighbors:
+                   print(f"current neighbor ==> {neighbor}")
 
+            print(f"-----------------")
+    print() # end with newline for cleaner look in terminal
 
 
 simulate(simulation_k)
+
+x_vals = []
+y_vals = []
+for vals in values:
+    x_vals.append(float(vals[0]))
+    y_vals.append(float(vals[1]))
+p.scatter(x_vals, y_vals)
+p.scatter([-1, 0.92], [0.4, 0.2], color="g")
+p.xlabel("x0_val")
+p.ylabel("x1_val")
+p.axis([-1.1, 1.1, -1, 1.2])
+p.show()
+
 
 
