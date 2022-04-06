@@ -116,9 +116,13 @@ simulate(simulation_k)
 x_vals = []
 y_vals = []
 for vals in values:
-    x_vals.append(float(vals[0]))
-    y_vals.append(float(vals[1]))
-p.scatter(x_vals, y_vals)
+    print(vals)
+    print(f"vals[2] == {vals[2]}")
+    point_color = ""
+    if int(vals[2]) == 0: point_color = "r"
+    elif int(vals[2]) == 1: point_color = "g"
+    p.scatter(float(vals[0]), float(vals[1]), color=point_color)
+
 p.scatter([-1, 0.92], [0.4, 0.2], color="g")
 p.xlabel("x0_val")
 p.ylabel("x1_val")
