@@ -42,7 +42,7 @@ def calc_euclidean_distance(z):
     z1 = z[1]
     distances = []
     for row in values:        # row[0] and row[1] --> x0 , x1
-        d = math.pow((z0 - float(row[1])), 2) + math.pow((z1 - float(row[1])), 2)
+        d = math.pow((z0 - float(row[0])), 2) + math.pow((z1 - float(row[1])), 2)
         #print(f"d = {d}")
         distances.append([d, row[0], row[1], row[2]])
     # All distances calculated
