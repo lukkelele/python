@@ -62,10 +62,18 @@ def find_neighbors(z, k):
         i += 1
     for n in neighbors:
         s += int(n[3])
-    print_result(z, k, s)
-    return neighbors
-
-
+    if k == 1:
+        if s == 1: return 1
+        else: return 0
+    elif k == 3:
+        if s > 1: return 1
+        else: return 0
+    elif k == 5:
+        if s > 2: return 1
+        else: return 0
+    elif k == 7:
+        if s > 3: return 1
+        else: return 0
 
 # Print the result for point z with k neighbors and the sum s
 def print_result(z, k, s):
@@ -101,6 +109,27 @@ def print_result(z, k, s):
         print("The number could not be run as a value of neighbors.\n"+
               "Make sure the numbers are odd.")
 
+# Calculate the result for each point in the grid and color accordingly
+def draw_boundary():
+    xx, yy = np.meshgrid(np.arange(-2, 2, 0.1),
+                         np.arange(-2, 2, 0.1)) 
+    x_counter = 0
+    counter = 0
+    x_index = 0
+    y_index = 0
+    while x_counter < 40:
+        #print(f"xx[x_index, 0] == {xx[0, x_index]}")
+        counter = 0
+        while counter < 40:
+        #    print(f"y[i] = {yy[y_index, 0]}") 
+            chips.append([xx[0, x_index], yy[y_index, 0]])
+            counter += 1
+            y_index += 1
+        y_index = 0
+        x_index += 1
+        x_counter += 1
+
+
 def base_plot():
     x_vals = []
     y_vals = []
@@ -126,21 +155,24 @@ def simulate(k):
             print("Even numbers are not allowed to use as k!")
             flag = False
     if flag == True:
+        draw_boundary()
         index_count = 0
         for i in k: # iterate list k
-            print(k)
-            index_count += 1
             print(f"\n-----------------\n| RUNNING k = {i} |\n-----------------")
+            index_count += 1
             base_plot()
             for chip in chips:
-                find_neighbors(chip, i)
+                result = find_neighbors(chip, i)
+                if result == 0: p.scatter(float(chip[0]), float(chip[1]), color="r")
+                elif result == 1: p.scatter(float(chip[0]), float(chip[1]), color="g")
             for chip in chips_result:
-                print(f"chip_result -> {chip}  |  s == {chip[1]}")
+#                print(f"chip_result -> {chip}  |  s == {chip[1]}")
                 if int(chip[1]) == 0: p.scatter(float(chip[0][0]), float(chip[0][1]), color="b")
                 elif int(chip[1]) == 1: p.scatter(float(chip[0][0]), float(chip[0][1]), color="c")
             p.subplot(2, 2, index_count)
             p.title(f"k == {i}")
-            
+
+
 # chips_result holds a list of three items per k.
 # index 0 holds k = 1, index 1 holds k = 3 etc.
 # index 3 --> k = 7
@@ -149,6 +181,5 @@ def simulate(k):
 simulate(simulation_k)
 p.subplots_adjust(wspace=0.4, hspace=0.4)
 p.show()
-
 
 
