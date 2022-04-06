@@ -4,17 +4,9 @@ import csv
 import numpy as np
 
 
-# Calculate distance for x
-# Sort the distance starting with the lowest values
-# Select k rows 
-# Calculate the mean
-
-# PLOT THE ORIGINAL DATA
 csv_path = "./A1_datasets/microchips.csv"
 
 values = []
-x_axis = []
-y_axis = []
 simulation_k = [1, 3, 5, 7]  # k's to be used when simulating
 
 chip1 = [-0.3, 1]
@@ -85,8 +77,7 @@ def print_result(z, k, s):
         print(f"{z} ==> Fail")
         chips_result.append([z, 0]) 
 
-# Calculate the result for each point in the grid and color accordingly
-def draw_boundary():
+def draw_grid():
     xx, yy = np.meshgrid(np.arange(-2, 2, 0.1),
                          np.arange(-2, 2, 0.1)) 
     x_counter = 0
@@ -94,10 +85,8 @@ def draw_boundary():
     x_index = 0
     y_index = 0
     while x_counter < 40:
-        #print(f"xx[x_index, 0] == {xx[0, x_index]}")
         counter = 0
         while counter < 40:
-        #    print(f"y[i] = {yy[y_index, 0]}") 
             chips.append([xx[0, x_index], yy[y_index, 0]])
             counter += 1
             y_index += 1
@@ -131,7 +120,7 @@ def simulate(k):
             print("Even numbers are not allowed to use as k!")
             flag = False
     if flag == True:
-        draw_boundary()
+        draw_grid()
         base_plot()
         index_count = 0
         for i in k: # iterate list k
