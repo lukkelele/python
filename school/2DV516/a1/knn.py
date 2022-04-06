@@ -21,7 +21,7 @@ chip1 = [-0.3, 1]
 chip2 = [-0.5, -0.1]
 chip3 = [0.6, 0]
 chips = [chip1, chip2, chip3]
-
+chips_result = []
 
 
 # Open a csv file and read the data in to the list 'values'
@@ -31,6 +31,7 @@ def open_csv_file(path):
             r = csv.reader(csv_data)
             for row in r:
                 # row[0] == x0_val  | row[1] == x1_val  | row[2] == y_val
+                print(row)
                 values.append([row[0], row[1], row[2]]) 
     except: print("An error has occured!")
 
@@ -68,6 +69,7 @@ def find_neighbors(z, k):
 
 # Print the result for point z with k neighbors and the sum s
 def print_result(z, k, s):
+    chips_result.append([z, round(s/k), k])  # z == chip
     if k == 1:
         if s == 1: print(f"{z} ==> OK")
         else: print(f"{z} ==> Fail")
@@ -84,9 +86,17 @@ def print_result(z, k, s):
         print("The number could not be run as a value of neighbors.\n"+
               "Make sure the numbers are odd.")
 
+def base_plot():
+    x_vals = []
+    y_vals = []
+    for vals in values:
+        point_color = ""
+        if int(vals[2]) == 0: point_color = "r"
+        elif int(vals[2]) == 1: point_color = "g"
+        x_vals.append(float(vals[0]))
+        y_vals.append(float(vals[1]))
+        p.scatter(float(vals[0]), float(vals[1]), color=point_color)
 
-def plot_result(z, k, s):
-    print()
 
 
 # Run simulation with the list k that hold amount of neighbors per test
@@ -100,15 +110,23 @@ def simulate(k):
             print("Even numbers are not allowed to use as k!")
             flag = False
     if flag == True:
+        index_count = 0
         for i in k: # iterate list k
+            index_count += 1
             print(f"\n-----------------\n| RUNNING k = {i} |\n-----------------")
-            for chip in chips:
-               neighbors = find_neighbors(chip, i)
-               for neighbor in neighbors:
-                   print(f"current neighbor ==> {neighbor}")
-
-            print(f"-----------------")
-    print() # end with newline for cleaner look in terminal
+            base_plot()
+            print("base plot ran")
+            for chip in chips_result:
+                print(f"chip -> {chip}")
+                neighbors = find_neighbors(chip, i)
+                if chip[2] == 0: p.scatter(chip[0], chip[1], color="b")
+                elif chip[2] == 1: p.scatter(chip[0], chip[1], color="b")
+            p.subplot(2, 2, index_count)
+            print("subplot -- pass")
+                
+# chips_result holds a list of three items per k.
+# index 0 holds k = 1, index 1 holds k = 3 etc.
+# index 3 --> k = 7
 
 
 simulate(simulation_k)
@@ -116,17 +134,20 @@ simulate(simulation_k)
 x_vals = []
 y_vals = []
 for vals in values:
-    print(vals)
-    print(f"vals[2] == {vals[2]}")
     point_color = ""
     if int(vals[2]) == 0: point_color = "r"
     elif int(vals[2]) == 1: point_color = "g"
+    x_vals.append(float(vals[0]))
+    y_vals.append(float(vals[1]))
     p.scatter(float(vals[0]), float(vals[1]), color=point_color)
 
-p.scatter([-1, 0.92], [0.4, 0.2], color="g")
+    
+#p.subplot(2, 2, 1)
+#p.scatter(x_vals, y_vals)
+#p.plot(x_vals, y_vals)
 p.xlabel("x0_val")
 p.ylabel("x1_val")
-p.axis([-1.1, 1.1, -1, 1.2])
+p.axis([-1, 1.4, -1.3, 1.4])
 p.show()
 
 
