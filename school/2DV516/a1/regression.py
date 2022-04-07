@@ -3,9 +3,9 @@ import numpy as np
 import csv
 import math
 
-
 csv_path = "./A1_datasets/polynomial200.csv"
 
+global data
 
 # Open a csv file and read the data in to the list 'data'
 def open_csv_file(path):
@@ -14,7 +14,7 @@ def open_csv_file(path):
             data = []
             r = csv.reader(csv_data)
             for row in r:
-                data.append([row[0], row[1]])
+                data.append([float(row[0]), float(row[1])])
             return np.array(data)                
     except: print("An error has occured!")
 
@@ -48,7 +48,19 @@ def plot_point(x, k):
 
 # Return an array with a amount of equidistant x points
 def get_x_points(a):
-    maximum = a
+    np_maximum = np.max(data, axis=0) 
+    np_minimum = np.min(data, axis=0)
+    maximum = 0
+    minimum = 100
+    for val in np_maximum:
+        if val > maximum:
+            maximum = val
+    for val in np_minimum:
+        if val < minimum:
+            minimum = val
 
 
 data = open_csv_file(csv_path)
+print(np.max(data, axis=0))
+print(np.min(data, axis=0))
+get_x_points(10)
