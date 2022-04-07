@@ -31,10 +31,18 @@ def calc_euclidean_distance(z):
     distances.sort()
     return distances
 
+def plot_data(data_set):
+    for point in data_set:
+        x = float(point[0])
+        y = float(point[1])
+        p.scatter(x, y, color="b", s=6)
+    p.show()
+
+
 # Get average y val for a point z with k neighbors
 def get_average(z, k):
     i = 0
-    s = 0 # sum for likelyhood of OK or FAIL
+    s = 0 
     d = calc_euclidean_distance(z)
     while i < k:
         s += int(d[i][2])   # d[i][2] equals y value for each datapoint
@@ -44,7 +52,7 @@ def get_average(z, k):
 
 def plot_point(x, k):
     y = get_average(x, k)
-    p.plot(x, y)
+    p.plot(x, y, color="r")
 
 # Return an array with a amount of equidistant x points
 def get_x_points(a):
@@ -58,9 +66,14 @@ def get_x_points(a):
     for val in np_minimum:
         if val < minimum:
             minimum = val
+    x_points = np.arange(minimum, maximum, 0.5)
+    return x_points
+
 
 
 data = open_csv_file(csv_path)
-print(np.max(data, axis=0))
-print(np.min(data, axis=0))
-get_x_points(10)
+plot_data(data)
+
+
+
+
