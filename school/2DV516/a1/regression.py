@@ -42,7 +42,7 @@ def validate_point(z):
     x = round(float(z[0]), 2)
     y = round(float(z[1]), 2)
     calculated_y = round(math_function(x), 2)
-    print(f"y1 = {y}\ny2 = {calculated_y}\n")
+    #print(f"y1 = {y}\ny2 = {calculated_y}\n")
     return y == calculated_y 
 
 def calc_error_rate(data_set):
@@ -52,11 +52,11 @@ def calc_error_rate(data_set):
             errors += 1
     return errors 
 
-def plot_data(data_set):
+def plot_data(data_set, c):
     for point in data_set:
         x = float(point[0])
         y = float(point[1])
-        p.scatter(x, y, color="b", s=6)
+        p.scatter(x, y, color=c, s=6)
 
 def calc_euclidean_distance(z):
     z0 = float(z[0])
@@ -97,10 +97,11 @@ def get_neighbors(z, k, data_set):
 
 def plot_boundary(k, data_set):
     x_points = get_x_points(1)
+    y_vals = []
     for x in x_points:
-        y = calculate_y(x, data_set, k)
-        print(f"x: {x}\ny: {y}")
-        p.scatter(x, y, color="k", s=2)
+        y = math_function(x)
+        y_vals.append(y)    
+    p.plot(x_points, y_vals, color="r")
 
 
 def calculate_y(x, data_set, k):
@@ -140,6 +141,7 @@ def get_x_points(a):
     np_maximum = np.max(data, axis=0) 
     np_minimum = np.min(data, axis=0)
     print(f"maximum val ==> {np_maximum}")
+    print(f"minimum val ==> {np_minimum}")
     maximum = 0
     minimum = 100
     for val in np_maximum:
@@ -148,23 +150,16 @@ def get_x_points(a):
     for val in np_minimum:
         if val < minimum:
             minimum = val
-    x_points = np.arange(minimum, maximum, 2)
+    x_points = np.arange(1, 25, 0.1)
     return x_points
 
-def simulate(data_set, k):
-    print(f"Starting simulation!")
-    plot_data(data_set)
-    plot_boundary(k, data_set)    
-
-    p.show()
 
 all_data = open_csv_file(csv_path)
 data = all_data[0]
 training_set = all_data[1]
 
-simulate(data, 3)
 
-#print(calculate_y(12.6806, data, 5))
-
-
-
+plot_data(data, "b")
+plot_data(training_set, "k")
+plot_boundary(3, data)
+p.show()
