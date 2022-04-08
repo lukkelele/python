@@ -57,7 +57,6 @@ def plot_data(data_set):
         x = float(point[0])
         y = float(point[1])
         p.scatter(x, y, color="b", s=6)
-    p.show()
 
 def calc_euclidean_distance(z):
     z0 = float(z[0])
@@ -99,26 +98,42 @@ def get_neighbors(z, k, data_set):
 def plot_boundary(k, data_set):
     x_points = get_x_points(1)
     for x in x_points:
-        y = math_function(x)
+        y = calculate_y(x, data_set, k)
+        print(f"x: {x}\ny: {y}")
         p.scatter(x, y, color="k", s=2)
-    p.show()
 
+
+def calculate_y(x, data_set, k):
+    x_vals = find_close_x_values(x, data_set, k)
+    y_sum = 0
+    len_x_vals = len(x_vals)
+    for x_val in x_vals:
+        if x_val[0] != x:
+            y_sum += x_val[1]
+            #print(f"y_sum: {y_sum}\nx_vals = {x_vals[1]}")
+    if len_x_vals == 0: len_x_vals = 1 
+    average_y = float(y_sum / len_x_vals)
+    #print(f"average_y: {average_y}")
+    return average_y
 
 def find_close_x_values(x, data_set, k):
     data_set = np.sort(data_set, axis=0)
     index_reduction = math.floor(k/2)
+    x_index = 0
     x_vals = []
     for val in data_set:
-        x_vals.append(val[0]) # val[0] == x
-        print(val[0])
-    x_index = x_vals.index(x)
-    print(x_index-index_reduction)
+        x_vals.append(val)
+    #X = np.abs(data_set - x)
+    idx = (np.abs(data_set-x)).argmin()
+    #idx = np.where(X == X.min())
+    x_index = idx
+    print(x_index)
     start = x_index - index_reduction
     stop = x_index + index_reduction + 1
     while stop > len(data_set):
         stop -= 1
     x_vals = x_vals[start:stop]
-    print(x_vals)
+    return x_vals
 
 # Return an array with a amount of equidistant x points
 def get_x_points(a):
@@ -133,18 +148,23 @@ def get_x_points(a):
     for val in np_minimum:
         if val < minimum:
             minimum = val
-    x_points = np.arange(minimum, maximum, 0.5)
+    x_points = np.arange(minimum, maximum, 2)
     return x_points
 
+def simulate(data_set, k):
+    print(f"Starting simulation!")
+    plot_data(data_set)
+    plot_boundary(k, data_set)    
 
+    p.show()
 
 all_data = open_csv_file(csv_path)
 data = all_data[0]
 training_set = all_data[1]
 
+simulate(data, 3)
 
-find_close_x_values(24.51496, data, 5)
-
+#print(calculate_y(12.6806, data, 5))
 
 
 
