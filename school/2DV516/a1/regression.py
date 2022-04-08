@@ -77,17 +77,16 @@ def get_x_points():
     x_points = np.arange(1, 25, 0.2)
     return x_points
 
-def calc_mse(k, data_set):
+def calc_mse(data_set):
     sum_diff = 0
     for z in data_set:
         x = float(z[0])
         y = float(z[1])
         predicted_y = math_function(x)
-        print(f"x: {x}\ny: {y}\npredicted_y: {predicted_y}\n")
         diff = float(y - predicted_y)
         diff = math.pow(diff, 2)
         sum_diff += diff
-    print(f"sum_diff: {sum_diff}")
+    return round(sum_diff, 1)
 
 def get_neighbors(z, k, data_set):
     distances = calc_euclidean_distance(z)
@@ -105,15 +104,16 @@ def simulate(data_set):
     p.suptitle("knn regression")
     for k in iterations:
         print(f"-------------------\n| K == {k} |\n-------------------\n")
-        p.subplot(2,2,i)
+        ax = p.subplot(2,2,i)
+        mse = calc_mse(data_set)  # use in the plotting stage
+        ax.set_title(f"k == {k}\nMSE = {mse}")
         subplot = plot_boundary(k, data_set)
         plot_data(data_set, "b")
-        p.title = f"k == {k}"
         p.plot(subplot[0], subplot[1], color="r")
         i += 1
         print("\n-------------------\n")
+    p.subplots_adjust(wspace=0.6, hspace=0.6)
     p.show()
-    print(f"\nSimulation done!\n")
 
 all_data = open_csv_file(csv_path)
 data = all_data[0]
