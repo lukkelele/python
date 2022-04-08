@@ -30,58 +30,10 @@ def open_csv_file(path):
             return [np_data, training_set]
     except: print("An error has occured!")
 
-
 def math_function(x):
     # f(x) = 5 + 12x - x^2 + 0,025x^3 + normrnd(0,5)
     y = 5 + 12*x - math.pow(x, 2) + 0.025*math.pow(x, 3) + np.random.normal(0.5)
     return y
-
-# Point z --> (x, y)
-# Used for error checking
-def validate_point(z):
-    x = round(float(z[0]), 2)
-    y = round(float(z[1]), 2)
-    calculated_y = round(math_function(x), 2)
-    #print(f"y1 = {y}\ny2 = {calculated_y}\n")
-    return y == calculated_y 
-
-def calc_error_rate(data_set):
-    errors = 0
-    for point in data_set:
-        if validate_point(point) == False:
-            errors += 1
-    return errors 
-
-def plot_data(data_set, c):
-    for point in data_set:
-        x = float(point[0])
-        y = float(point[1])
-        p.scatter(x, y, color=c, s=6)
-
-def plot_boundary(k, data_set):
-    x_points = get_x_points()
-    y_vals = []
-    points = []
-    average_y_vals = []
-    for x in x_points:
-        y = math_function(x)
-        y_vals.append(y)    
-        points.append([x, y])
-    #p.plot(x_points, y_vals, color="r")
-    for point in points:
-        y_sum = 0
-        neighbors = get_neighbors(point, k, data_set)
-        print(f"Neighbors: {neighbors}\n\n")
-        print("POINT -----")
-        for neighbor in neighbors:
-            print(f"Neighbor: {neighbor}")
-            print(f"n[0]: {neighbor[0]}\nn[1]: {neighbor[1]}\nn[2]: {neighbor[2]}\n")
-            y_sum += neighbor[2]    # distance
-        average_y = float(y_sum/k) # the new y
-        print(f"average_y ==> {average_y}\ny_sum: {y_sum}\nlen(neighbors): {len(neighbors)}")
-        average_y_vals.append(average_y)
-        print("\n---------")
-    p.plot(x_points, average_y_vals)
 
 def calc_euclidean_distance(z):
     z0 = float(z[0])
@@ -96,6 +48,47 @@ def calc_euclidean_distance(z):
     dist = np.array(distances)
     return dist
 
+def plot_data(data_set, c):
+    for point in data_set:
+        x = float(point[0])
+        y = float(point[1])
+        p.scatter(x, y, color=c, s=3.5)
+
+def plot_boundary(k, data_set):
+    x_points = get_x_points()
+    y_vals = []
+    average_y_vals = []
+    points = []
+    for x in x_points:
+        y = math_function(x)
+        y_vals.append(y)    
+        points.append([x, y])
+    for point in points:
+        y_sum = 0
+        neighbors = get_neighbors(point, k, data_set)
+        for neighbor in neighbors:
+            y_sum += neighbor[2]   # y value 
+        average_y = float(y_sum/k) # new y value
+        average_y_vals.append(average_y)
+    return [x_points, average_y_vals]
+
+# Return an array with a amount of equidistant x points
+def get_x_points():
+    x_points = np.arange(1, 25, 0.2)
+    return x_points
+
+def calc_mse(k, data_set):
+    sum_diff = 0
+    for z in data_set:
+        x = float(z[0])
+        y = float(z[1])
+        predicted_y = math_function(x)
+        print(f"x: {x}\ny: {y}\npredicted_y: {predicted_y}\n")
+        diff = float(y - predicted_y)
+        diff = math.pow(diff, 2)
+        sum_diff += diff
+    print(f"sum_diff: {sum_diff}")
+
 def get_neighbors(z, k, data_set):
     distances = calc_euclidean_distance(z)
     neighbors = []
@@ -105,19 +98,25 @@ def get_neighbors(z, k, data_set):
         counter += 1
     return neighbors
 
-
-# Return an array with a amount of equidistant x points
-def get_x_points():
-    x_points = np.arange(1, 25, 0.2)
-    return x_points
-
+def simulate(data_set):
+    print("\nStarting...")
+    iterations = [1, 3, 5, 7]
+    i = 1
+    p.suptitle("knn regression")
+    for k in iterations:
+        print(f"-------------------\n| K == {k} |\n-------------------\n")
+        p.subplot(2,2,i)
+        subplot = plot_boundary(k, data_set)
+        plot_data(data_set, "b")
+        p.title = f"k == {k}"
+        p.plot(subplot[0], subplot[1], color="r")
+        i += 1
+        print("\n-------------------\n")
+    p.show()
+    print(f"\nSimulation done!\n")
 
 all_data = open_csv_file(csv_path)
 data = all_data[0]
 training_set = all_data[1]
 
-
-plot_data(data, "b")
-#plot_data(training_set, "k")
-plot_boundary(3, data)
-p.show()
+simulate(data)
