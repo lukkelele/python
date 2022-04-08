@@ -61,10 +61,27 @@ def plot_data(data_set, c):
 def plot_boundary(k, data_set):
     x_points = get_x_points()
     y_vals = []
+    points = []
+    average_y_vals = []
     for x in x_points:
         y = math_function(x)
         y_vals.append(y)    
-    p.plot(x_points, y_vals, color="r")
+        points.append([x, y])
+    #p.plot(x_points, y_vals, color="r")
+    for point in points:
+        y_sum = 0
+        neighbors = get_neighbors(point, k, data_set)
+        print(f"Neighbors: {neighbors}\n\n")
+        print("POINT -----")
+        for neighbor in neighbors:
+            print(f"Neighbor: {neighbor}")
+            print(f"n[0]: {neighbor[0]}\nn[1]: {neighbor[1]}\nn[2]: {neighbor[2]}\n")
+            y_sum += neighbor[2]    # distance
+        average_y = float(y_sum/k) # the new y
+        print(f"average_y ==> {average_y}\ny_sum: {y_sum}\nlen(neighbors): {len(neighbors)}")
+        average_y_vals.append(average_y)
+        print("\n---------")
+    p.plot(x_points, average_y_vals)
 
 def calc_euclidean_distance(z):
     z0 = float(z[0])
@@ -75,8 +92,8 @@ def calc_euclidean_distance(z):
         y = float(row[1])
         d = math.pow((z0 - x), 2) + math.pow((z1 - y), 2)
         distances.append([d, x, y])
+    distances.sort()
     dist = np.array(distances)
-    dist = np.sort(dist, axis=0)
     return dist
 
 def get_neighbors(z, k, data_set):
