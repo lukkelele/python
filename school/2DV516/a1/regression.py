@@ -15,7 +15,8 @@ def open_csv_file(path):
             r = csv.reader(csv_data)
             for row in r:
                 data.append([float(row[0]), float(row[1])])
-            return np.array(data)                
+            np_data = np.array(data)                
+            return np.sort(np_data, axis=0)
     except: print("An error has occured!")
 
 
@@ -29,6 +30,7 @@ def calc_euclidean_distance(z):
         d = math.pow((z0 - x), 2) + math.pow((z1 - y), 2)
         distances.append([d, x, y])
     dist = np.array(distances)
+    dist = np.sort(dist, axis=0)
     return dist
 
 def plot_data(data_set):
@@ -38,28 +40,43 @@ def plot_data(data_set):
         p.scatter(x, y, color="b", s=6)
     p.show()
 
+def find_near_value(x, data_set):
+    index = np.searchsorted(data_set[:, 0], x, side="left")
+    print(f"index: {index}\ndata[index]: {data_set[index]}")
+
+def get_near_values(x, k, data_set):
+    test_set = calc_euclidean_distance(x)
+    counter = 0
+    while counter < k:
+        index = np.searchsorted(test_set[:, counter], x, side="left")
+        print(f"data: {test_set[index]}")
+        counter += 1
+
 # z is a point without y value
-def get_neighbors(z, k, data_set):
-    distances = calc_euclidean_distance([z, 0])
-    min_distance = np.min(distances, axis=0)
-    max_distance = np.max(distances, axis=0)
-    distances = np.sort(distances, axis=0)
-    print(distances)
+def get_neighbors(x, k, data_set):
+    distances = calc_euclidean_distance([x, 0])
+    neighbors = []
+    counter = 0
+    while counter < k:
+        neighbors.append(distances[counter])
+        counter += 1
+    return neighbors
 
-# Get average y val for a point z with k neighbors
-def get_average(z, k):
-    i = 0
-    s = 0 
-    d = calc_euclidean_distance(z)
-    while i < k:
-        s += int(d[i][2])   # d[i][2] equals y value for each datapoint
-        i += 1
-    average = s/k   # divide the sum with the amount of neighbors
-    return average
+def get_y_value(z, k, data_set):
+    neighbors = get_neighbors(z, k, data_set)
+    y_sum = 0
+    for neighbor in neighbors:
+        y_val = neighbor[2]
+        y_sum += y_val
+    y = float(y_sum/k)
+    return y
 
-def plot_point(x, k):
-    y = get_average(x, k)
-    p.plot(x, y, color="r")
+def plot_boundary(k, data_set):
+    x_points = get_x_points(1)
+    for x in x_points:
+        y = get_y_value(x, k, data_set) 
+        p.scatter(x, y, color="k", s=2)
+    #p.show()
 
 # Return an array with a amount of equidistant x points
 def get_x_points(a):
@@ -80,6 +97,10 @@ def get_x_points(a):
 
 data = open_csv_file(csv_path)
 #plot_data(data)
-get_neighbors(2, 2, data)
+#get_neighbors(2, 5, data)
+#get_y_value(2, 5, data)
+#find_near_value(11.09, data)
+get_near_values([5.2,0], 3, data)
+#plot_boundary(5, data)
 
 
