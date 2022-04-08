@@ -40,22 +40,19 @@ def calc_euclidean_distance(z):
     dist = np.sort(dist, axis=0)
     return dist
 
-def find_near_value(x, data_set):
-    index = np.searchsorted(data_set[:, 0], x, side="left")
-    print(f"index: {index}\ndata[index]: {data_set[index]}")
-
 def get_near_values(x, k, data_set):
     y_sum = 0
     counter = 0
+    index = 0
     index = np.searchsorted(data_set[:, 0], x, side="left")
-    index = index[0]
+    #index = index[0]
     close_values = []
     while counter < k:
-        print(f"data: {data_set[index]}")
-        close_values.append(data_set[index])
+        #print(f"data: {data_set[index]}")
+        #close_values.append(data_set[index])
         y_sum += data_set[index][1]
-        index += 1
         counter += 1
+        index += 1
     average = y_sum/k
     print(f"average ==> {average}")
     return average
@@ -82,14 +79,17 @@ def get_y_value(z, k, data_set):
 def plot_boundary(k, data_set):
     x_points = get_x_points(1)
     for x in x_points:
-        y = get_y_value(x, k, data_set) 
+        #y = get_y_value(x, k, data_set) 
+        print(f"current x: {x}")
+        y = get_near_values(x, k, np.sort(data_set, axis=0))
         p.scatter(x, y, color="k", s=2)
-    #p.show()
+    p.show()
 
 # Return an array with a amount of equidistant x points
 def get_x_points(a):
     np_maximum = np.max(data, axis=0) 
     np_minimum = np.min(data, axis=0)
+    print(f"maximum val ==> {np_maximum}")
     maximum = 0
     minimum = 100
     for val in np_maximum:
@@ -107,8 +107,7 @@ data = open_csv_file(csv_path)
 #plot_data(data)
 #get_neighbors(2, 5, data)
 #get_y_value(2, 5, data)
-#find_near_value(11.09, data)
-get_near_values([3.2,0], 3, data)
-#plot_boundary(5, data)
+#get_near_values([3.2,0], 3, data)
+plot_boundary(3, data)
 
 
