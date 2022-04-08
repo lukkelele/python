@@ -72,16 +72,13 @@ def calc_euclidean_distance(z):
     dist = np.sort(dist, axis=0)
     return dist
 
+
 def get_near_values(x, k, data_set):
     y_sum = 0
     counter = 0
     index = 0
     index = np.searchsorted(data_set[:, 0], x, side="left")
-    #index = index[0]
-    close_values = []
     while counter < k:
-        #print(f"data: {data_set[index]}")
-        #close_values.append(data_set[index])
         y_sum += data_set[index][1]
         counter += 1
         index += 1
@@ -90,8 +87,8 @@ def get_near_values(x, k, data_set):
     return average
     
 
-def get_neighbors(x, k, data_set):
-    distances = calc_euclidean_distance([x, 0])
+def get_neighbors(z, k, data_set):
+    distances = calc_euclidean_distance(z)
     neighbors = []
     counter = 0
     while counter < k:
@@ -99,21 +96,29 @@ def get_neighbors(x, k, data_set):
         counter += 1
     return neighbors
 
-def get_y_value(z, k, data_set):
-    neighbors = get_neighbors(z, k, data_set)
-    y_sum = 0
-    for neighbor in neighbors:
-        y_val = neighbor[2]
-        y_sum += y_val
-    y = float(y_sum/k)
-    return y
-
 def plot_boundary(k, data_set):
     x_points = get_x_points(1)
     for x in x_points:
         y = math_function(x)
         p.scatter(x, y, color="k", s=2)
     p.show()
+
+
+def find_close_x_values(x, data_set, k):
+    data_set = np.sort(data_set, axis=0)
+    index_reduction = math.floor(k/2)
+    x_vals = []
+    for val in data_set:
+        x_vals.append(val[0]) # val[0] == x
+        print(val[0])
+    x_index = x_vals.index(x)
+    print(x_index-index_reduction)
+    start = x_index - index_reduction
+    stop = x_index + index_reduction + 1
+    while stop > len(data_set):
+        stop -= 1
+    x_vals = x_vals[start:stop]
+    print(x_vals)
 
 # Return an array with a amount of equidistant x points
 def get_x_points(a):
@@ -137,4 +142,9 @@ all_data = open_csv_file(csv_path)
 data = all_data[0]
 training_set = all_data[1]
 
-print(calc_error_rate(data))
+
+find_close_x_values(24.51496, data, 5)
+
+
+
+
