@@ -26,10 +26,10 @@ def calc_euclidean_distance(z):
     for row in data:        # row[0] and row[1] --> x0 , y
         x = float(row[0])
         y = float(row[1])
-        d = math.pow((z0 - x, 2)) + math.pow((z1 - y, 2))
+        d = math.pow((z0 - x), 2) + math.pow((z1 - y), 2)
         distances.append([d, x, y])
-    distances.sort()
-    return distances
+    dist = np.array(distances)
+    return dist
 
 def plot_data(data_set):
     for point in data_set:
@@ -38,6 +38,13 @@ def plot_data(data_set):
         p.scatter(x, y, color="b", s=6)
     p.show()
 
+# z is a point without y value
+def get_neighbors(z, k, data_set):
+    distances = calc_euclidean_distance([z, 0])
+    min_distance = np.min(distances, axis=0)
+    max_distance = np.max(distances, axis=0)
+    distances = np.sort(distances, axis=0)
+    print(distances)
 
 # Get average y val for a point z with k neighbors
 def get_average(z, k):
@@ -72,8 +79,7 @@ def get_x_points(a):
 
 
 data = open_csv_file(csv_path)
-plot_data(data)
-
-
+#plot_data(data)
+get_neighbors(2, 2, data)
 
 
