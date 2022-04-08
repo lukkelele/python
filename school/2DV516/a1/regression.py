@@ -6,6 +6,7 @@ import math
 csv_path = "./A1_datasets/polynomial200.csv"
 
 global data
+global distances
 
 # Open a csv file and read the data in to the list 'data'
 def open_csv_file(path):
@@ -19,6 +20,12 @@ def open_csv_file(path):
             return np.sort(np_data, axis=0)
     except: print("An error has occured!")
 
+def plot_data(data_set):
+    for point in data_set:
+        x = float(point[0])
+        y = float(point[1])
+        p.scatter(x, y, color="b", s=6)
+    p.show()
 
 def calc_euclidean_distance(z):
     z0 = float(z[0])
@@ -33,26 +40,27 @@ def calc_euclidean_distance(z):
     dist = np.sort(dist, axis=0)
     return dist
 
-def plot_data(data_set):
-    for point in data_set:
-        x = float(point[0])
-        y = float(point[1])
-        p.scatter(x, y, color="b", s=6)
-    p.show()
-
 def find_near_value(x, data_set):
     index = np.searchsorted(data_set[:, 0], x, side="left")
     print(f"index: {index}\ndata[index]: {data_set[index]}")
 
 def get_near_values(x, k, data_set):
-    test_set = calc_euclidean_distance(x)
+    y_sum = 0
     counter = 0
+    index = np.searchsorted(data_set[:, 0], x, side="left")
+    index = index[0]
+    close_values = []
     while counter < k:
-        index = np.searchsorted(test_set[:, counter], x, side="left")
-        print(f"data: {test_set[index]}")
+        print(f"data: {data_set[index]}")
+        close_values.append(data_set[index])
+        y_sum += data_set[index][1]
+        index += 1
         counter += 1
+    average = y_sum/k
+    print(f"average ==> {average}")
+    return average
+    
 
-# z is a point without y value
 def get_neighbors(x, k, data_set):
     distances = calc_euclidean_distance([x, 0])
     neighbors = []
@@ -100,7 +108,7 @@ data = open_csv_file(csv_path)
 #get_neighbors(2, 5, data)
 #get_y_value(2, 5, data)
 #find_near_value(11.09, data)
-get_near_values([5.2,0], 3, data)
+get_near_values([3.2,0], 3, data)
 #plot_boundary(5, data)
 
 
