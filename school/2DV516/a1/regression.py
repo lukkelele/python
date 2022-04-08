@@ -2,23 +2,55 @@ from matplotlib import pyplot as p
 import numpy as np
 import csv
 import math
+import random
 
 csv_path = "./A1_datasets/polynomial200.csv"
 
+global training_set
 global data
 global distances
+
 
 # Open a csv file and read the data in to the list 'data'
 def open_csv_file(path):
     try:
         with open(path) as csv_data:
             data = []
+            training = []
             r = csv.reader(csv_data)
+            count = 0
             for row in r:
-                data.append([float(row[0]), float(row[1])])
+                x = float(row[0])
+                y = float(row[1])
+                if count < 100: data.append([x, y])
+                else: training.append([x, y])
+                count += 1
             np_data = np.array(data)                
-            return np.sort(np_data, axis=0)
+            training_set = np.array(training)
+            return [np_data, training_set]
     except: print("An error has occured!")
+
+
+def math_function(x):
+    # f(x) = 5 + 12x - x^2 + 0,025x^3 + normrnd(0,5)
+    y = 5 + 12*x - math.pow(x, 2) + 0.025*math.pow(x, 3) + np.random.normal(0.5)
+    return y
+
+# Point z --> (x, y)
+# Used for error checking
+def validate_point(z):
+    x = round(float(z[0]), 2)
+    y = round(float(z[1]), 2)
+    calculated_y = round(math_function(x), 2)
+    print(f"y1 = {y}\ny2 = {calculated_y}\n")
+    return y == calculated_y 
+
+def calc_error_rate(data_set):
+    errors = 0
+    for point in data_set:
+        if validate_point(point) == False:
+            errors += 1
+    return errors 
 
 def plot_data(data_set):
     for point in data_set:
@@ -79,9 +111,7 @@ def get_y_value(z, k, data_set):
 def plot_boundary(k, data_set):
     x_points = get_x_points(1)
     for x in x_points:
-        #y = get_y_value(x, k, data_set) 
-        print(f"current x: {x}")
-        y = get_near_values(x, k, np.sort(data_set, axis=0))
+        y = math_function(x)
         p.scatter(x, y, color="k", s=2)
     p.show()
 
@@ -103,11 +133,8 @@ def get_x_points(a):
 
 
 
-data = open_csv_file(csv_path)
-#plot_data(data)
-#get_neighbors(2, 5, data)
-#get_y_value(2, 5, data)
-#get_near_values([3.2,0], 3, data)
-plot_boundary(3, data)
+all_data = open_csv_file(csv_path)
+data = all_data[0]
+training_set = all_data[1]
 
-
+print(calc_error_rate(data))
