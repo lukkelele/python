@@ -6,10 +6,6 @@ import random
 
 csv_path = "./A1_datasets/polynomial200.csv"
 
-global training_set
-global data
-global distances
-
 
 # Open a csv file and read the data in to the list 'data'
 def open_csv_file(path):
@@ -63,12 +59,10 @@ def plot_data(data_set, c):
 def plot_boundary(data_set, k):
     x_points = get_x_points()
     y_vals = []
-    knn_points = []
     for x in x_points:
         y = calc_y_value(x, data_set, k)
         y_vals.append(y)    
     p.plot(x_points, y_vals, color="r")
-    return knn_points
 
 # Return an array with a amount of equidistant x points
 def get_x_points():
@@ -83,25 +77,18 @@ def get_y_difference(z):
     diff = math.pow(diff, 2)
     return diff
 
-def calc_mse(data_set, points):
+def calc_mse(data_set):
     sum_diff = 0
-    idx = 0
-    len_points = len(data_set) + len(points) # all observations
+    len_points = len(data_set)
     for z in data_set:
         diff = get_y_difference(z)
-        sum_diff += diff
-    for point in points: # the decision boundary plot with equidistant x's
-        diff = get_y_difference(point)
-        idx += 1
         sum_diff += diff
     sum_diff = float(sum_diff/len_points)
     print(f"Observations: {len_points}")
     return round(sum_diff, 3)
 
 def calc_error_rate(data_set, k):
-    calc_points = plot_boundary(data_set, k)
-    mse = calc_mse(data_set, calc_points)
-    print(f"MSE: {mse}")
+    mse = calc_mse(data_set)
     return mse 
 
 def simulate_training(data_set):
@@ -109,11 +96,11 @@ def simulate_training(data_set):
     iterations = [1, 3, 5, 7]
     i = 1
     for k in iterations:
-        print(f"== TRAINING SET\n-------------------\n| K == {k} |\n-------------------\n")
+        print(f"\n==== TRAINING SET\n-------------------\n| K == {k} |\n-------------------")
         mse = calc_error_rate(data_set, k)
-        print(f"MSE: {mse}")
+        print(f"MSE = {mse}\n-------------------\n")
         i += 1
-    print("\n===================================================\n") 
+    print("===================================================\n") 
 
 def simulate(data_set, training_set):
     print("\nStarting...")
@@ -122,13 +109,14 @@ def simulate(data_set, training_set):
     i = 1
     p.suptitle("knn regression")
     for k in iterations:
-        print(f"-------------------\n| K == {k} |\n-------------------\n")
+        print(f"-------------------\n| K == {k} |\n-------------------")
         ax = p.subplot(2,2,i)
+        plot_boundary(data_set, k)
         mse = calc_error_rate(data_set, k)
         ax.set_title(f"k == {k}\nMSE = {mse}")
         plot_data(data_set, "b")
         i += 1
-        print("\n-------------------\n")
+        print(f"MSE = {mse}\n-------------------\n")
     p.subplots_adjust(wspace=0.6, hspace=0.6)
     p.show()
 
