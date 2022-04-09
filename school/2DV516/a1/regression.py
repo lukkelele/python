@@ -156,17 +156,25 @@ def find_closest_x(x, data_set, k):
         absolute_val = np.abs(x_values - x)
         idx = absolute_val.argmin()
         print(f"idx: {idx}\nclosest x: {x_values[idx]}\n")
-        close_x.append(x_values[idx])
+        close_x.append(idx)
         x_values = np.delete(x_values, idx, axis=None)
         i += 1
-    print(f"X VALUES: \n{close_x}")
-    print(np.sort(x_values, axis=0))
     return close_x
+
+def calc_y_value(x, data_set, k):
+    x_idx = find_closest_x(x, data_set, k)  # close x indexes
+    y_values = np.take(data_set, x_idx)
+    average_y = float(sum(y_values)/k)
+    return average_y
 
 all_data = open_csv_file(csv_path)
 data = all_data[0]
 training_set = all_data[1]
 
-#simulate(data, training_set)
-find_closest_x(3.6, data, 3)
+simulate(data, training_set)
+#find_closest_x(3.6, data, 3)
+#calc_y_value(3.6, data, 3)
+
+
+
 
