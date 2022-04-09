@@ -48,6 +48,31 @@ def calc_euclidean_distance(z):
     dist = np.array(distances)
     return dist
 
+# Finds closest x values in the data set for a provided x
+def find_closest_x(x, data_set, k):
+    x_values = np.copy(data_set[:, 0])
+    close_x = []
+    i = 0
+    while i < k:
+        absolute_val = np.abs(x_values - x)
+        idx = absolute_val.argmin()
+        close_x.append(idx)
+        x_values = np.delete(x_values, idx, axis=None)
+        i += 1
+    print(f"x_values[idx]: {data_set[:, 1][idx]}")
+    return close_x
+
+def calc_y_value(x, data_set, k):
+    x_idx = find_closest_x(x, data_set, k)  # close x indexes
+    y_values = np.take(data_set[:,1], x_idx)
+    y_sum = 0
+    for y_val in y_values:
+        y_sum += y_val
+    #print(f"y vals ==> {y_values}")
+    average_y = float(y_sum/k)
+    print(f"average_y: {average_y}")
+    return average_y
+
 def plot_data(data_set, c):
     for point in data_set:
         x = float(point[0])
@@ -57,23 +82,12 @@ def plot_data(data_set, c):
 def plot_boundary(data_set, k):
     x_points = get_x_points()
     y_vals = []
-    average_y_vals = []
-    points = []
     knn_points = []
     for x in x_points:
-        y = math_function(x)
+        y = calc_y_value(x, data_set, k)
         y_vals.append(y)    
-        points.append([x, y])
-    for point in points:
-        y_sum = 0
-        x = float(point[0])
-        neighbors = get_neighbors(point, k, data_set)
-        for neighbor in neighbors:
-            y_sum += neighbor[2]   # y value 
-        average_y = float(y_sum/k) # new y value
-        knn_points.append([x, average_y])
-        average_y_vals.append(average_y)
-    p.plot(x_points, average_y_vals, color="r")
+        #print(f"x: {x}          | y: {y}")
+    p.plot(x_points, y_vals, color="r")
     return knn_points
 
 # Return an array with a amount of equidistant x points
@@ -147,32 +161,13 @@ def simulate(data_set, training_set):
     p.subplots_adjust(wspace=0.6, hspace=0.6)
     p.show()
 
-# Finds closest x values in the data set for a provided x
-def find_closest_x(x, data_set, k):
-    x_values = data_set[:, 0]
-    close_x = []
-    i = 0
-    while i < k:
-        absolute_val = np.abs(x_values - x)
-        idx = absolute_val.argmin()
-        print(f"idx: {idx}\nclosest x: {x_values[idx]}\n")
-        close_x.append(idx)
-        x_values = np.delete(x_values, idx, axis=None)
-        i += 1
-    return close_x
-
-def calc_y_value(x, data_set, k):
-    x_idx = find_closest_x(x, data_set, k)  # close x indexes
-    y_values = np.take(data_set, x_idx)
-    average_y = float(sum(y_values)/k)
-    return average_y
 
 all_data = open_csv_file(csv_path)
 data = all_data[0]
 training_set = all_data[1]
 
 simulate(data, training_set)
-#find_closest_x(3.6, data, 3)
+#print(calc_y_value(1.3, data, 1))
 #calc_y_value(3.6, data, 3)
 
 
