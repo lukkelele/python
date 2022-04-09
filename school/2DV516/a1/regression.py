@@ -147,17 +147,26 @@ def simulate(data_set, training_set):
     p.subplots_adjust(wspace=0.6, hspace=0.6)
     p.show()
 
+# Finds closest x values in the data set for a provided x
 def find_closest_x(x, data_set, k):
     x_values = data_set[:, 0]
-    absolute_val = np.abs(x_values - x)
-    idx = absolute_val.argmin()
-    print(f"idx: {idx}\nclosest x: {x_values[idx]}")
-
+    close_x = []
+    i = 0
+    while i < k:
+        absolute_val = np.abs(x_values - x)
+        idx = absolute_val.argmin()
+        print(f"idx: {idx}\nclosest x: {x_values[idx]}\n")
+        close_x.append(x_values[idx])
+        x_values = np.delete(x_values, idx, axis=None)
+        i += 1
+    print(f"X VALUES: \n{close_x}")
+    print(np.sort(x_values, axis=0))
+    return close_x
 
 all_data = open_csv_file(csv_path)
 data = all_data[0]
 training_set = all_data[1]
 
 #simulate(data, training_set)
-find_closest_x(3.5, data, 3)
+find_closest_x(3.6, data, 3)
 
