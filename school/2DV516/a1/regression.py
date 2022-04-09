@@ -35,19 +35,6 @@ def math_function(x):
     y = 5 + 12*x - math.pow(x, 2) + 0.025*math.pow(x, 3) + np.random.normal(0.5)
     return y
 
-def calc_euclidean_distance(z):
-    z0 = float(z[0])
-    z1 = float(z[1])
-    distances = []
-    for row in data:        # row[0] and row[1] --> x0 , y
-        x = float(row[0])
-        y = float(row[1])
-        d = math.pow((z0 - x), 2) + math.pow((z1 - y), 2)
-        distances.append([d, x, y])
-    distances.sort()
-    dist = np.array(distances)
-    return dist
-
 # Finds closest x values in the data set for a provided x
 def find_closest_x(x, data_set, k):
     x_values = np.copy(data_set[:, 0])
@@ -56,21 +43,15 @@ def find_closest_x(x, data_set, k):
     while i < k:
         absolute_val = np.abs(x_values - x)
         idx = absolute_val.argmin()
-        close_x.append(idx)
         x_values = np.delete(x_values, idx, axis=None)
+        close_x.append(idx) # add the indexes for the closest x values
         i += 1
-    print(f"x_values[idx]: {data_set[:, 1][idx]}")
     return close_x
 
 def calc_y_value(x, data_set, k):
     x_idx = find_closest_x(x, data_set, k)  # close x indexes
-    y_values = np.take(data_set[:,1], x_idx)
-    y_sum = 0
-    for y_val in y_values:
-        y_sum += y_val
-    #print(f"y vals ==> {y_values}")
-    average_y = float(y_sum/k)
-    print(f"average_y: {average_y}")
+    y_values = np.take(data_set[:,1], x_idx) # get all y values with the indexes of the close x values
+    average_y = float(sum(y_values)/k)  # average y value of neighbor points 
     return average_y
 
 def plot_data(data_set, c):
@@ -86,7 +67,6 @@ def plot_boundary(data_set, k):
     for x in x_points:
         y = calc_y_value(x, data_set, k)
         y_vals.append(y)    
-        #print(f"x: {x}          | y: {y}")
     p.plot(x_points, y_vals, color="r")
     return knn_points
 
@@ -102,15 +82,6 @@ def get_y_difference(z):
     diff = float(y - predicted_y)
     diff = math.pow(diff, 2)
     return diff
-
-def get_neighbors(z, k, data_set):
-    distances = calc_euclidean_distance(z)
-    neighbors = []
-    counter = 0
-    while counter < k:
-        neighbors.append(distances[counter])
-        counter += 1
-    return neighbors
 
 def calc_mse(data_set, points):
     sum_diff = 0
