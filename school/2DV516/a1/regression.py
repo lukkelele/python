@@ -57,6 +57,7 @@ def plot_data(data_set, c):
 def plot_boundary(k, data_set):
     x_points = get_x_points()
     y_vals = []
+    average_y_vals = []
     points = []
     knn_points = []
     for x in x_points:
@@ -71,6 +72,8 @@ def plot_boundary(k, data_set):
             y_sum += neighbor[2]   # y value 
         average_y = float(y_sum/k) # new y value
         knn_points.append([x, average_y])
+        average_y_vals.append(average_y)
+    p.plot(x_points, average_y_vals, color="r")
     return knn_points
 
 # Return an array with a amount of equidistant x points
@@ -78,29 +81,13 @@ def get_x_points():
     x_points = np.arange(1, 25, 0.2)
     return x_points
 
-def get_predicted_y(z):
+def get_y_difference(z):
     x = float(z[0])
     y = float(z[1])
     predicted_y = math_function(x)
     diff = float(y - predicted_y)
     diff = math.pow(diff, 2)
     return diff
-
-def calc_mse(data_set, points):
-    sum_diff = 0
-    idx = 0
-    len_points = len(data_set) + len(points) # all observations
-    for z in data_set:
-        diff = get_predicted_y(z)
-        sum_diff += diff
-    for point in points: # the decision boundary plot with equidistant x's
-        print(point)
-        diff = get_predicted_y(point)
-        idx += 1
-        sum_diff += diff
-    print(f"len_points: {len(points)}")
-    #sum_diff = float(sum_diff/len_points)
-    return round(sum_diff, 1)
 
 def get_neighbors(z, k, data_set):
     distances = calc_euclidean_distance(z)
@@ -110,6 +97,20 @@ def get_neighbors(z, k, data_set):
         neighbors.append(distances[counter])
         counter += 1
     return neighbors
+
+def calc_mse(data_set, points):
+    sum_diff = 0
+    idx = 0
+    len_points = len(data_set) + len(points) # all observations
+    for z in data_set:
+        diff = get_y_difference(z)
+        sum_diff += diff
+    for point in points: # the decision boundary plot with equidistant x's
+        diff = get_y_difference(point)
+        idx += 1
+        sum_diff += diff
+    sum_diff = float(sum_diff/len_points)
+    return round(sum_diff, 3)
 
 def simulate(data_set):
     print("\nStarting...")
@@ -121,9 +122,9 @@ def simulate(data_set):
         ax = p.subplot(2,2,i)
         subplot = plot_boundary(k, data_set)
         mse = calc_mse(data_set, subplot)  # use in the plotting stage
+        print(f"MSE: {mse}")
         ax.set_title(f"k == {k}\nMSE = {mse}")
         plot_data(data_set, "b")
-        p.plot(subplot[0], subplot[1], color="r")
         i += 1
         print("\n-------------------\n")
     p.subplots_adjust(wspace=0.6, hspace=0.6)
