@@ -110,6 +110,7 @@ def calc_mse(data_set, points):
         idx += 1
         sum_diff += diff
     sum_diff = float(sum_diff/len_points)
+    print(f"Observations: {len_points}\nSummary: {sum_diff}")
     return round(sum_diff, 3)
 
 def simulate(data_set):
@@ -129,6 +130,10 @@ def simulate(data_set):
         print("\n-------------------\n")
     p.subplots_adjust(wspace=0.6, hspace=0.6)
     p.show()
+
+def calc_training_error_rate(data_set, k):
+    subplot = plot_boundary(k, data_set)
+
 
 all_data = open_csv_file(csv_path)
 data = all_data[0]
