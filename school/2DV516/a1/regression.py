@@ -54,7 +54,7 @@ def plot_data(data_set, c):
         y = float(point[1])
         p.scatter(x, y, color=c, s=3.5)
 
-def plot_boundary(k, data_set):
+def plot_boundary(data_set, k):
     x_points = get_x_points()
     y_vals = []
     average_y_vals = []
@@ -110,20 +110,36 @@ def calc_mse(data_set, points):
         idx += 1
         sum_diff += diff
     sum_diff = float(sum_diff/len_points)
-    print(f"Observations: {len_points}\nSummary: {sum_diff}")
+    print(f"Observations: {len_points}")
     return round(sum_diff, 3)
 
-def simulate(data_set):
+def calc_error_rate(data_set, k):
+    calc_points = plot_boundary(data_set, k)
+    mse = calc_mse(data_set, calc_points)
+    print(f"MSE: {mse}")
+    return mse 
+
+def simulate_training(data_set):
+    print("\nStarting test simulation...")
+    iterations = [1, 3, 5, 7]
+    i = 1
+    for k in iterations:
+        print(f"== TRAINING SET\n-------------------\n| K == {k} |\n-------------------\n")
+        mse = calc_error_rate(data_set, k)
+        print(f"MSE: {mse}")
+        i += 1
+    print("\n===================================================\n") 
+
+def simulate(data_set, training_set):
     print("\nStarting...")
+    simulate_training(training_set)
     iterations = [1, 3, 5, 7]
     i = 1
     p.suptitle("knn regression")
     for k in iterations:
         print(f"-------------------\n| K == {k} |\n-------------------\n")
         ax = p.subplot(2,2,i)
-        subplot = plot_boundary(k, data_set)
-        mse = calc_mse(data_set, subplot)  # use in the plotting stage
-        print(f"MSE: {mse}")
+        mse = calc_error_rate(data_set, k)
         ax.set_title(f"k == {k}\nMSE = {mse}")
         plot_data(data_set, "b")
         i += 1
@@ -131,12 +147,9 @@ def simulate(data_set):
     p.subplots_adjust(wspace=0.6, hspace=0.6)
     p.show()
 
-def calc_training_error_rate(data_set, k):
-    subplot = plot_boundary(k, data_set)
-
 
 all_data = open_csv_file(csv_path)
 data = all_data[0]
 training_set = all_data[1]
 
-simulate(data)
+simulate(data, training_set)
