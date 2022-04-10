@@ -29,9 +29,9 @@ def open_csv_file(path):
             for row in r:
                 # row[0] == x0_val  | row[1] == x1_val  | row[2] == y_val
             #    print(row)
-                X.append([float(row[0]), float(row[1])])
-                y.append(float(row[2]))
-            return [np.array(X), np.array(y)]
+                X.append([row[0], row[1]])
+                y.append(row[2])
+            return [np.array(X, dtype=float), np.array(y, dtype=float)]
     except: print("An error has occured!")
 
 data = open_csv_file(csv_path)
@@ -39,7 +39,14 @@ X = data[0]
 x0 = data[0][:, 0]
 x1 = data[0][:, 1]
 y = data[1]
+test_x0 = np.arange(0, 118, 1)
+test_x1 = np.arange(0, 118, 1)
+test_set = np.matrix([test_x0, test_x1])
+test_set = np.reshape(test_set, (118,2))
+
+print(f"len_y: {len(y)}\nlen_x0: {len(x0)}\nlen_x1: {len(x1)}\nlen_X: {len(X)}")
 
 n = KNeighborsClassifier(n_neighbors=3)
 n.fit(X, y)
-print(n)
+print(n.kneighbors(test_set))
+
