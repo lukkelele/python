@@ -46,7 +46,17 @@ test_set = np.reshape(test_set, (118,2))
 
 print(f"len_y: {len(y)}\nlen_x0: {len(x0)}\nlen_x1: {len(x1)}\nlen_X: {len(X)}")
 
-n = KNeighborsClassifier(n_neighbors=3)
+k = 3
+i = 0
+n = KNeighborsClassifier(n_neighbors=k)
 n.fit(X, y)
-print(n.kneighbors(test_set))
+print(f"test set: \n{test_set}")
+close = n.kneighbors(test_set)
+plt.plot(x0,x1, color="r")
+while i < k:
+    print(f"distances: {close[0][i]}\nindexes: {close[1][i]}")
+    i += 1
+plt.show()
+
+
 
