@@ -44,6 +44,15 @@ def plot_data(x0, x1, y, n):
         plt.scatter(x0,x1, color=point_color)
         idx += 1
 
+def determine_chip_status(chip_sums, k):
+    for chip_sum in chip_sums:
+        print(f"\nchip_sum: {chip_sum}")
+        c = math.floor(float(chip_sum/2))
+        #print(f"c == {c} k == {k} | round(k/2): {round(k/2)} | k - round(k/2) == {k - round(k/2)} | k - math.floor(k/2) == {k-math.floor(k/2)}")
+        if chip_sum < k - math.floor(k/2):
+            print(f"Fail --> {c}")
+        else: print(f"OK! --> {c}")
+
 def run_test(k, data, n):
     print(f"\n----------\n| k == {k} |\n----------\n")
     X = data[0]
@@ -60,6 +69,7 @@ def run_test(k, data, n):
         print(f"y: {y[idx]}")
         y_sum = sum(y[idx])
         chip_sum.append(y_sum)
+    determine_chip_status(chip_sum, k)
     print(f"y_sum: {chip_sum}")
 
 def simulate(k):
