@@ -29,51 +29,45 @@ def open_csv_file(path):
             return [np.array(X, dtype=float), np.array(y, dtype=float)]
     except: print("An error has occured!")
 
-def load_data(path):
-    data = open_csv_file(path)
-    x0 = data[0][:, 0]
-    x1 = data[0][:, 1]
-    y = data[1]
-    test_x0 = np.arange(0, 118, 1)
-    test_x1 = np.arange(0, 118, 1)
-    test_set = np.matrix([test_x0, test_x1])
-    test_set = np.reshape(test_set, (118,2))
-    print(f"len_y: {len(y)}\nlen_x0: {len(x0)}\nlen_x1: {len(x1)}")
-    return test_set
-
-def plot_data(data):
-    x0 = data[0][:, 0]
-    x1 = data[0][:, 1]
-    Y = data[1]
-    X = np.array([x0, x1])
-    print(f"len_X: {len(X)}")
+# y --> y value for corresponding x0, x1 value
+# X --> 2-dimensional array of x0 and x1
+def plot_data(x0, x1, y, n):
+    plt.subplot(2, 2, n)
     idx = 0
+    X = np.array([x0, x1])
     for x0 in X[0]:
-        y = Y[idx]
-        if y == 0:
+        y_val = y[idx]
+        if y_val == 0:
             point_color = "r"
         else: point_color = "g"
         x1 = X[1][idx]
         plt.scatter(x0,x1, color=point_color)
         idx += 1
-    plt.show()
 
-def run_test(k, data):
-    print(f"------\n| k == {k} |\n-------")
+def run_test(k, data, n):
+    print(f"\n----------\n| k == {k} |\n----------\n")
     X = data[0]
-    x0, x1 = X[:, [0, 1]]
     y = data[1]
+    x0 = X[:, 0] # select the first column in X
+    x1 = X[:, 1] # select the second column in X
+    plot_data(x0, x1, y, n)
     n = KNeighborsClassifier(n_neighbors=k)
     n.fit(X, y)
-    close = n.kneighbors(test_set)
-    plt.plot(x0,x1, color="r")
+    neighbors = n.kneighbors(test_chips)
+    indexes = neighbors[1]
+    chip_sum = []
+    for idx in indexes:
+        print(f"y: {y[idx]}")
+        y_sum = sum(y[idx])
+        chip_sum.append(y_sum)
+    print(f"y_sum: {chip_sum}")
 
-def simulate(k, data):
+def simulate(k):
+    data = open_csv_file(path)
+    n = 1 # number of subplot
     for i in k: # iterate the list
-        run_test(i, data)
+        run_test(i, data, n)
+        n += 1
+    plt.show()
 
-
-test_data = open_csv_file(path)
-plot_data(test_data)
-
-
+simulate(simulation_k)
