@@ -31,8 +31,9 @@ def open_csv_file(path):
 
 # y --> y value for corresponding x0, x1 value
 # X --> 2-dimensional array of x0 and x1
-def plot_data(x0, x1, y, n):
+def plot_data(x0, x1, y, n, k):
     plt.subplot(2, 2, n)
+    plt.title(f"k == {k}")
     idx = 0
     X = np.array([x0, x1])
     for x0 in X[0]:
@@ -41,18 +42,20 @@ def plot_data(x0, x1, y, n):
             point_color = "r"
         else: point_color = "g"
         x1 = X[1][idx]
-        plt.scatter(x0,x1, color=point_color, s=2.1)
+        plt.scatter(x0,x1, color=point_color, s=12, alpha=0.8)
         idx += 1
 
 def determine_chip_status(chip_sums, k):
     for chip_sum in chip_sums:
         current_chip = test_chips[chip_sums.index(chip_sum)]   
+        print(f"current chip --> {current_chip}")
         if chip_sum < k - math.floor(k/2):
             print(f"{current_chip} --> Fail")
-            plt.scatter(current_chip[0], current_chip[1], color="k")
+            plt.scatter(current_chip[0], current_chip[1], color="b", marker="x")
         else:
             print(f"{current_chip} --> OK!")
-            plt.scatter(current_chip[0], current_chip[1], color="b")
+            plt.scatter(current_chip[0], current_chip[1], color="k", marker="x")
+    print()
 
 def run_test(k, data, n):
     print(f"\n----------\n| k == {k} |\n----------\n")
@@ -60,7 +63,7 @@ def run_test(k, data, n):
     y = data[1]
     x0 = X[:, 0] # select the first column in X
     x1 = X[:, 1] # select the second column in X
-    plot_data(x0, x1, y, n)
+    plot_data(x0, x1, y, n, k)
     n = KNeighborsClassifier(n_neighbors=k)
     n.fit(X, y)
     neighbors = n.kneighbors(test_chips)
@@ -70,14 +73,18 @@ def run_test(k, data, n):
         y_sum = sum(y[idx])
         chip_sum.append(y_sum)
     determine_chip_status(chip_sum, k)
-    print()
+
+
 
 def simulate(k):
     data = open_csv_file(path)
+    f = plt.figure(figsize=(12, 9.4))
+    plt.suptitle("Scikit on task 1")
     n = 1 # number of subplot
     for i in k: # iterate the list
         run_test(i, data, n)
         n += 1
+    plt.subplots_adjust(wspace=0.3, hspace=0.3)
     plt.show()
 
 simulate(simulation_k)
