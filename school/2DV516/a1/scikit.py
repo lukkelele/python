@@ -41,17 +41,18 @@ def plot_data(x0, x1, y, n):
             point_color = "r"
         else: point_color = "g"
         x1 = X[1][idx]
-        plt.scatter(x0,x1, color=point_color)
+        plt.scatter(x0,x1, color=point_color, s=2.1)
         idx += 1
 
 def determine_chip_status(chip_sums, k):
     for chip_sum in chip_sums:
-        #print(f"\nchip_sum: {chip_sum}")
-        c = math.floor(float(chip_sum/2))
         current_chip = test_chips[chip_sums.index(chip_sum)]   
         if chip_sum < k - math.floor(k/2):
             print(f"{current_chip} --> Fail")
-        else: print(f"{current_chip} --> OK!")
+            plt.scatter(current_chip[0], current_chip[1], color="k")
+        else:
+            print(f"{current_chip} --> OK!")
+            plt.scatter(current_chip[0], current_chip[1], color="b")
 
 def run_test(k, data, n):
     print(f"\n----------\n| k == {k} |\n----------\n")
