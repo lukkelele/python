@@ -67,13 +67,15 @@ def run_test(k, data, n):
     n = KNeighborsClassifier(n_neighbors=k)
     n.fit(X, y)
     neighbors = n.kneighbors(test_chips)
+    for n in neighbors:
+        print(f"neighbor ==> {n}")
     print(neighbors[1])
     indexes = neighbors[1]
     chip_sum = []
     for idx in indexes:
-        print(f"idx: {idx}")
+        #print(f"idx: {idx}")
         y_sum = sum(y[idx])
-        print(f"y_sum: {y_sum}")
+        #print(f"y_sum: {y_sum}")
         chip_sum.append(y_sum)
     determine_chip_status(chip_sum, k)
 
