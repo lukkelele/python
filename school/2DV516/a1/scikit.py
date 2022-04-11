@@ -45,16 +45,13 @@ def plot_data(x0, x1, y, n, k):
         plt.scatter(x0,x1, color=point_color, s=12, alpha=0.8)
         idx += 1
 
-def determine_chip_status(chip_sums, k):
-    for chip_sum in chip_sums:
-        current_chip = test_chips[chip_sums.index(chip_sum)]   
-        print(f"current chip --> {current_chip}")
-        if chip_sum < k - math.floor(k/2):
-            print(f"{current_chip} --> Fail")
-            plt.scatter(current_chip[0], current_chip[1], color="b", marker="x")
-        else:
-            print(f"{current_chip} --> OK!")
-            plt.scatter(current_chip[0], current_chip[1], color="k", marker="x")
+def determine_chip_status(chip, chip_sum, k):
+    if chip_sum < k - math.floor(k/2):
+        print(f"{chip} --> Fail")
+        plt.scatter(chip[0], chip[1], color="b", marker="x")
+    else:
+        print(f"{chip} --> OK!")
+        plt.scatter(chip[0], chip[1], color="k", marker="x")
     print()
 
 def run_test(k, data, n):
@@ -69,12 +66,12 @@ def run_test(k, data, n):
     neighbors = n.kneighbors(test_chips)
     indexes = neighbors[1]
     chip_sum = []
+    i = 0
     for idx in indexes:
         #print(f"idx: {idx}")
         y_sum = sum(y[idx])
-        #print(f"y_sum: {y_sum}")
-        chip_sum.append(y_sum)
-    determine_chip_status(chip_sum, k)
+        determine_chip_status(test_chips[i], y_sum, k)
+        i += 1
 
 
 
@@ -87,6 +84,6 @@ def simulate(k):
         run_test(i, data, n)
         n += 1
     plt.subplots_adjust(wspace=0.3, hspace=0.3)
-    #plt.show()
+    plt.show()
 
 simulate(simulation_k)
