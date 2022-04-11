@@ -67,9 +67,6 @@ def run_test(k, data, n):
     n = KNeighborsClassifier(n_neighbors=k)
     n.fit(X, y)
     neighbors = n.kneighbors(test_chips)
-    for n in neighbors:
-        print(f"neighbor ==> {n}")
-    print(neighbors[1])
     indexes = neighbors[1]
     chip_sum = []
     for idx in indexes:
