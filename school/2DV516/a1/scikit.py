@@ -5,14 +5,15 @@ import csv
 import math
 
 
-path = "./A1_datasets/microchips.csv"
 
+path = "./A1_datasets/microchips.csv"
 simulation_k = [1, 3, 5, 7]  # k's to be used when simulating
 
 chip1 = [-0.3, 1]
 chip2 = [-0.5, -0.1]
 chip3 = [0.6, 0]
 test_chips = [chip1, chip2, chip3]
+
 
 # Open a csv file and read the data in to the list 'values'
 def open_csv_file(path):
@@ -21,9 +22,7 @@ def open_csv_file(path):
             r = csv.reader(csv_data)
             X = []
             y = []
-            for row in r:
-                # row[0] == x0_val  | row[1] == x1_val  | row[2] == y_val
-            #    print(row)
+            for row in r: # row[0] == x0_val  | row[1] == x1_val  | row[2] == y_val
                 X.append([row[0], row[1]])
                 y.append(row[2])
             return [np.array(X, dtype=float), np.array(y, dtype=float)]
@@ -33,7 +32,10 @@ def open_csv_file(path):
 # X --> 2-dimensional array of x0 and x1
 def plot_data(x0, x1, y, n, k):
     plt.subplot(2, 2, n)
+    plt.legend(["Failed", "OK!"]) 
     plt.title(f"k == {k}")
+    plt.xlabel("x0")
+    plt.ylabel("x1")
     idx = 0
     X = np.array([x0, x1])
     for x0 in X[0]:
@@ -45,6 +47,11 @@ def plot_data(x0, x1, y, n, k):
         plt.scatter(x0,x1, color=point_color, s=12, alpha=0.5)
         idx += 1
 
+def plot_boundary(data, k):
+    x = np.arange(-1, 1, 0.05)
+    y = np.arange(-1, 1, 0.05)
+    X, Y = np.meshgrid(x, y)
+
 def determine_chip_status(chip, chip_sum, k):
     if chip_sum < k - math.floor(k/2):
         print(f"{chip} --> Fail")
@@ -53,26 +60,23 @@ def determine_chip_status(chip, chip_sum, k):
         print(f"{chip} --> OK!")
         plt.scatter(chip[0], chip[1], color="g", s=60, edgecolors="k")
 
-def run_test(k, data, n):
+def run_test(data, k, n):
     print(f"\n----------\n| k == {k} |\n----------\n")
+    plot_boundary(data, k)
     X = data[0]
     y = data[1]
     x0 = X[:, 0] # select the first column in X
     x1 = X[:, 1] # select the second column in X
     plot_data(x0, x1, y, n, k)
-    n = KNeighborsClassifier(n_neighbors=k)
-    n.fit(X, y)
-    neighbors = n.kneighbors(test_chips)
-    indexes = neighbors[1]
-    chip_sum = []
+    kn = KNeighborsClassifier(n_neighbors=k)
+    kn.fit(X, y)
+    neighbors = kn.kneighbors(test_chips)
+    indexes = neighbors[1]  # neighbors[0] is the distances
     i = 0
     for idx in indexes:
-        #print(f"idx: {idx}")
         y_sum = sum(y[idx])
         determine_chip_status(test_chips[i], y_sum, k)
         i += 1
-
-
 
 def simulate(k):
     data = open_csv_file(path)
@@ -80,9 +84,15 @@ def simulate(k):
     plt.suptitle("Scikit on task 1")
     n = 1 # number of subplot
     for i in k: # iterate the list
-        run_test(i, data, n)
+        run_test(data, i, n)
         n += 1
     plt.subplots_adjust(wspace=0.3, hspace=0.3)
     plt.show()
+    
+
 
 simulate(simulation_k)
+
+
+
+
