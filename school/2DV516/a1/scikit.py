@@ -48,10 +48,10 @@ def determine_chip_status(chip_sums, k):
     for chip_sum in chip_sums:
         #print(f"\nchip_sum: {chip_sum}")
         c = math.floor(float(chip_sum/2))
-        #print(f"c == {c} k == {k} | round(k/2): {round(k/2)} | k - round(k/2) == {k - round(k/2)} | k - math.floor(k/2) == {k-math.floor(k/2)}")
+        current_chip = test_chips[chip_sums.index(chip_sum)]   
         if chip_sum < k - math.floor(k/2):
-            print(f"{test_chips[chip_sums.index(chip_sum)]} --> Fail")
-        else: print(f"{test_chips[chip_sums.index(chip_sum)]} --> OK!")
+            print(f"{current_chip} --> Fail")
+        else: print(f"{current_chip} --> OK!")
 
 def run_test(k, data, n):
     print(f"\n----------\n| k == {k} |\n----------\n")
@@ -66,11 +66,10 @@ def run_test(k, data, n):
     indexes = neighbors[1]
     chip_sum = []
     for idx in indexes:
-        #print(f"y: {y[idx]}")
         y_sum = sum(y[idx])
         chip_sum.append(y_sum)
     determine_chip_status(chip_sum, k)
-    #print(f"y_sum: {chip_sum}")
+    print()
 
 def simulate(k):
     data = open_csv_file(path)
