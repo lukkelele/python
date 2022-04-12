@@ -20,6 +20,11 @@ path = "./data/girls_height.csv"
 # X_ext --> n x 2 matrix with an added column of 1's in row 0  
 # y --> n x 1 vector 
 # B --> 2 x 1 vector
+# J(B) = (1\n)((X_ext*B - y)^T * (X_ext*B - y))
+# Extending X: Xe = np.c_[np.ones((n,1)), X]
+# Model: np.dot(Xe, B)
+# Normal equation: B = np.linialg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
+# Cost function: J = (j.T.dot(j))/n  where j = np.dot(Xe, beta)-y
 
 class Exercise_A:
 
