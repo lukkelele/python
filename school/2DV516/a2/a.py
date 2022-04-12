@@ -24,7 +24,7 @@ path = "./data/girls_height.csv"
 # J(B) = (1\n)((X_ext*B - y)^T * (X_ext*B - y))
 # Extending X: Xe = np.c_[np.ones((n,1)), X]
 # Model: np.dot(Xe, B)
-# Normal equation: B = np.linialg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
+# Normal equation: B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
 # Cost function: J = (j.T.dot(j))/n  where j = np.dot(Xe, beta)-y
 # ==================================================================
 # --- Gradient Descent
@@ -52,6 +52,7 @@ class Exercise_A:
         self.dataset = csv.open_csv_file(path)
         self.X = self.dataset[:, [1, 2]]
         self.y = self.dataset[:, 0]
+        self.n = len(self.X)    # observations
 
     def plot_dataset(self):
         plt.figure(figsize=(12, 8))
@@ -65,7 +66,18 @@ class Exercise_A:
         n = len(self.X)
         self.Xe = np.c_[np.ones((n, 1)), self.X]
 
+    def calc_normal(self, y):
+        B = np.linalg.inv(self.Xe.T.dot(self.Xe)).dot(self.Xe.T).dot(y)
+        return B
+
+    def calc_cost(self, y):
+        B = self.calc_normal(y)
+        j = np.dot(self.Xe, B) - y
+        J = (j.T.dot(j)) / self.n
+        print(f"Cost J: {J}")
+        return J
+
 a = Exercise_A(path=path)
 a.extend_x()
-
+a.calc_cost(65)
 a.plot_dataset()
