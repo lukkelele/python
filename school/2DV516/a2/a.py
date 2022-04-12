@@ -10,7 +10,8 @@ import math
 # Column 3: dad height
 path = "./data/girls_height.csv"
 
-# Linear Regression | y = a + bx 
+# ==================================================================
+# --- Linear Regression | y = a + bx 
 # (y - yi)^2 = ((a + bx) - yi)^2  | the distance
 # Cost function, J(a, b) | (1/n) * SUM((a+bx) - yi)^2  |  minimize the average distance 
 # dy/dx = 0  ==> extreme values (max, min)
@@ -31,7 +32,11 @@ path = "./data/girls_height.csv"
 # Repeat the process until minimum point is reached or limit of iterations has been reached | df/dx > 0
 # Will in general find a local minimum
 # Very good for convex problems | Less effective for realistic cases with multiple local minimums
-# 
+# Selecting learning rate is pretty much trial and error
+# The cost function J(B1, B2) is an upward facing parabolic "bowl", i.e convex
+# Therefore there will be a unique min(B1_min, B2_min) and it is possible to use any point as a starting point
+# Initial steps: iterations N = 10, a = 0.00001, B0 = (0, 0)  | then plot the cost function
+# a = 2*lambda / n  | Plot J(B) vs N is a good way to see if J(B) has stabilised
 
 class Exercise_A:
 
