@@ -63,6 +63,7 @@ class Exercise_A:
         #x0_max, x1_max = np.max(x0), np.max(x1)
         #plt.plot(X, y, c="b")
         plt.plot(dad, y, c="k")
+        plt.scatter(dad, y)
         plt.show()
         
 
