@@ -26,8 +26,8 @@ class Exercise_A:
         x1 = self.dataset[:, 2]
         x0_min, x1_min = np.min(x0), np.min(x1)
         x0_max, x1_max = np.max(x0), np.max(x1)
-        plt.scatter(x0, y, c="r", alpha=0.2)
-        plt.scatter(x0, x1, c="g")
+        plt.scatter(x0, y, c="r", s=20)
+        plt.scatter(x0, x1, c="g", s=20)
         plt.show()
         
 
