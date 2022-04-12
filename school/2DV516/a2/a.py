@@ -74,7 +74,7 @@ class Exercise_A:
         B = self.calc_normal(y)
         j = np.dot(self.Xe, B) - y
         J = (j.T.dot(j)) / self.n
-        print(f"Cost J: {J}")
+        print(f"Cost J: {J}\nlength_J: {len(J)}")
         return J
 
 a = Exercise_A(path=path)
