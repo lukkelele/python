@@ -39,21 +39,33 @@ path = "./data/girls_height.csv"
 # a = 2*lambda / n  | Plot J(B) vs N is a good way to see if J(B) has stabilised
 # B^(j+1) = B^j - (2*lambda/n)*X^T * (X*B^j - y)
 
+# Assumption: height = a + b*mom_height + c*dad_height
+# Model: y = B1 + B2*x1 + B3*x2
+# Vectorized: y = XB
+# J(B) = (1/n)*(XB-y)^T * (XB-y)
+# Exact solution: B = (X^T*X)^(-1) * (X^T*y)
+# B^(j+1) = B^j - (2*lambda/n)*X^T * (XB^j - y)
+
 class Exercise_A:
 
     def __init__(self, path):
         self.dataset = csv.open_csv_file(path)
+        self.X = self.dataset[:, [1, 2]]
+        self.y = self.dataset[:, 0]
 
     def plot_dataset(self):
-        y = self.dataset[:, 0]
-        X = self.dataset[:, [1,2]]
         plt.figure(figsize=(12, 8))
         plt.subplot(121)
-        plt.scatter(X[:, 0], y, color="r", s=30, label='mom')
+        plt.scatter(self.X[:, 0], self.y, color="r", s=30, label='mom')
         plt.subplot(122)
-        plt.scatter(X[:, 1], y, color="k", s=30, label='dad')
+        plt.scatter(self.X[:, 1], self.y, color="k", s=30, label='dad')
         plt.show() 
 
+    def extend_x(self):
+        n = len(self.X)
+        self.Xe = np.c_[np.ones((n, 1)), self.X]
 
 a = Exercise_A(path=path)
+a.extend_x()
+
 a.plot_dataset()
