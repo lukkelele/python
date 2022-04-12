@@ -11,10 +11,16 @@ import math
 path = "./data/girls_height.csv"
 
 # Linear Regression | y = a + bx 
-# (yi - y)^2 = (yi - (a + bx))^2  | the distance
-# Cost function, J | (1/n)*SUM(yi - (a+bx))^2  |  minimize the average distance 
-# J(a, b) = (1/n)*SUM(yi - (a+bx))^2 
+# (y - yi)^2 = ((a + bx) - yi)^2  | the distance
+# Cost function, J(a, b) | (1/n) * SUM((a+bx) - yi)^2  |  minimize the average distance 
 # dy/dx = 0  ==> extreme values (max, min)
+# Diffrentiate J(a, b) with a and b respectively and set to zero
+# The normal equation is used to get the smallest distance (90 degrees from the plot)
+# Vectorised version of linear regression (degree 1) | y = X_ext * B
+# X_ext --> n x 2 matrix with an added column of 1's in row 0  
+# y --> n x 1 vector 
+# B --> 2 x 1 vector
+
 class Exercise_A:
 
     def __init__(self, path):
