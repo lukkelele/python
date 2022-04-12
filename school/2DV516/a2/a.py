@@ -25,6 +25,13 @@ path = "./data/girls_height.csv"
 # Model: np.dot(Xe, B)
 # Normal equation: B = np.linialg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
 # Cost function: J = (j.T.dot(j))/n  where j = np.dot(Xe, beta)-y
+# ==================================================================
+# --- Gradient Descent
+# Select a point x0 | Move to x1 = x0 - lambda(df/dx)*x0 | lambda is called the learning rate
+# Repeat the process until minimum point is reached or limit of iterations has been reached | df/dx > 0
+# Will in general find a local minimum
+# Very good for convex problems | Less effective for realistic cases with multiple local minimums
+# 
 
 class Exercise_A:
 
