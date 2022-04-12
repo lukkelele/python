@@ -11,11 +11,11 @@ import math
 path = "./data/girls_height.csv"
 
 # ==================================================================
-# --- Linear Regression | y = a + bx 
-# (y - yi)^2 = ((a + bx) - yi)^2  | the distance
-# Cost function, J(a, b) | (1/n) * SUM((a+bx) - yi)^2  |  minimize the average distance 
+# --- Linear Regression | y = B1 + B2x 
+# (y - yi)^2 = ((B1 + B2*x) - yi)^2  | the distance
+# Cost function, J(B1, B2) | (1/n) * SUM((B1 + B2*x) - yi)^2  |  minimize the average distance 
 # dy/dx = 0  ==> extreme values (max, min)
-# Diffrentiate J(a, b) with a and b respectively and set to zero
+# Diffrentiate J(B1, B2) with a and b respectively and set to zero
 # The normal equation is used to get the smallest distance (90 degrees from the plot)
 # Vectorised version of linear regression (degree 1) | y = X_ext * B
 # X_ext --> n x 2 matrix with an added column of 1's in row 0  
