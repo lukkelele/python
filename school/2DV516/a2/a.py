@@ -45,24 +45,14 @@ class Exercise_A:
         self.dataset = csv.open_csv_file(path)
 
     def plot_dataset(self):
-        plt.figure(figsize=(12,9))
-        ax = plt.subplot(211)
-        ax.set_title("Dataset")
-        ax.set_xlabel('mom height')
-        ax.set_ylabel('girl height')
         y = self.dataset[:, 0]
-        mom = self.dataset[:, 1]
-        dad = self.dataset[:, 2]
-        #X = self.dataset[:, [1,2]]
-        ax = plt.subplot(212)
-        ax.set_title("Dataset")
-        ax.set_xlabel('dad height')
-        ax.set_ylabel('girl height')
-        plt.scatter(mom, y, color="r", s=33, marker="v", label='mom')
-        plt.scatter(dad, y, color="b", s=30, label='dad')
-        plt.legend(['Mom', 'Dad'])
-        plt.show()
-        
+        X = self.dataset[:, [1,2]]
+        plt.figure(figsize=(12, 8))
+        plt.subplot(121)
+        plt.scatter(X[:, 0], y, color="r", s=30, label='mom')
+        plt.subplot(122)
+        plt.scatter(X[:, 1], y, color="k", s=30, label='dad')
+        plt.show() 
 
 
 a = Exercise_A(path=path)
