@@ -15,7 +15,7 @@ path = "./data/girls_height.csv"
 # (y - yi)^2 = ((B1 + B2*x) - yi)^2  | the distance
 # Cost function, J(B1, B2) | (1/n) * SUM((B1 + B2*x) - yi)^2  |  minimize the average distance 
 # dy/dx = 0  ==> extreme values (max, min)
-# Diffrentiate J(B1, B2) with a and b respectively and set to zero
+# Diffrentiate J(B1, B2) with B1 and B2 respectively and set to zero
 # The normal equation is used to get the smallest distance (90 degrees from the plot)
 # Vectorised version of linear regression (degree 1) | y = X_ext * B
 # X_ext --> n x 2 matrix with an added column of 1's in row 0  
@@ -37,6 +37,7 @@ path = "./data/girls_height.csv"
 # Therefore there will be a unique min(B1_min, B2_min) and it is possible to use any point as a starting point
 # Initial steps: iterations N = 10, a = 0.00001, B0 = (0, 0)  | then plot the cost function
 # a = 2*lambda / n  | Plot J(B) vs N is a good way to see if J(B) has stabilised
+# B^(j+1) = B^j - (2*lambda/n)*X^T * (X*B^j - y)
 
 class Exercise_A:
 
@@ -44,18 +45,24 @@ class Exercise_A:
         self.dataset = csv.open_csv_file(path)
 
     def plot_dataset(self):
-        #f = plt.figure(figsize=(12,9))
-        ax = plt.subplot(2,2,1)
+        plt.figure(figsize=(12,9))
+        ax = plt.subplot(211)
         ax.set_title("Dataset")
         ax.set_xlabel('mom height')
-        ax.set_ylabel('dad height')
+        ax.set_ylabel('girl height')
         y = self.dataset[:, 0]
-        #x0 = self.dataset[:, 1]
-        #x1 = self.dataset[:, 2]
+        mom = self.dataset[:, 1]
+        dad = self.dataset[:, 2]
         X = self.dataset[:, [1,2]]
+        plt.plot(mom, y, c="g")
+
+        ax = plt.subplot(212)
+        ax.set_xlabel('dad height')
+        ax.set_ylabel('girl height')
         #x0_min, x1_min = np.min(x0), np.min(x1)
         #x0_max, x1_max = np.max(x0), np.max(x1)
-        plt.plot(X, y, c="b")
+        #plt.plot(X, y, c="b")
+        plt.plot(dad, y, c="k")
         plt.show()
         
 
