@@ -26,11 +26,7 @@ class Exercise_A:
         x1 = self.dataset[:, 2]
         x0_min, x1_min = np.min(x0), np.min(x1)
         x0_max, x1_max = np.max(x0), np.max(x1)
-        x0_range = np.arange(x0_min-1, x0_max+1, 0.2)
-        x1_range = np.arange(x1_min-1, x1_max+1, 0.2)
-        xx, yy = np.meshgrid(np.arange(x0_min-1, x0_max+1, 0.2),
-                             np.arange(x1_min-1, x1_max+1, 0.2))
-        plt.scatter(x0, y, c="r")
+        plt.scatter(x0, y, c="r", alpha=0.2)
         plt.scatter(x0, x1, c="g")
         plt.show()
         
