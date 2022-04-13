@@ -55,7 +55,7 @@ class Exercise_A:
         self.y = self.dataset[:, 0]
         self.n = len(self.X)    # observations
         self.Xe = self.extend_x()
-
+        self.beta = self.calc_beta()
 
     def plot_dataset(self):
         plt.figure(figsize=(12, 8))
@@ -68,26 +68,18 @@ class Exercise_A:
         return np.c_[np.ones((self.n, 1)), self.X]
 
     # Normal equation
-    def calc_beta(self, y):
-        B = np.linalg.inv(self.Xe.T.dot(self.Xe)).dot(self.Xe.T).dot(y)
+    def calc_beta(self):
+        B = np.linalg.inv(self.Xe.T.dot(self.Xe)).dot(self.Xe.T).dot(self.y)
         return B
 
     # Cost function
-    def calc_cost(self, y):
-        B = self.calc_beta(y)
-        j = np.dot(self.Xe, B) - y
+    def calc_cost(self, z):
+        j = np.dot(self.Xe, B) - z
         J = (j.T.dot(j)) / self.n
         print(f"Cost J: {J}\nlength_J: {len(J)}")
         return J
 
-mom = 65
-dad = 75
-
 # y = XB
 
 a = Exercise_A(path=path)
-beta = a.calc_beta(mom)
-XB = np.dot(a.Xe, beta)
-M = sum(XB[1].dot(mom))/a.n
-D = sum(XB[2].dot(dad))/a.n
-print(f"M: {M/mom}\nD: {D/dad}")
+print(a.beta)
