@@ -27,9 +27,6 @@ class Printer:
                 if part != "":
                     self.non_priority.append([self.default_order, part])
                     self.default_order += 1
-        priority_order = len(self.queue)
-        non_priority_order = len(self.non_priority)
-        print(f"Priority len: {priority_order}\nnon-priority: {non_priority_order}")
 
 
 
