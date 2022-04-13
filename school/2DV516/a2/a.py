@@ -60,20 +60,24 @@ class Exercise_A:
     def calc_height(self, mom, dad):
         B_mom = self.calc_beta(mom)
         B_dad = self.calc_beta(dad)
-        sum_dad =(sum(sum(B_dad*dad))/self.n)
-        sum_mom = (sum(sum(B_mom*mom))/self.n)
-        print(f"sum_dad: {sum_dad}\nsum_mom: {sum_mom}\ngirl height: {self.a+sum_dad+sum_mom}")
-        return self.a + sum_dad + sum_mom   # predicted height
-        
+        print(len(B_dad[0]))
+        print(sum(B_dad[0]))
+        print(sum(B_dad[1]))
+        print(sum(B_dad[2]))
+        print("==")
+        print(sum(B_mom[0]))
+        print(sum(B_mom[1]))
+        print(sum(B_mom[2]))
+        s = sum(B_mom)+sum(B_dad)/self.n
+        print(f"\n{sum(s)}")
+
 
     def plot_dataset(self):
         plt.figure(figsize=(12, 8))
         plt.subplot(121)
         plt.scatter(self.X[:, 0], self.y, color="r", s=30, label='mom')
-        plt.scatter(65, self.calc_height(65,70), color="b", s=40, marker="v")
         plt.subplot(122)
         plt.scatter(self.X[:, 1], self.y, color="k", s=30, label='dad')
-        plt.scatter(70, self.calc_height(65,70), color="b", s=40, marker="x")
         plt.show() 
 
     def extend_x(self):
@@ -92,10 +96,9 @@ class Exercise_A:
         print(f"Cost J: {J}\nlength_J: {len(J)}")
         return J
 
+mom = 60
+dad = 45
 
 a = Exercise_A(path=path)
-mom = 65
-dad = 70
-a.plot_dataset()
-
+a.calc_height(mom, dad)
 
