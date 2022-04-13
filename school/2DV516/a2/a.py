@@ -45,6 +45,7 @@ path = "./data/girls_height.csv"
 # J(B) = (1/n)*(XB-y)^T * (XB-y)
 # Exact solution: B = (X^T*X)^(-1) * (X^T*y)
 # B^(j+1) = B^j - (2*lambda/n)*X^T * (XB^j - y)
+# a = 22.779813084118473
 
 class Exercise_A:
 
@@ -54,32 +55,38 @@ class Exercise_A:
         self.y = self.dataset[:, 0]
         self.n = len(self.X)    # observations
         self.Xe = self.extend_x()
+        self.a = 22.779813084118473
 
     def calc_height(self, mom, dad):
-        B_mom = self.calc_normal(mom)
-        B_dad = self.calc_normal(dad)
-        h1 = np.dot(self.Xe, B_mom)
-        h2 = np.dot(self.Xe, B_dad)
+        B_mom = self.calc_beta(mom)
+        B_dad = self.calc_beta(dad)
+        sum_dad =(sum(sum(B_dad*dad))/self.n)
+        sum_mom = (sum(sum(B_mom*mom))/self.n)
+        print(f"sum_dad: {sum_dad}\nsum_mom: {sum_mom}\ngirl height: {self.a+sum_dad+sum_mom}")
+        return self.a + sum_dad + sum_mom   # predicted height
+        
 
     def plot_dataset(self):
         plt.figure(figsize=(12, 8))
         plt.subplot(121)
         plt.scatter(self.X[:, 0], self.y, color="r", s=30, label='mom')
+        plt.scatter(65, self.calc_height(65,70), color="b", s=40, marker="v")
         plt.subplot(122)
         plt.scatter(self.X[:, 1], self.y, color="k", s=30, label='dad')
+        plt.scatter(70, self.calc_height(65,70), color="b", s=40, marker="x")
         plt.show() 
 
     def extend_x(self):
         return np.c_[np.ones((self.n, 1)), self.X]
 
     # Normal equation
-    def calc_normal(self, z):
+    def calc_beta(self, z):
         B = np.linalg.inv(self.Xe.T.dot(self.Xe)).dot(self.Xe.T).dot(z)
         return B
 
     # Cost function
     def calc_cost(self, y):
-        B = self.calc_normal(y)
+        B = self.calc_beta(y)
         j = np.dot(self.Xe, B) - y
         J = (j.T.dot(j)) / self.n
         print(f"Cost J: {J}\nlength_J: {len(J)}")
@@ -89,7 +96,6 @@ class Exercise_A:
 a = Exercise_A(path=path)
 mom = 65
 dad = 70
-a.calc_height(mom, dad)
-
+a.plot_dataset()
 
 
