@@ -53,6 +53,13 @@ class Exercise_A:
         self.X = self.dataset[:, [1, 2]]
         self.y = self.dataset[:, 0]
         self.n = len(self.X)    # observations
+        self.Xe = self.extend_x()
+
+    def calc_height(self, mom, dad):
+        B_mom = self.calc_normal(mom)
+        B_dad = self.calc_normal(dad)
+        h1 = np.dot(self.Xe, B_mom)
+        h2 = np.dot(self.Xe, B_dad)
 
     def plot_dataset(self):
         plt.figure(figsize=(12, 8))
@@ -63,13 +70,14 @@ class Exercise_A:
         plt.show() 
 
     def extend_x(self):
-        n = len(self.X)
-        self.Xe = np.c_[np.ones((n, 1)), self.X]
+        return np.c_[np.ones((self.n, 1)), self.X]
 
-    def calc_normal(self, y):
-        B = np.linalg.inv(self.Xe.T.dot(self.Xe)).dot(self.Xe.T).dot(y)
+    # Normal equation
+    def calc_normal(self, z):
+        B = np.linalg.inv(self.Xe.T.dot(self.Xe)).dot(self.Xe.T).dot(z)
         return B
 
+    # Cost function
     def calc_cost(self, y):
         B = self.calc_normal(y)
         j = np.dot(self.Xe, B) - y
@@ -77,7 +85,11 @@ class Exercise_A:
         print(f"Cost J: {J}\nlength_J: {len(J)}")
         return J
 
+
 a = Exercise_A(path=path)
-a.extend_x()
-a.calc_cost(65)
-a.plot_dataset()
+mom = 65
+dad = 70
+a.calc_height(mom, dad)
+
+
+
