@@ -55,21 +55,6 @@ class Exercise_A:
         self.y = self.dataset[:, 0]
         self.n = len(self.X)    # observations
         self.Xe = self.extend_x()
-        self.a = 22.779813084118473
-
-    def calc_height(self, mom, dad):
-        B_mom = self.calc_beta(mom)
-        B_dad = self.calc_beta(dad)
-        print(len(B_dad[0]))
-        print(sum(B_dad[0]))
-        print(sum(B_dad[1]))
-        print(sum(B_dad[2]))
-        print("==")
-        print(sum(B_mom[0]))
-        print(sum(B_mom[1]))
-        print(sum(B_mom[2]))
-        s = sum(B_mom)+sum(B_dad)/self.n
-        print(f"\n{sum(s)}")
 
 
     def plot_dataset(self):
@@ -78,14 +63,13 @@ class Exercise_A:
         plt.scatter(self.X[:, 0], self.y, color="r", s=30, label='mom')
         plt.subplot(122)
         plt.scatter(self.X[:, 1], self.y, color="k", s=30, label='dad')
-        plt.show() 
 
     def extend_x(self):
         return np.c_[np.ones((self.n, 1)), self.X]
 
     # Normal equation
-    def calc_beta(self, z):
-        B = np.linalg.inv(self.Xe.T.dot(self.Xe)).dot(self.Xe.T).dot(z)
+    def calc_beta(self, y):
+        B = np.linalg.inv(self.Xe.T.dot(self.Xe)).dot(self.Xe.T).dot(y)
         return B
 
     # Cost function
@@ -96,9 +80,14 @@ class Exercise_A:
         print(f"Cost J: {J}\nlength_J: {len(J)}")
         return J
 
-mom = 60
-dad = 45
+mom = 65
+dad = 75
+
+# y = XB
 
 a = Exercise_A(path=path)
-a.calc_height(mom, dad)
-
+beta = a.calc_beta(mom)
+XB = np.dot(a.Xe, beta)
+M = sum(XB[1].dot(mom))/a.n
+D = sum(XB[2].dot(dad))/a.n
+print(f"M: {M/mom}\nD: {D/dad}")
