@@ -56,6 +56,7 @@ class Exercise_A:
         self.n = len(self.X)    # observations
         self.Xe = self.extend_x()
         self.beta = self.calc_beta()
+        self.j = self.calc_j()  # keep as variable instead of recalculating each call
 
     def plot_dataset(self):
         plt.figure(figsize=(12, 8))
@@ -72,14 +73,22 @@ class Exercise_A:
         B = np.linalg.inv(self.Xe.T.dot(self.Xe)).dot(self.Xe.T).dot(self.y)
         return B
 
+    def calc_j(self):
+        j = np.dot(self.Xe, self.beta) - self.y
+        return j
+
     # Cost function
-    def calc_cost(self, z):
-        j = np.dot(self.Xe, B) - z
-        J = (j.T.dot(j)) / self.n
+    def calc_cost(self):
+        J = (self.j.T.dot(self.j)) / self.n
         print(f"Cost J: {J}\nlength_J: {len(J)}")
         return J
 
-# y = XB
+    def calc_height(self, mom, dad):
+        height = self.beta[0] + self.beta[1]*mom + self.beta[2]*dad
+        print(height)
+        return height
 
 a = Exercise_A(path=path)
-print(a.beta)
+a.calc_height(65, 70)
+
+
