@@ -18,7 +18,7 @@ class Exercise_A:
         self.X = self.dataset[:, [1, 2]]
         self.y = self.dataset[:, 0]
         self.n = len(self.X)    # observations
-        self.Xe = self.extend_x()
+        self.Xe = self.extend_x(self.X, self.n)
         self.beta = self.calc_beta()
         self.j = self.calc_j()  # keep as variable instead of recalculating each call
 
@@ -29,8 +29,8 @@ class Exercise_A:
         plt.subplot(122)
         plt.scatter(self.X[:, 1], self.y, color="k", s=30, label='dad')
 
-    def extend_x(self):
-        return np.c_[np.ones((self.n, 1)), self.X]
+    def extend_x(self, X, n):
+        return np.c_[np.ones((n, 1)), X]
 
     # Standard deviation --> compute each value - mean
     def feature_norm(self):
@@ -40,8 +40,10 @@ class Exercise_A:
         mom_std, dad_std = np.std(mom_height), np.std(dad_height)     
         mom_subt, dad_subt = np.subtract(mom_height, mom_mean), np.subtract(dad_height, dad_mean)
         mom_norm, dad_norm = np.divide(mom_subt, mom_std), np.divide(dad_subt, dad_std)
-        Xn = np.array([[mom_norm], [dad_norm]])
-        print(Xn)
+        Xn = np.array([mom_norm, dad_norm])
+        Xn_e = self.extend_x(Xn, self.n)
+        print(Xn_e)
+        
 
     # Normal equation
     def calc_beta(self):
