@@ -39,15 +39,6 @@ class Exercise_A:
         mom_mean, dad_mean = np.mean(mom_height), np.mean(dad_height)
         mom_std = np.std(mom_height)     
         dad_std = np.std(dad_height)     
-        m = 0
-        m_mean = sum(mom_height)/len(mom_height)
-        print(f"m_mean : {m_mean}\nmom_mean : {mom_mean}")
-        for val in mom_height:
-            d = val - m_mean
-            m += math.pow(d, 2)
-        m_mean2 = m / len(mom_height)
-        print(math.sqrt(m_mean2))
-        print(mom_std)
 
     # Normal equation
     def calc_beta(self):
