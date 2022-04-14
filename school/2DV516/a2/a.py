@@ -40,6 +40,8 @@ class Exercise_A:
         mom_std, dad_std = np.std(mom_height), np.std(dad_height)     
         mom_subt, dad_subt = np.subtract(mom_height, mom_mean), np.subtract(dad_height, dad_mean)
         mom_norm, dad_norm = np.divide(mom_subt, mom_std), np.divide(dad_subt, dad_std)
+        Xn = np.array([[mom_norm], [dad_norm]])
+        print(Xn)
 
     # Normal equation
     def calc_beta(self):
