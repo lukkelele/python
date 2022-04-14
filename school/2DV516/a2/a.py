@@ -47,7 +47,7 @@ class Exercise_A:
         print(f"\n|== Mean ================|\nMom: {mom_mean}\nDad: {dad_mean}\n"
              +f"\n|== Height - mean =======|\nMom: {mom_subt}\nDad: {dad_subt}\n"
              +f"\n|== Standard deviation ==|\nMom: {mom_std}\nDad: {dad_std}\n"
-             +f"\n|== Normalized Mean =====|\nMom: {np.mean(Xn_e[1])}\nDad: {np.mean(Xn_e[2])}\n") 
+             +f"\n|== Normalized Mean =====|\nMom: {np.mean(self.Xn_e[1])}\nDad: {np.mean(self.Xn_e[2])}\n") 
         self.plot_subplot(self.Xn_e[:,1], self.Xn_e[:,2], 3, ['r', 'g'])
 
     # Normal equation
