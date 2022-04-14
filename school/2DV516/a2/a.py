@@ -43,12 +43,12 @@ class Exercise_A:
         mom_norm, dad_norm = np.divide(mom_subt, mom_std), np.divide(dad_subt, dad_std)
         print(mom_norm/mom_std)
         Xn = np.array([mom_norm, dad_norm]).reshape((214,2))
-        Xn_e = self.extend_x(Xn, len(dad_height))
+        self.Xn_e = self.extend_x(Xn, len(dad_height))
         print(f"\n|== Mean ================|\nMom: {mom_mean}\nDad: {dad_mean}\n"
              +f"\n|== Height - mean =======|\nMom: {mom_subt}\nDad: {dad_subt}\n"
              +f"\n|== Standard deviation ==|\nMom: {mom_std}\nDad: {dad_std}\n"
              +f"\n|== Normalized Mean =====|\nMom: {np.mean(Xn_e[1])}\nDad: {np.mean(Xn_e[2])}\n") 
-        self.plot_subplot(Xn_e[:,1], Xn_e[:,2], 3, ['r', 'g'])
+        self.plot_subplot(self.Xn_e[:,1], self.Xn_e[:,2], 3, ['r', 'g'])
 
     # Normal equation
     def calc_beta(self, Xe):
