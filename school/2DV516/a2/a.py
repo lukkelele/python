@@ -41,11 +41,9 @@ class Exercise_A:
         mom_std, dad_std = np.std(mom_height), np.std(dad_height)     
         mom_subt, dad_subt = np.subtract(mom_height, mom_mean), np.subtract(dad_height, dad_mean)
         mom_norm, dad_norm = np.divide(mom_subt, mom_std), np.divide(dad_subt, dad_std)
-        print(mom_norm/mom_std)
         Xn = np.array([mom_norm, dad_norm]).reshape((214,2))
         self.Xn_e = self.extend_x(Xn, len(dad_height))
         print(f"\n|== Mean ================|\nMom: {mom_mean}\nDad: {dad_mean}\n"
-             +f"\n|== Height - mean =======|\nMom: {mom_subt}\nDad: {dad_subt}\n"
              +f"\n|== Standard deviation ==|\nMom: {mom_std}\nDad: {dad_std}\n"
              +f"\n|== Normalized Mean =====|\nMom: {np.mean(self.Xn_e[1])}\nDad: {np.mean(self.Xn_e[2])}\n") 
         self.plot_subplot(self.Xn_e[:,1], self.Xn_e[:,2], 3, ['r', 'g'])
