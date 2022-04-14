@@ -72,9 +72,8 @@ class Exercise_A:
 a = Exercise_A(path=path)
 a.plot_subplot(a.X[:,0], a.X[:,1], 1)
 a.feature_norm()
-print(a.calc_cost(a.Xe, a.beta))
-
-
+B = a.calc_beta(a.Xn_e)
+a.calc_height(B, 65, 70)
 
 
 #plt.show()
