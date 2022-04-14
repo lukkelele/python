@@ -37,8 +37,9 @@ class Exercise_A:
         mom_height = self.X[:, 0]
         dad_height = self.X[:, 1]
         mom_mean, dad_mean = np.mean(mom_height), np.mean(dad_height)
-        mom_std = np.std(mom_height)     
-        dad_std = np.std(dad_height)     
+        mom_std, dad_std = np.std(mom_height), np.std(dad_height)     
+        mom_subt, dad_subt = np.subtract(mom_height, mom_mean), np.subtract(dad_height, dad_mean)
+        mom_norm, dad_norm = np.divide(mom_subt, mom_std), np.divide(dad_subt, dad_std)
 
     # Normal equation
     def calc_beta(self):
@@ -57,10 +58,9 @@ class Exercise_A:
 
     def calc_height(self, mom, dad):
         height = self.beta[0] + self.beta[1]*mom + self.beta[2]*dad
-        print(height)
+        print(f"Calculated height: {height}")
         return height
 
 a = Exercise_A(path=path)
-a.calc_height(65, 70)
 a.feature_norm()
 
