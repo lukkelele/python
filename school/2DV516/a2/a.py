@@ -40,9 +40,10 @@ class Exercise_A:
         mom_std, dad_std = np.std(mom_height), np.std(dad_height)     
         mom_subt, dad_subt = np.subtract(mom_height, mom_mean), np.subtract(dad_height, dad_mean)
         mom_norm, dad_norm = np.divide(mom_subt, mom_std), np.divide(dad_subt, dad_std)
-        Xn = np.array([mom_norm, dad_norm])
-        #Xn_e = self.extend_x(Xn, self.n)
-        #print(Xn_e)
+        #Xn = np.concatenate((mom_norm.T, dad_norm.T), axis=0).reshape((214,2))
+        Xn = np.array([mom_norm, dad_norm]).reshape((214,2))
+        Xn_e = self.extend_x(Xn, self.n)
+        print(Xn_e)
         
 
     # Normal equation
