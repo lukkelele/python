@@ -51,6 +51,7 @@ class Exercise_A:
     # Normal equation
     def calc_beta(self, Xe):
         B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(self.y)
+        print(f"BETA: {B}")
         return B
 
     def calc_j(self, X, beta):
@@ -65,7 +66,10 @@ class Exercise_A:
 
     def calc_height(self, beta, mom, dad):
         height = beta[0] + beta[1]*mom + beta[2]*dad
-        print(f"Calculated height: {height}")
+        print(f"beta_0 == {beta[0]}\n"
+             +f"mom*beta_1 == {beta[1]*mom} ===> beta_1 == {beta[1]}\n"
+             +f"dad*beta_2 == {beta[2]*dad} ===> beta_2 == {beta[2]}\n"
+             +f"Calculated height: {height}\n")
         return height
 
 
@@ -73,7 +77,7 @@ a = Exercise_A(path=path)
 a.plot_subplot(a.X[:,0], a.X[:,1], 1)
 a.feature_norm()
 B = a.calc_beta(a.Xn_e)
-a.calc_height(B, 65, 70)
+a.calc_height(a.beta, 65, 70)
 
 
 #plt.show()
