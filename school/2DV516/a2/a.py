@@ -19,7 +19,7 @@ class Exercise_A:
         self.y = self.dataset[:, 0]
         self.n = len(self.X)    # observations
         self.Xe = self.extend_x(self.X, self.n)
-        self.beta = self.calc_beta()
+        self.beta = self.calc_beta(self.Xe)
         self.j = self.calc_j()  # keep as variable instead of recalculating each call
 
     def plot_dataset(self):
@@ -40,15 +40,19 @@ class Exercise_A:
         mom_std, dad_std = np.std(mom_height), np.std(dad_height)     
         mom_subt, dad_subt = np.subtract(mom_height, mom_mean), np.subtract(dad_height, dad_mean)
         mom_norm, dad_norm = np.divide(mom_subt, mom_std), np.divide(dad_subt, dad_std)
-        #Xn = np.concatenate((mom_norm.T, dad_norm.T), axis=0).reshape((214,2))
         Xn = np.array([mom_norm, dad_norm]).reshape((214,2))
-        Xn_e = self.extend_x(Xn, self.n)
-        print(Xn_e)
-        
+        Xn_e = self.extend_x(Xn, len(dad_height))
+        print(f"\n|== Standard deviation ==|\nMom: {np.std(Xn_e[1])}\nDad: {np.std(Xn_e[2])}\n"
+             +f"\n|== Mean ================|\nMom: {np.mean(Xn_e[1])}\nDad: {np.mean(Xn_e[2])}\n") 
+        plt.scatter(Xn_e[:, 1], self.y, color="r", s=30, label='mom')
+        plt.scatter(Xn_e[:, 2], self.y, color="b", s=30, label='dad')
+        print(self.calc_beta(Xn_e))
+        print(self.calc_height(Xn_e[:,1], dad)(Xn_e))
+
 
     # Normal equation
-    def calc_beta(self):
-        B = np.linalg.inv(self.Xe.T.dot(self.Xe)).dot(self.Xe.T).dot(self.y)
+    def calc_beta(self, Xe):
+        B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(self.y)
         return B
 
     def calc_j(self):
@@ -69,3 +73,4 @@ class Exercise_A:
 a = Exercise_A(path=path)
 a.feature_norm()
 
+plt.show()
