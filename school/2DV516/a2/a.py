@@ -32,12 +32,20 @@ class Exercise_A:
     def extend_x(self):
         return np.c_[np.ones((self.n, 1)), self.X]
 
-    # Standard deviation --> 
+    # Standard deviation --> compute each value - mean
     def feature_norm(self):
         mom_height = self.X[:, 0]
         dad_height = self.X[:, 1]
         mom_mean, dad_mean = np.mean(mom_height), np.mean(dad_height)
-         
+        mom_std = np.std(mom_height)     
+        dad_std = np.std(dad_height)     
+        m = 0
+        for val in mom_height:
+            d = val - mom_mean
+            dist = abs(d)**2
+            m += dist
+        mean_m = m/len(mom_height)
+        print(f"mean_m: {mean_m}\nmom_std: {mom_std}")
 
     # Normal equation
     def calc_beta(self):
