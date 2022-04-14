@@ -32,6 +32,13 @@ class Exercise_A:
     def extend_x(self):
         return np.c_[np.ones((self.n, 1)), self.X]
 
+    # Standard deviation --> 
+    def feature_norm(self):
+        mom_height = self.X[:, 0]
+        dad_height = self.X[:, 1]
+        mom_mean, dad_mean = np.mean(mom_height), np.mean(dad_height)
+         
+
     # Normal equation
     def calc_beta(self):
         B = np.linalg.inv(self.Xe.T.dot(self.Xe)).dot(self.Xe.T).dot(self.y)
@@ -54,5 +61,5 @@ class Exercise_A:
 
 a = Exercise_A(path=path)
 a.calc_height(65, 70)
-
+a.feature_norm()
 
