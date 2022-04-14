@@ -22,12 +22,16 @@ class Exercise_A:
         self.beta = self.calc_beta(self.Xe)
         self.j = self.calc_j()  # keep as variable instead of recalculating each call
 
-    def plot_dataset(self):
-        plt.figure(figsize=(12, 8))
-        plt.subplot(121)
-        plt.scatter(self.X[:, 0], self.y, color="r", s=30, label='mom')
-        plt.subplot(122)
-        plt.scatter(self.X[:, 1], self.y, color="k", s=30, label='dad')
+    # X is the data and 'i' is the number of subplots
+    # TODO: add functionality to subplot automatically
+    def plot_subplot(self, x1, x2, i):
+        j = 2
+        I = int(f"{j}2{i}")
+        plt.subplot(I)
+        plt.scatter(x1, self.y, color="r", s=30, label='mom')
+        I = int(f"{j}2{i+1}")
+        plt.subplot(I)
+        plt.scatter(x2, self.y, color="k", s=30, label='dad')
 
     def extend_x(self, X, n):
         return np.c_[np.ones((n, 1)), X]
@@ -47,8 +51,10 @@ class Exercise_A:
              +f"\n|== Standard deviation ==|\nMom: {mom_std}\nDad: {dad_std}\n"
              +f"\n|== Standard dev v2 =====|\nMom: {np.std(Xn_e[1])}\nDad: {np.std(Xn_e[2])}\n"
              +f"\n|== Normalized Mean =====|\nMom: {np.mean(Xn_e[1])}\nDad: {np.mean(Xn_e[2])}\n") 
-        plt.scatter(Xn_e[:, 1], self.y, color="r", s=30, label='mom')
-        plt.scatter(Xn_e[:, 2], self.y, color="b", s=30, label='dad')
+        #plt.subplot(222)
+        #plt.scatter(Xn_e[:, 1], self.y, color="r", s=30, label='mom')
+        #plt.scatter(Xn_e[:, 2], self.y, color="b", s=30, label='dad')
+        self.plot_subplot(Xn_e[:,1], Xn_e[:,2], 3)
 
     # Normal equation
     def calc_beta(self, Xe):
@@ -71,6 +77,7 @@ class Exercise_A:
         return height
 
 a = Exercise_A(path=path)
+plt.figure(figsize=(12,9))
+a.plot_subplot(a.X[:,0], a.X[:,1], 1)
 a.feature_norm()
-
 plt.show()
