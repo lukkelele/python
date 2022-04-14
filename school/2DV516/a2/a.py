@@ -20,8 +20,7 @@ class Exercise_A:
         self.n = len(self.X)    # observations
         self.Xe = self.extend_x(self.X, self.n)
         self.beta = self.calc_beta(self.Xe)
-        self.j = self.calc_j()  # keep as variable instead of recalculating each call
-        plt.figure(figsize=(12,9))
+        self.fig = plt.figure(figsize=(12,9))
 
     def plot_subplot(self, x1, x2, i, c=['m', 'b']):
         j = 2
@@ -54,14 +53,14 @@ class Exercise_A:
         B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(self.y)
         return B
 
-    def calc_j(self):
-        j = np.dot(self.Xe, self.beta) - self.y
+    def calc_j(self, X, beta):
+        j = np.dot(X, beta) - self.y
         return j
 
     # Cost function
-    def calc_cost(self):
-        J = (self.j.T.dot(self.j)) / self.n
-        print(f"Cost J: {J}\nlength_J: {len(J)}")
+    def calc_cost(self, X, beta):
+        j = self.calc_j(X, beta)
+        J = (j.T.dot(j)) / self.n
         return J
 
     def calc_height(self, beta, mom, dad):
@@ -69,7 +68,14 @@ class Exercise_A:
         print(f"Calculated height: {height}")
         return height
 
+
 a = Exercise_A(path=path)
 a.plot_subplot(a.X[:,0], a.X[:,1], 1)
 a.feature_norm()
-plt.show()
+print(a.calc_cost(a.Xe, a.beta))
+
+
+
+
+#plt.show()
+
