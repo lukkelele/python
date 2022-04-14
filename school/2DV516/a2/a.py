@@ -21,6 +21,7 @@ class Exercise_A:
         self.Xe = self.extend_x(self.X, self.n)
         self.beta = self.calc_beta(self.Xe)
         self.j = self.calc_j()  # keep as variable instead of recalculating each call
+        plt.figure(figsize=(12,9))
 
     def plot_subplot(self, x1, x2, i, c=['m', 'b']):
         j = 2
@@ -69,7 +70,6 @@ class Exercise_A:
         return height
 
 a = Exercise_A(path=path)
-plt.figure(figsize=(12,9))
 a.plot_subplot(a.X[:,0], a.X[:,1], 1)
 a.feature_norm()
 plt.show()
