@@ -47,6 +47,8 @@ class Exercise_A:
              +f"\n|== Standard deviation ==|\nMom: {mom_std}\nDad: {dad_std}\n"
              +f"\n|== Standard dev v2 =====|\nMom: {np.std(Xn_e[1])}\nDad: {np.std(Xn_e[2])}\n"
              +f"\n|== Normalized Mean =====|\nMom: {np.mean(Xn_e[1])}\nDad: {np.mean(Xn_e[2])}\n") 
+        plt.scatter(Xn_e[:, 1], self.y, color="r", s=30, label='mom')
+        plt.scatter(Xn_e[:, 2], self.y, color="b", s=30, label='dad')
 
     # Normal equation
     def calc_beta(self, Xe):
