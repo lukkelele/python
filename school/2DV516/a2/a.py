@@ -45,10 +45,10 @@ class Exercise_A:
         dad_n = dad_norm.reshape(214, 1)
         Xn = np.concatenate((mom_n, dad_n), axis=1)
         self.Xn_e = self.extend_x(Xn, len(dad_height))
-        print(f"\n\n{self.Xn_e}\n\n")
         print(f"\n|== Mean ================|\nMom: {mom_mean}\nDad: {dad_mean}\n"
              +f"\n|== Standard deviation ==|\nMom: {mom_std}\nDad: {dad_std}\n"
-             +f"\n|== Normalized Mean =====|\nMom: {np.mean(self.Xn_e[1])}\nDad: {np.mean(self.Xn_e[2])}\n") 
+             +f"\n|== Normalized Mean =====|\nMom: {np.mean(self.Xn_e[1])}\nDad: {np.mean(self.Xn_e[2])}\n" 
+             +f"\n|== Norm standard dev ===|\nMom: {np.std(self.Xn_e[1])}\nDad: {np.std(self.Xn_e[2])}\n")
         self.plot_subplot(self.Xn_e[:,1], self.Xn_e[:,2], 3, ['r', 'g'])
 
     # Normal equation
@@ -84,5 +84,5 @@ a.calc_height(a.beta, 65, 70)
 a.calc_height(B, 65, 70)
 
 
-#plt.show()
+plt.show()
 
