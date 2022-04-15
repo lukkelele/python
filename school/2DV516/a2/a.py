@@ -82,10 +82,6 @@ class Exercise_A:
 
     def calc_height(self, beta, mom, dad):
         height = beta[0] + beta[1]*mom + beta[2]*dad
-        #print(f"beta_0 == {beta[0]}\n"
-             #+f"mom*beta_1 == {beta[1]*mom} ===> beta_1 == {beta[1]}\n"
-             #+f"dad*beta_2 == {beta[2]*dad} ===> beta_2 == {beta[2]}\n"
-             #+f"Calculated height: {height}\n")
         return height
 
 

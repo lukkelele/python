@@ -38,3 +38,4 @@ def calc_cost(j, n):
 def calc_height(beta, x0, x1):
     height = beta[0] + beta[1]*x0 + beta[2]*x1
     return height
+
