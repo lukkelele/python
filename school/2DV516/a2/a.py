@@ -84,5 +84,5 @@ a.calc_height(a.beta, 65, 70)
 a.calc_height(B, 65, 70)
 
 
-plt.show()
+#plt.show()
 
