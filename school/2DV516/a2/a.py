@@ -61,9 +61,7 @@ class Exercise_A:
     def normalize_x(self, x, X):
         x_mean = np.mean(X)
         x_std = np.std(X)
-        print(f"mean ==> {x_mean}")
         x_norm = (x - x_mean) / x_std
-        print(x_norm)
         return x_norm
 
     # Normal equation
@@ -95,7 +93,9 @@ a = Exercise_A(path=path)
 a.plot_subplot(a.X[:,0], a.X[:,1], 1)
 Xn_e = a.feature_norm(a.X)
 B = a.calc_beta(Xn_e, a.y)
-a.normalize_x(70, a.X[:,1])
+mom = a.normalize_x(65, a.X[:,0])
+dad = a.normalize_x(70, a.X[:,1])
+print(a.calc_height(B, mom, dad))
 
 #plt.show()
 

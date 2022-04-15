@@ -10,7 +10,15 @@ def normalize_matrix(X):
     Xn = np.concatenate((x0_norm.reshape(len(x0_col), 1), x1_norm.reshape(len(x0_col), 1)), axis=1)
     return Xn
 
-def extend_x(n, X):
+    # x is the value to be normalized
+    # X is the column which holds values of same kind
+def normalize_val(x, X):
+    x_mean = np.mean(X)
+    x_std = np.std(X)
+    x_norm = (x-x_mean)/x_std
+    return x_norm
+
+def extend_matrix(n, X):
     return np.c_[np.ones((n, 1)), X]
 
     # Normal equation
@@ -25,10 +33,8 @@ def calc_j(Xe, y, beta):
 # Cost function
 def calc_cost(j, n):
     J = (j.T.dot(j)) / n
-    print(f"Cost J: {J}\nlength_J: {len(J)}")
     return J
 
-def calc_height(beta, mom, dad):
-    height = beta[0] + beta[1]*mom + beta[2]*dad
-    print(height)
+def calc_height(beta, x0, x1):
+    height = beta[0] + beta[1]*x0 + beta[2]*x1
     return height
