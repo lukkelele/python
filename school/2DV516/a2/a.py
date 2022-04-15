@@ -19,7 +19,7 @@ class Exercise_A:
         self.y = self.dataset[:, 0]
         self.n = len(self.X)    # observations
         self.Xe = self.extend_x(self.X, self.n)
-        self.beta = self.calc_beta(self.Xe)
+        self.beta = self.calc_beta(self.Xe, self.y)
         self.fig = plt.figure(figsize=(12,9))
 
     def plot_subplot(self, x1, x2, i, c=['m', 'b']):
@@ -47,13 +47,13 @@ class Exercise_A:
         self.Xn_e = self.extend_x(Xn, len(dad_height))
         print(f"\n|== Mean ================|\nMom: {mom_mean}\nDad: {dad_mean}\n"
              +f"\n|== Standard deviation ==|\nMom: {mom_std}\nDad: {dad_std}\n"
-             +f"\n|== Normalized Mean =====|\nMom: {np.mean(self.Xn_e[1])}\nDad: {np.mean(self.Xn_e[2])}\n" 
-             +f"\n|== Norm standard dev ===|\nMom: {np.std(self.Xn_e[1])}\nDad: {np.std(self.Xn_e[2])}\n")
+             +f"\n|== Normalized Mean =====|\nMom: {np.mean(self.Xn_e[:,1])}\nDad: {np.mean(self.Xn_e[:,2])}\n" 
+             +f"\n|== Norm standard dev ===|\nMom: {np.std(self.Xn_e[:,1])}\nDad: {np.std(self.Xn_e[:,2])}\n")
         self.plot_subplot(self.Xn_e[:,1], self.Xn_e[:,2], 3, ['r', 'g'])
 
     # Normal equation
-    def calc_beta(self, Xe):
-        B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(self.y)
+    def calc_beta(self, Xe, y):
+        B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
         print(f"BETA: {B}")
         return B
 
@@ -79,7 +79,7 @@ class Exercise_A:
 a = Exercise_A(path=path)
 a.plot_subplot(a.X[:,0], a.X[:,1], 1)
 a.feature_norm()
-B = a.calc_beta(a.Xn_e)
+B = a.calc_beta(a.Xn_e, a.y)
 a.calc_height(a.beta, 65, 70)
 a.calc_height(B, 65, 70)
 
