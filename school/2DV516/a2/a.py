@@ -38,13 +38,11 @@ class Exercise_A:
     def feature_norm(self, X):
         mom_height, dad_height = X[:, 0], X[:, 1]
         mom_mean, dad_mean = np.mean(mom_height), np.mean(dad_height)
-        mom_std, dad_std = np.std(mom_height), np.std(dad_height)     
         mom_subt, dad_subt = np.subtract(mom_height, mom_mean), np.subtract(dad_height, dad_mean)
+        mom_std, dad_std = np.std(mom_height), np.std(dad_height)     
         mom_norm, dad_norm = np.divide(mom_subt, mom_std), np.divide(dad_subt, dad_std)
-        mom_n = mom_norm.reshape(214, 1)
-        dad_n = dad_norm.reshape(214, 1)
-        Xn = np.concatenate((mom_n, dad_n), axis=1)
-        Xn_e = self.extend_x(Xn, len(dad_height))
+        Xn = np.concatenate((mom_norm.reshape(len(dad_height), 1), dad_norm.reshape(len(dad_height), 1)), axis=1)
+        Xn_e = self.extend_x(Xn, len(dad_height))   # len(dad_height) == len(mom_height) == 214
         print(f"\n|== Mean ================|\nMom: {mom_mean}\nDad: {dad_mean}\n"
              +f"\n|== Standard deviation ==|\nMom: {mom_std}\nDad: {dad_std}\n"
              +f"\n|== Normalized Mean =====|\nMom: {np.mean(Xn_e[:,1])}\nDad: {np.mean(Xn_e[:,2])}\n" 
@@ -52,10 +50,26 @@ class Exercise_A:
         self.plot_subplot(Xn_e[:,1], Xn_e[:,2], 3, ['r', 'g']) # x0, x1, subplot index, colors for x0 and x1
         return Xn_e
 
+    def feature_norm_y(self, z, y):
+        y_mean = np.mean(y)
+        y_subt = np.subtract(y, y_mean)
+        y_std = np.std(y)
+        y_norm = np.divide(y_subt, y_std)
+        n = (z-y_mean)/y_std
+        return n
+
+    def normalize_x(self, x, X):
+        x_mean = np.mean(X)
+        x_std = np.std(X)
+        print(f"mean ==> {x_mean}")
+        x_norm = (x - x_mean) / x_std
+        print(x_norm)
+        return x_norm
+
     # Normal equation
     def calc_beta(self, Xe, y):
         B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
-        print(f"BETA: {B}")
+        print(f"BETA: {B}\n")
         return B
 
     def calc_j(self, X, beta):
@@ -70,10 +84,10 @@ class Exercise_A:
 
     def calc_height(self, beta, mom, dad):
         height = beta[0] + beta[1]*mom + beta[2]*dad
-        print(f"beta_0 == {beta[0]}\n"
-             +f"mom*beta_1 == {beta[1]*mom} ===> beta_1 == {beta[1]}\n"
-             +f"dad*beta_2 == {beta[2]*dad} ===> beta_2 == {beta[2]}\n"
-             +f"Calculated height: {height}\n")
+        #print(f"beta_0 == {beta[0]}\n"
+             #+f"mom*beta_1 == {beta[1]*mom} ===> beta_1 == {beta[1]}\n"
+             #+f"dad*beta_2 == {beta[2]*dad} ===> beta_2 == {beta[2]}\n"
+             #+f"Calculated height: {height}\n")
         return height
 
 
@@ -81,9 +95,7 @@ a = Exercise_A(path=path)
 a.plot_subplot(a.X[:,0], a.X[:,1], 1)
 Xn_e = a.feature_norm(a.X)
 B = a.calc_beta(Xn_e, a.y)
-a.calc_height(a.beta, 65, 70)
-a.calc_height(B, 65, 70)
-
+a.normalize_x(70, a.X[:,1])
 
 #plt.show()
 
