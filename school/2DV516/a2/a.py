@@ -35,8 +35,8 @@ class Exercise_A:
         return np.c_[np.ones((n, 1)), X]
 
     # Standard deviation --> compute each value - mean
-    def feature_norm(self):
-        mom_height, dad_height = self.X[:, 0], self.X[:, 1]
+    def feature_norm(self, X):
+        mom_height, dad_height = X[:, 0], X[:, 1]
         mom_mean, dad_mean = np.mean(mom_height), np.mean(dad_height)
         mom_std, dad_std = np.std(mom_height), np.std(dad_height)     
         mom_subt, dad_subt = np.subtract(mom_height, mom_mean), np.subtract(dad_height, dad_mean)
@@ -44,12 +44,13 @@ class Exercise_A:
         mom_n = mom_norm.reshape(214, 1)
         dad_n = dad_norm.reshape(214, 1)
         Xn = np.concatenate((mom_n, dad_n), axis=1)
-        self.Xn_e = self.extend_x(Xn, len(dad_height))
+        Xn_e = self.extend_x(Xn, len(dad_height))
         print(f"\n|== Mean ================|\nMom: {mom_mean}\nDad: {dad_mean}\n"
              +f"\n|== Standard deviation ==|\nMom: {mom_std}\nDad: {dad_std}\n"
-             +f"\n|== Normalized Mean =====|\nMom: {np.mean(self.Xn_e[:,1])}\nDad: {np.mean(self.Xn_e[:,2])}\n" 
-             +f"\n|== Norm standard dev ===|\nMom: {np.std(self.Xn_e[:,1])}\nDad: {np.std(self.Xn_e[:,2])}\n")
-        self.plot_subplot(self.Xn_e[:,1], self.Xn_e[:,2], 3, ['r', 'g'])
+             +f"\n|== Normalized Mean =====|\nMom: {np.mean(Xn_e[:,1])}\nDad: {np.mean(Xn_e[:,2])}\n" 
+             +f"\n|== Norm standard dev ===|\nMom: {np.std(Xn_e[:,1])}\nDad: {np.std(Xn_e[:,2])}\n")
+        self.plot_subplot(Xn_e[:,1], Xn_e[:,2], 3, ['r', 'g']) # x0, x1, subplot index, colors for x0 and x1
+        return Xn_e
 
     # Normal equation
     def calc_beta(self, Xe, y):
@@ -78,8 +79,8 @@ class Exercise_A:
 
 a = Exercise_A(path=path)
 a.plot_subplot(a.X[:,0], a.X[:,1], 1)
-a.feature_norm()
-B = a.calc_beta(a.Xn_e, a.y)
+Xn_e = a.feature_norm(a.X)
+B = a.calc_beta(Xn_e, a.y)
 a.calc_height(a.beta, 65, 70)
 a.calc_height(B, 65, 70)
 
