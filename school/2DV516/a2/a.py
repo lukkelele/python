@@ -18,7 +18,7 @@ class Exercise_A:
         self.X = self.dataset[:, [1, 2]]
         self.y = self.dataset[:, 0]
         self.n = len(self.X)    # observations
-        self.Xe = self.extend_x(self.X, self.n)
+        self.Xe = self.extend_matrix(self.X, self.n)
         self.beta = self.calc_beta(self.Xe, self.y)
         self.fig = plt.figure(figsize=(12,9))
 
@@ -31,26 +31,24 @@ class Exercise_A:
         plt.subplot(I)
         plt.scatter(x2, self.y, color=c[1], s=30, edgecolors='k', label='dad')
 
-    def extend_x(self, X, n):
+    def extend_matrix(self, X, n):
         return np.c_[np.ones((n, 1)), X]
 
-    # Standard deviation --> compute each value - mean
-    def feature_norm(self, X):
+    def normalize_matrix(self, X):
         mom_height, dad_height = X[:, 0], X[:, 1]
         mom_mean, dad_mean = np.mean(mom_height), np.mean(dad_height)
         mom_subt, dad_subt = np.subtract(mom_height, mom_mean), np.subtract(dad_height, dad_mean)
         mom_std, dad_std = np.std(mom_height), np.std(dad_height)     
         mom_norm, dad_norm = np.divide(mom_subt, mom_std), np.divide(dad_subt, dad_std)
         Xn = np.concatenate((mom_norm.reshape(len(dad_height), 1), dad_norm.reshape(len(dad_height), 1)), axis=1)
-        Xn_e = self.extend_x(Xn, len(dad_height))   # len(dad_height) == len(mom_height) == 214
-        print(f"\n|== Mean ================|\nMom: {mom_mean}\nDad: {dad_mean}\n"
-             +f"\n|== Standard deviation ==|\nMom: {mom_std}\nDad: {dad_std}\n"
-             +f"\n|== Normalized Mean =====|\nMom: {np.mean(Xn_e[:,1])}\nDad: {np.mean(Xn_e[:,2])}\n" 
-             +f"\n|== Norm standard dev ===|\nMom: {np.std(Xn_e[:,1])}\nDad: {np.std(Xn_e[:,2])}\n")
-        self.plot_subplot(Xn_e[:,1], Xn_e[:,2], 3, ['r', 'g']) # x0, x1, subplot index, colors for x0 and x1
+        return Xn
+
+    def normalize_extend(self, X):
+        Xn = a.normalize_matrix(X)
+        Xn_e = a.extend_matrix(Xn, len(Xn))
         return Xn_e
 
-    def feature_norm_y(self, z, y):
+    def normalize_y(self, z, y):
         y_mean = np.mean(y)
         y_subt = np.subtract(y, y_mean)
         y_std = np.std(y)
@@ -87,11 +85,9 @@ class Exercise_A:
 
 a = Exercise_A(path=path)
 a.plot_subplot(a.X[:,0], a.X[:,1], 1)
-Xn_e = a.feature_norm(a.X)
-B = a.calc_beta(Xn_e, a.y)
-mom = a.normalize_x(65, a.X[:,0])
-dad = a.normalize_x(70, a.X[:,1])
-print(a.calc_height(B, mom, dad))
+Xn_e = a.normalize_extend(a.X)
+BETA = a.calc_beta(Xn_e, a.y)
+print(a.calc_height(BETA, a.normalize_x(65, a.X[:,0]), a.normalize_x(70, a.X[:,1])))
 
 #plt.show()
 
