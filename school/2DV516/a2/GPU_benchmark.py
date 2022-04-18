@@ -63,18 +63,20 @@ class GPU_benchmark:
 
     def task_3(self):
         values = [2432, 1607, 1683, 8, 8, 256]
-        print(f"Predicted benchmark: {self.calc_benchmark(values, self.beta)}")
+        print(f"| Predicted benchmark: {self.calc_benchmark(values, self.beta)}")
         
     def task_4(self):
-        print(f"Cost J(B): {self.calc_cost(self.Xe, self.beta, self.y, len(self.x0))}")
+        print(f"| Cost J(B): {self.calc_cost(self.Xe, self.beta, self.y, len(self.x0))}")
 
+    def run_tests(self):
+        print("\n------------------------------------------------\n| Running tests...\n"+
+              "------------------------------------------------")
+        self.task_3()
+        self.task_4()
+        print("------------------------------------------------\n")
+    
 g = GPU_benchmark(csv_path)
-#print(g.normalize_X(g.X))
-#g.plot_features(g.normalize_X(g.X), g.y)
-g.task_3()
-g.task_4()
-
-b = g.calc_beta(g.Xe, g.y)
+g.run_tests()
 
 plt.subplots_adjust(wspace=0.28)
 #plt.show()
