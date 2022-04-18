@@ -8,6 +8,8 @@ import csv_parser
 # Find f(X) = B0 + B1*X1 + ... + B6*X6
 
 csv_path = "./data/GPUbenchmark.csv"
+task_3_values = [2432, 1607, 1683, 8, 8, 256]
+
 
 class GPU_benchmark:
     
@@ -55,8 +57,12 @@ class GPU_benchmark:
     def calc_benchmark(self, X, beta):
         benchmark_result = (beta[0] + beta[1]*X[0] + beta[2]*X[1] + beta[3]*X[2] +
                             beta[4]*X[3] + beta[5]*X[4] + beta[6]*X[5])
-        print(benchmark_result)
         return benchmark_result
+
+    def calc_cost(self, X, beta, y, n):
+        cost = func.calc_cost(X, beta, y, n)
+        return cost
+
 
 
 g = GPU_benchmark(csv_path)
@@ -65,7 +71,8 @@ g = GPU_benchmark(csv_path)
 
 b = g.calc_beta(g.Xe, g.y)
 g.normalize_X(g.X)
-g.calc_benchmark([2432, 1607, 1683, 8, 8, 256], b)
+g.calc_benchmark(task_3_values, b)
+print(g.calc_cost(g.X, b, g.y, len(g.X[:,0])))
 
 plt.subplots_adjust(wspace=0.28)
 #plt.show()
