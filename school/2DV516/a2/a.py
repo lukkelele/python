@@ -74,8 +74,14 @@ class Exercise_A:
         return J
 
         # X has to be extended
-    def gradient_descent(self, X, a, y, n):
-        B = np.array([[0], [0], [0]]) # starting value for beta
+    def gradient_descent(self, Xe, y, N=10, a=0.001, B=np.array([[0],[0],[0]])):
+        prev = []
+        prev.append(B)
+        for i in range(N):
+            prev_b = prev[i]
+            B = prev_b - a*Xe.T.dot((Xe.dot(prev_b))-y)
+            prev.append(B)
+            print(f"B: {np.mean(B)} || prev_b: {np.mean(prev_b)}")
 
     def calc_height(self, beta, mom, dad):
         height = beta[0] + beta[1]*mom + beta[2]*dad
@@ -87,6 +93,7 @@ a.plot_subplot(a.X[:,0], a.X[:,1], 1)
 b = a.calc_beta(a.Xe, a.y)
 print(b)
 print(a.calc_cost(a.Xe, b, a.y, a.n))
+a.gradient_descent(a.Xe, a.y, 3)
 
 #print(b)
 
