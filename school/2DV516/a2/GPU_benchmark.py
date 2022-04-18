@@ -1,4 +1,5 @@
 import mlrlib as func
+import numpy as np
 import csv_parser
 
 # The 7th column is the response y
@@ -23,7 +24,14 @@ class GPU_benchmark:
         self.x4 = dataset[:,4]
         self.x5 = dataset[:,5]
 
+    def normalize_X(self, X):
+        col_length = len(X[:,0])
+        Xn = func.normalize_column(X, 0).reshape(col_length, 1)
+        for i in range(2, 6):
+            xn = func.normalize_column(X, i).reshape(col_length, 1)
+            Xn = np.concatenate((Xn, (xn)), axis=1)
+        return Xn
 
 
-gpu = GPU_benchmark(csv_path)
-print(gpu.X)
+g = GPU_benchmark(csv_path)
+print(g.normalize_X(g.X))

@@ -3,7 +3,7 @@ import numpy as np
 
 
 
-# two columns
+# two columns only
 def normalize_matrix(X):
     x0_col, x1_col = X[:,0], X[:,1]
     x0_std, x1_std = np.std(x0_col), np.std(x1_col)
@@ -12,6 +12,14 @@ def normalize_matrix(X):
     x0_norm, x1_norm = np.divide(x0_subt, x0_std), np.divide(x1_subt, x1_std) 
     Xn = np.concatenate((x0_norm.reshape(len(x0_col), 1), x1_norm.reshape(len(x0_col), 1)), axis=1)
     return Xn
+
+def normalize_column(X, col):
+    x = X[:,col]
+    x_std = np.std(x)
+    x_mean = np.mean(x)
+    x_subt = np.subtract(x, x_mean)
+    x_norm = np.divide(x_subt, x_std)
+    return x_norm
 
 # Normalize a single value
 def normalize_val(x, X):
