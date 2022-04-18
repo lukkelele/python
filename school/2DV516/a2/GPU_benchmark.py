@@ -8,7 +8,6 @@ import csv_parser
 # Find f(X) = B0 + B1*X1 + ... + B6*X6
 
 csv_path = "./data/GPUbenchmark.csv"
-task_3_values = [2432, 1607, 1683, 8, 8, 256]
 
 
 class GPU_benchmark:
@@ -29,6 +28,7 @@ class GPU_benchmark:
         self.x3 = dataset[:,3]
         self.x4 = dataset[:,4]
         self.x5 = dataset[:,5]
+        self.beta = self.calc_beta(self.Xe, self.y) 
 
     def normalize_X(self, X):
         col_length = len(X[:,0])
@@ -50,7 +50,6 @@ class GPU_benchmark:
 
     def calc_beta(self, Xe, y):
         beta = func.calc_beta(Xe, y)
-        #print(beta)
         return beta
 
     def calc_benchmark(self, X, beta):
@@ -62,15 +61,20 @@ class GPU_benchmark:
         cost = func.calc_cost(X, beta, y, n)
         return cost
 
+    def task_3(self):
+        values = [2432, 1607, 1683, 8, 8, 256]
+        print(f"Predicted benchmark: {self.calc_benchmark(values, self.beta)}")
+        
+    def task_4(self):
+        print(f"Cost J(B): {self.calc_cost(self.Xe, self.beta, self.y, len(self.x0))}")
 
 g = GPU_benchmark(csv_path)
 #print(g.normalize_X(g.X))
 #g.plot_features(g.normalize_X(g.X), g.y)
+g.task_3()
+g.task_4()
 
 b = g.calc_beta(g.Xe, g.y)
-g.normalize_X(g.X)
-g.calc_benchmark(task_3_values, b)
-print(g.calc_cost(g.Xe, b, g.y, len(g.X[:,0])))
 
 plt.subplots_adjust(wspace=0.28)
 #plt.show()
