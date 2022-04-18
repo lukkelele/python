@@ -44,8 +44,8 @@ class Exercise_A:
         return Xn
 
     def normalize_extend(self, X):
-        Xn = a.normalize_matrix(X)
-        Xn_e = a.extend_matrix(Xn, len(Xn))
+        Xn = self.normalize_matrix(X)
+        Xn_e = self.extend_matrix(Xn, len(Xn))
         return Xn_e
 
     def normalize_x(self, x, X):

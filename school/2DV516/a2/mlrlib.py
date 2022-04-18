@@ -1,7 +1,9 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-    # two columns
+
+
+# two columns
 def normalize_matrix(X):
     x0_col, x1_col = X[:,0], X[:,1]
     x0_std, x1_std = np.std(x0_col), np.std(x1_col)
@@ -11,8 +13,7 @@ def normalize_matrix(X):
     Xn = np.concatenate((x0_norm.reshape(len(x0_col), 1), x1_norm.reshape(len(x0_col), 1)), axis=1)
     return Xn
 
-    # x is the value to be normalized
-    # X is the column which holds values of same kind
+# Normalize a single value
 def normalize_val(x, X):
     x_mean = np.mean(X)
     x_std = np.std(X)
@@ -21,6 +22,12 @@ def normalize_val(x, X):
 
 def extend_matrix(n, X):
     return np.c_[np.ones((n, 1)), X]
+
+# Extend a matrix in its first column
+def normalize_extend(X):
+    Xn = normalize_matrix(X)
+    Xn_e = extend_matrix(Xn, len(Xn))
+    return Xn_e
 
 def calc_beta(Xe, y):
     B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
@@ -46,7 +53,7 @@ def gradient_descent(Xe, y, N=10, a=0.001, b=[0,0,0]):
         b = b - a*grad
     return b
 
-    # Plot two subplots with different x values but same y values
+# Plot two subplots with different x values but same y values
 def plot_subplot(x1, x2, y, i, c=['m', 'b']):
     j = 2
     I = int(f"{j}2{i}")
