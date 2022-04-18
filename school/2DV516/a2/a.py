@@ -67,23 +67,15 @@ class Exercise_A:
         B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
         return B
 
+    # Cost function
+    def calc_cost(self, Xe, beta, y, n):
+        j = np.dot(Xe, beta) - y
+        J = (j.T.dot(j)) / n
+        return J
+
         # X has to be extended
     def gradient_descent(self, X, a, y, n):
         B = np.array([[0], [0], [0]]) # starting value for beta
-        alpha = (2*a)/n
-        B = B - alpha*((X.T.dot(X.dot(B) - y)))
-        print(B[0])
-        return B
-    
-    def calc_j(self, X, beta, y):
-        j = np.dot(X, beta) - y
-        return j
-
-    # Cost function
-    def calc_cost(self, X, beta, y, n):
-        j = self.calc_j(X, beta, y)
-        J = (j.T.dot(j)) / n
-        return J
 
     def calc_height(self, beta, mom, dad):
         height = beta[0] + beta[1]*mom + beta[2]*dad
@@ -92,9 +84,11 @@ class Exercise_A:
 
 a = Exercise_A(path=path)
 a.plot_subplot(a.X[:,0], a.X[:,1], 1)
+b = a.calc_beta(a.Xe, a.y)
+print(b)
+print(a.calc_cost(a.Xe, b, a.y, a.n))
 
-b = a.gradient_descent(a.Xe, 0.002 , a.y, a.n)
-
+#print(b)
 
 #plt.show()
 
