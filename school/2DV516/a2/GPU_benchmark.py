@@ -34,7 +34,6 @@ class GPU_benchmark:
         col_length = len(X[:,0])
         Xn = func.normalize_column(X, 0).reshape(col_length, 1)
         for i in range(1,6):
-            print(i)
             xn = func.normalize_column(X, i).reshape(col_length, 1)
             Xn = np.concatenate((Xn, (xn)), axis=1)
         return Xn
@@ -64,7 +63,6 @@ class GPU_benchmark:
         return cost
 
 
-
 g = GPU_benchmark(csv_path)
 #print(g.normalize_X(g.X))
 #g.plot_features(g.normalize_X(g.X), g.y)
@@ -72,7 +70,7 @@ g = GPU_benchmark(csv_path)
 b = g.calc_beta(g.Xe, g.y)
 g.normalize_X(g.X)
 g.calc_benchmark(task_3_values, b)
-print(g.calc_cost(g.X, b, g.y, len(g.X[:,0])))
+print(g.calc_cost(g.Xe, b, g.y, len(g.X[:,0])))
 
 plt.subplots_adjust(wspace=0.28)
 #plt.show()
