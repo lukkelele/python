@@ -68,14 +68,23 @@ class Exercise_A:
         print(f"BETA: {B}\n")
         return B
 
-    def calc_j(self, X, beta):
-        j = np.dot(X, beta) - self.y
+        # X has to be extended
+    def gradient_descent(self, X, beta, a, y, n):
+        J = self.calc_cost(X, beta, y, n)
+        B = np.subtract(beta, np.dot((2*a/n), (X.T)).dot((X.dot(beta) - y)))
+        alpha = 2*(a/n)
+        B = beta - np.dot(alpha, (X.T)).dot((X.dot(beta) - y))
+        print(f"B --> {B}")
+        return B
+
+    def calc_j(self, X, beta, y):
+        j = np.dot(X, beta) - y
         return j
 
     # Cost function
-    def calc_cost(self, X, beta):
-        j = self.calc_j(X, beta)
-        J = (j.T.dot(j)) / self.n
+    def calc_cost(self, X, beta, y, n):
+        j = self.calc_j(X, beta, y)
+        J = (j.T.dot(j)) / n
         return J
 
     def calc_height(self, beta, mom, dad):
@@ -85,9 +94,8 @@ class Exercise_A:
 
 a = Exercise_A(path=path)
 a.plot_subplot(a.X[:,0], a.X[:,1], 1)
-Xn_e = a.normalize_extend(a.X)
-BETA = a.calc_beta(Xn_e, a.y)
-print(a.calc_height(BETA, a.normalize_x(65, a.X[:,0]), a.normalize_x(70, a.X[:,1])))
+print(a.beta)
+b = a.gradient_descent(a.Xe, a.beta, 200, a.y, a.n)
 
 #plt.show()
 
