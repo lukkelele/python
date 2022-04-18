@@ -1,3 +1,4 @@
+from matplotlib import pyplot as plt
 import numpy as np
 
     # two columns
@@ -29,7 +30,8 @@ def calc_j(Xe, y, beta):
     j = np.dot(Xe, beta) - y
     return j
 
-def calc_cost(j, n):
+def calc_cost(X, beta, y, n):
+    j = np.dot(X, beta) - y
     J = (j.T.dot(j)) / n
     return J
 
@@ -37,4 +39,19 @@ def calc_height(beta, x0, x1):
     height = beta[0] + beta[1]*x0 + beta[2]*x1
     return height
 
+def gradient_descent(Xe, y, N=10, a=0.001, b=[0,0,0]):
+    n = len(Xe)     # column length 
+    for i in range(N):
+        grad = Xe.T.dot(y - Xe.dot(b)) / n
+        b = b - a*grad
+    return b
 
+    # Plot two subplots with different x values but same y values
+def plot_subplot(x1, x2, y, i, c=['m', 'b']):
+    j = 2
+    I = int(f"{j}2{i}")
+    plt.subplot(I)
+    plt.scatter(x1, y, color=c[0], s=30, edgecolors='k', label='mom')
+    I = int(f"{j}2{i+1}")
+    plt.subplot(I)
+    plt.scatter(x2, y, color=c[1], s=30, edgecolors='k', label='dad')

@@ -48,14 +48,6 @@ class Exercise_A:
         Xn_e = a.extend_matrix(Xn, len(Xn))
         return Xn_e
 
-    def normalize_y(self, z, y):
-        y_mean = np.mean(y)
-        y_subt = np.subtract(y, y_mean)
-        y_std = np.std(y)
-        y_norm = np.divide(y_subt, y_std)
-        n = (z-y_mean)/y_std
-        return n
-
     def normalize_x(self, x, X):
         x_mean = np.mean(X)
         x_std = np.std(X)
@@ -75,7 +67,6 @@ class Exercise_A:
 
         # X has to be extended
     def gradient_descent(self, Xe, y, N=10, a=0.0001, b=[0,0,0]):
-        beta = self.calc_beta(self.Xe, self.y)
         for i in range(N):
             grad = -(Xe.T.dot(y - Xe.dot(b)) / self.n)
             b = b - a*grad
