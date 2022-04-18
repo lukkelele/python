@@ -20,6 +20,7 @@ class GPU_benchmark:
         dataset = csv_parser.open_gpu_file(self.path)
         self.X = dataset[:,[0,1,2,3,4,5]]
         self.y = dataset[:,6]
+        self.Xe = func.extend_matrix(self.X, len(self.X))
         self.x0 = dataset[:,0]
         self.x1 = dataset[:,1]
         self.x2 = dataset[:,2]
@@ -30,7 +31,8 @@ class GPU_benchmark:
     def normalize_X(self, X):
         col_length = len(X[:,0])
         Xn = func.normalize_column(X, 0).reshape(col_length, 1)
-        for i in range(1, 6):
+        for i in range(1,6):
+            print(i)
             xn = func.normalize_column(X, i).reshape(col_length, 1)
             Xn = np.concatenate((Xn, (xn)), axis=1)
         return Xn
@@ -45,10 +47,25 @@ class GPU_benchmark:
             plt.ylabel("y")
             plt.scatter(current_column, y, s=10, color="b")
 
+    def calc_beta(self, Xe, y):
+        beta = func.calc_beta(Xe, y)
+        #print(beta)
+        return beta
+
+    def calc_benchmark(self, X, beta):
+        benchmark_result = (beta[0] + beta[1]*X[0] + beta[2]*X[1] + beta[3]*X[2] +
+                            beta[4]*X[3] + beta[5]*X[4] + beta[6]*X[5])
+        print(benchmark_result)
+        return benchmark_result
+
 
 g = GPU_benchmark(csv_path)
-print(g.normalize_X(g.X))
-g.plot_features(g.normalize_X(g.X), g.y)
+#print(g.normalize_X(g.X))
+#g.plot_features(g.normalize_X(g.X), g.y)
+
+b = g.calc_beta(g.Xe, g.y)
+g.normalize_X(g.X)
+g.calc_benchmark([2432, 1607, 1683, 8, 8, 256], b)
 
 plt.subplots_adjust(wspace=0.28)
-plt.show()
+#plt.show()

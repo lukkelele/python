@@ -28,7 +28,7 @@ def normalize_val(x, X):
     x_norm = (x-x_mean)/x_std
     return x_norm
 
-def extend_matrix(n, X):
+def extend_matrix(X, n):
     return np.c_[np.ones((n, 1)), X]
 
 # Extend a matrix in its first column
