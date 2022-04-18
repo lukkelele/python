@@ -82,6 +82,7 @@ class Exercise_A:
             b = b - a*grad_vec
             cost = self.calc_cost(self.Xe, b, self.y, self.n)
             #print(cost)
+            if i < 20: pass
             plt.scatter(cost, i, s=5)
             #print(b)
         return b
@@ -90,14 +91,14 @@ class Exercise_A:
         height = beta[0] + beta[1]*mom + beta[2]*dad
         return height
 
-
+N = 4000
 a = Exercise_A(path=path)
 #a.plot_subplot(a.X[:,0], a.X[:,1], 1)
 b = a.calc_beta(a.Xe, a.y)
 #print(a.calc_cost(a.Xe, b, a.y, a.n))
-grad = a.gradient_descent(a.Xe, a.y, 1000, 0.00023)
+grad = a.gradient_descent(a.Xe, a.y, N, 0.000224)
 cost_grad = a.calc_cost(grad, b, a.y, a.n)
 #a.plot_subplot(a.Xe[:,1], a.Xe[:,2], 1)
-plt.ylim([1, 1100])
+#plt.ylim([1, N+50])
 plt.show()
 
