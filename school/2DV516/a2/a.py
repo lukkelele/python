@@ -65,18 +65,16 @@ class Exercise_A:
     # Normal equation
     def calc_beta(self, Xe, y):
         B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
-        print(f"BETA: {B}\n")
         return B
 
         # X has to be extended
-    def gradient_descent(self, X, beta, a, y, n):
-        J = self.calc_cost(X, beta, y, n)
-        B = np.subtract(beta, np.dot((2*a/n), (X.T)).dot((X.dot(beta) - y)))
-        alpha = 2*(a/n)
-        B = beta - np.dot(alpha, (X.T)).dot((X.dot(beta) - y))
-        print(f"B --> {B}")
+    def gradient_descent(self, X, a, y, n):
+        B = np.array([[0], [0], [0]]) # starting value for beta
+        alpha = (2*a)/n
+        B = B - alpha*((X.T.dot(X.dot(B) - y)))
+        print(B[0])
         return B
-
+    
     def calc_j(self, X, beta, y):
         j = np.dot(X, beta) - y
         return j
@@ -94,8 +92,9 @@ class Exercise_A:
 
 a = Exercise_A(path=path)
 a.plot_subplot(a.X[:,0], a.X[:,1], 1)
-print(a.beta)
-b = a.gradient_descent(a.Xe, a.beta, 200, a.y, a.n)
+
+b = a.gradient_descent(a.Xe, 0.002 , a.y, a.n)
+
 
 #plt.show()
 
