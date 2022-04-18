@@ -37,11 +37,18 @@ class GPU_benchmark:
 
     def plot_features(self, X, y):
         for i in range(6):
+            current_column = X[:,i]
+            x_min, x_max = np.min(current_column) - 1, np.max(current_column) + 1
             plt.subplot(2, 3, i+1)
-            plt.scatter(X[:, i], y, s=10, color="b")
+            plt.xlim(x_min, x_max)
+            plt.xlabel(f"x_{i}")
+            plt.ylabel("y")
+            plt.scatter(current_column, y, s=10, color="b")
 
 
 g = GPU_benchmark(csv_path)
 print(g.normalize_X(g.X))
-g.plot_features(g.X, g.y)
-#plt.show()
+g.plot_features(g.normalize_X(g.X), g.y)
+
+plt.subplots_adjust(wspace=0.28)
+plt.show()
