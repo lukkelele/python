@@ -54,7 +54,7 @@ def calc_height(beta, x0, x1):
     height = beta[0] + beta[1]*x0 + beta[2]*x1
     return height
 
-def gradient_descent(Xe, y, N=10, a=0.001, b=[0,0,0]):
+def gradient_descent(Xe, y, b, N=10, a=0.001):
     n = len(Xe)     # column length 
     for i in range(N):
         grad = Xe.T.dot(y - Xe.dot(b)) / n

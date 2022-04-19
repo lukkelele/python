@@ -52,10 +52,26 @@ class GPU_benchmark:
         beta = func.calc_beta(Xe, y)
         return beta
 
+    def gradient_descent(self, Xe, y, b, N, a):
+        b = func.gradient_descent(Xe, y, b, N, a)
+        return b
+
     def calc_benchmark(self, X, beta):
         benchmark_result = (beta[0] + beta[1]*X[0] + beta[2]*X[1] + beta[3]*X[2] +
                             beta[4]*X[3] + beta[5]*X[4] + beta[6]*X[5])
         return benchmark_result
+
+    def normalize_column(self, X, col):
+        norm_col = func.normalize_column(X, col)
+        print(norm_col)
+        return norm_col
+
+    def normalize_val(self, X, col, val):
+        column = X[:,col]
+        mean = np.mean(column) 
+        std = np.std(column) 
+        norm_val = (val-mean)/std
+        return norm_val
 
     def calc_cost(self, X, beta, y, n):
         cost = func.calc_cost(X, beta, y, n)
@@ -74,9 +90,32 @@ class GPU_benchmark:
         self.task_3()
         self.task_4()
         print("------------------------------------------------\n")
-    
+
+
+
+values = [2432, 1607, 1683, 8, 8, 256]
+norm_values = []
+
 g = GPU_benchmark(csv_path)
 g.run_tests()
+grad_b = g.gradient_descent(g.Xe, g.y, g.beta, 10, 0.001)
+
+g.normalize_column(g.X, 0)
+print(g.normalize_val(g.X, 0, 3584))
+
+
+#print(g.calc_benchmark(norm_values, grad_b))
 
 plt.subplots_adjust(wspace=0.28)
 #plt.show()
+
+
+
+
+
+
+
+
+
+
+
