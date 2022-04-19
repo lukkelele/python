@@ -21,6 +21,7 @@ class GPU_benchmark:
         dataset = csv_parser.open_gpu_file(self.path)
         self.X = dataset[:,[0,1,2,3,4,5]]
         self.y = dataset[:,6]
+        self.n = len(self.X)
         self.Xe = func.extend_matrix(self.X, len(self.X))
         self.x0 = dataset[:,0]
         self.x1 = dataset[:,1]
@@ -52,10 +53,6 @@ class GPU_benchmark:
         beta = func.calc_beta(Xe, y)
         return beta
 
-    def gradient_descent(self, Xe, y, b, N, a):
-        b = func.gradient_descent(Xe, y, b, N, a)
-        return b
-
     def calc_benchmark(self, X, beta):
         benchmark_result = (beta[0] + beta[1]*X[0] + beta[2]*X[1] + beta[3]*X[2] +
                             beta[4]*X[3] + beta[5]*X[4] + beta[6]*X[5])
@@ -63,7 +60,6 @@ class GPU_benchmark:
 
     def normalize_column(self, X, col):
         norm_col = func.normalize_column(X, col)
-        print(norm_col)
         return norm_col
 
     def normalize_val(self, X, col, val):
@@ -73,9 +69,29 @@ class GPU_benchmark:
         norm_val = (val-mean)/std
         return norm_val
 
-    def calc_cost(self, X, beta, y, n):
-        cost = func.calc_cost(X, beta, y, n)
-        return cost
+    def normalize_features(self, features):
+        norm_vals = []
+        for i in range(6):
+            norm_vals.append(self.normalize_val(self.X, i, features[i]))
+        return norm_vals
+
+    def calc_cost(self, Xe, beta, y, n):
+        j = np.dot(Xe, beta) - y
+        J = (j.T.dot(j)) / n
+        return J
+
+    def gradient_descent(self, Xe, y, b, N, a):
+        #b = func.gradient_descent(Xe, y, b, N, a)
+        n = len(Xe)
+        #print(Xe)
+        for i in range(N):
+            grad = -(Xe.T.dot(y - Xe.dot(b)) / n)
+            b = b - a*grad
+            cost = self.calc_cost(Xe, b, y, self.n)
+            if i < 5: pass
+            plt.scatter(i, cost, s=3, color="k")
+        #plt.show()
+        return b
 
     def task_3(self):
         values = [2432, 1607, 1683, 8, 8, 256]
@@ -94,20 +110,21 @@ class GPU_benchmark:
 
 
 values = [2432, 1607, 1683, 8, 8, 256]
-norm_values = []
 
 g = GPU_benchmark(csv_path)
 g.run_tests()
-grad_b = g.gradient_descent(g.Xe, g.y, g.beta, 10, 0.001)
+grad_b = g.gradient_descent(g.Xe, g.y, [0,0,0,0,0,0,0], 100, 0.00000001)
 
-g.normalize_column(g.X, 0)
-print(g.normalize_val(g.X, 0, 3584))
+#g.normalize_column(g.X, 0)
+#print(g.normalize_val(g.X, 0, 3584))
+norm_values = g.normalize_features(values)
+print(g.calc_benchmark(norm_values, grad_b))
 
 
 #print(g.calc_benchmark(norm_values, grad_b))
 
 plt.subplots_adjust(wspace=0.28)
-#plt.show()
+plt.show()
 
 
 
