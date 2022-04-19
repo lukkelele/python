@@ -107,6 +107,7 @@ grad_b = g.gradient_descent(g.Xe, g.y, 100, 0.000000088)
 print(g.calc_cost(g.Xe, g.y, grad_b, g.n))
 print(g.calc_cost(g.Xn_e, g.y, g.beta, g.n))
 print(g.calc_benchmark(values, g.beta))
+print(g.calc_benchmark(values, grad_b))
 
 plt.subplots_adjust(wspace=0.28)
 #plt.show()
