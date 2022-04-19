@@ -22,9 +22,9 @@ class GPU_benchmark:
         self.X = dataset[:,[0,1,2,3,4,5]]
         self.y = dataset[:,6]
         self.n = len(self.X)
-        self.Xe = func.extend_matrix(self.X, 18)
-        self.Xn = self.normalize_X(self.X, 6)
-        self.Xn_e = func.extend_matrix(self.Xn, 18)
+        self.Xn = self.normalize_X(self.X)
+        self.Xe = self.extend_matrix(self.X, self.n)
+        self.Xn_e = self.extend_matrix(self.Xn, self.n)
         self.x0 = dataset[:,0]
         self.x1 = dataset[:,1]
         self.x2 = dataset[:,2]
@@ -33,7 +33,7 @@ class GPU_benchmark:
         self.x5 = dataset[:,5]
         self.beta = self.calc_beta(self.Xe, self.y) 
 
-    def normalize_X(self, X, cols):
+    def normalize_X(self, X):
         Xn = np.zeros((18, 6))
         for i in range(6):
             Xn[:,i] = func.normalize_column(X, i)
@@ -42,6 +42,9 @@ class GPU_benchmark:
     def normalize_column(self, X, col):
         norm_col = func.normalize_column(X, col)
         return norm_col
+
+    def extend_matrix(self, X, n):
+        return np.c_[np.ones((n, 1)), X]
 
     def plot_features(self, X, y):
         for i in range(6):
@@ -76,53 +79,36 @@ class GPU_benchmark:
             norm_vals.append(self.normalize_val(self.X, i, features[i]))
         return norm_vals
 
-    def calc_cost(self, Xe, beta, y, n):
+    def calc_cost(self, Xe, y, beta, n):
         j = np.dot(Xe, beta) - y
         J = (j.T.dot(j)) / n
         return J
 
-    def gradient_descent(self, Xe, y, b, N, a):
-        #b = START_B
-        n = len(Xe)
-        #print(Xe)
+    def gradient_descent(self, Xe, y, N, a):
+        b = [0,0,0,0,0,0,0]
         for i in range(N):
-            grad = -(Xe.T.dot(y - Xe.dot(b)) / n)
+            grad = -(Xe.T.dot(y - Xe.dot(b)) / self.n)
             b = b - a*grad
-            cost = self.calc_cost(Xe, b, y, self.n)
+            cost = self.calc_cost(Xe, y, b, self.n)
             if i < 5: pass
             plt.scatter(i, cost, s=3, color="k")
-        #plt.show()
-        print(b)
         return b
 
-    def task_3(self):
-        values = [2432, 1607, 1683, 8, 8, 256]
-        print(f"| Predicted benchmark: {self.calc_benchmark(values, self.beta)}")
-        
-    def task_4(self):
-        print(f"| Cost J(B): {self.calc_cost(self.Xe, self.beta, self.y, len(self.x0))}")
-
-    def run_tests(self):
-        print("\n------------------------------------------------\n| Running tests...\n"+
-              "------------------------------------------------")
-        self.task_3()
-        self.task_4()
-        print("------------------------------------------------\n")
 
 
 
 values = [2432, 1607, 1683, 8, 8, 256]
-#norm_values = g.normalize_features(values)
 
 g = GPU_benchmark(csv_path)
-grad_b = g.gradient_descent(g.Xe, g.y, [0,0,0,0,0,0,0], 10, 0.0000001)
 
-print(g.Xn)
-
-#print(g.calc_benchmark(norm_values, grad_b))
+#print(g.Xe)
+#print(g.Xn_e)
+print(g.beta.shape)
+grad_b = g.gradient_descent(g.Xe, g.y, 10, 0.0000001)
+print(g.calc_cost(g.Xe, g.y, grad_b, g.n))
 
 plt.subplots_adjust(wspace=0.28)
-plt.show()
+#plt.show()
 
 
 
