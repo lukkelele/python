@@ -103,9 +103,10 @@ g = GPU_benchmark(csv_path)
 
 #print(g.Xe)
 #print(g.Xn_e)
-print(g.beta.shape)
-grad_b = g.gradient_descent(g.Xe, g.y, 10, 0.0000001)
+grad_b = g.gradient_descent(g.Xe, g.y, 100, 0.000000088)
 print(g.calc_cost(g.Xe, g.y, grad_b, g.n))
+print(g.calc_cost(g.Xn_e, g.y, g.beta, g.n))
+print(g.calc_benchmark(values, g.beta))
 
 plt.subplots_adjust(wspace=0.28)
 #plt.show()
