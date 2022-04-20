@@ -3,12 +3,10 @@ import mlrlib as func
 import numpy as np
 import csv_parser
 
-
 # The 7th column is the response y
 # Find f(X) = B0 + B1*X1 + ... + B6*X6
 
 csv_path = "./data/GPUbenchmark.csv"
-
 
 class GPU_benchmark:
     
@@ -50,32 +48,10 @@ class GPU_benchmark:
     def extend_matrix(self, X, n):
         return np.c_[np.ones((n, 1)), X]
 
-    def plot_grad_features(self, X, y):
-        for i in range(6):
-            current_column = X[:,i]
-            x_min, x_max = np.min(current_column) - 1, np.max(current_column) + 1
-            plt.subplot(2, 3, i+1)
-            #plt.xlim(x_min, x_max)
-            plt.xlabel(f"x_{i}")
-            plt.ylabel("y")
-            plt.scatter(current_column, X[:,i], s=10, color="r")
-
-    def plot_features(self, X, y):
-        for i in range(6):
-            current_column = X[:,i]
-            x_min, x_max = np.min(current_column) - 1, np.max(current_column) + 1
-            plt.subplot(2, 3, i+1)
-            plt.xlim(x_min, x_max)
-            plt.xlabel(f"x_{i}")
-            plt.ylabel("y")
-            plt.scatter(current_column, y, s=10, color="b")
-
-
     def calc_benchmark(self, X, beta):
         benchmark_result = (beta[0] + beta[1]*X[0] + beta[2]*X[1] + beta[3]*X[2] +
                             beta[4]*X[3] + beta[5]*X[4] + beta[6]*X[5])
         return benchmark_result
-
 
     def normalize_val(self, X, col, val):
         column = X[:,col]
