@@ -91,8 +91,9 @@ class GPU_benchmark:
         b = [0,0,0,0,0,0,0]
         for i in range(N):
             grad = -(Xe.T.dot(y - Xe.dot(b)) / self.n)
-            b = b - a*grad
             cost = self.calc_cost(Xe, y, b)
+            b = b - a*grad
+            #print(f"np.mean(b): {np.mean(b)} | mean_cost: {np.mean(cost)}")
             if i < 5: pass
             plt.scatter(i, cost, s=3, color="k")
         return b
@@ -107,15 +108,19 @@ values = [2432, 1607, 1683, 8, 8, 256]
 g = GPU_benchmark(csv_path)
 print()
 
-grad_b = g.gradient_descent(g.Xe, g.y, 350, 0.000000088)
 
 
 benchmark_NORMAL_EQUATION = g.calc_benchmark(values, g.beta)
+benchmark_NORMALIZED_VALUES = g.normalize_features(values)
 print(f"Benchmark_normal_equ: {benchmark_NORMAL_EQUATION}")
 cost_J_normal_equ = g.calc_cost(g.Xe, g.y, g.beta)
 print(f"Cost_normal_equ: {cost_J_normal_equ}")
 cost_error_margin = 0.01 * cost_J_normal_equ
 print(f"""Cost J allowed for gradient descent:
 {round(cost_J_normal_equ-cost_error_margin, 3)} < {round(cost_J_normal_equ, 3)} < {round(cost_J_normal_equ+cost_error_margin, 3)}""")
+gradient_descent = g.gradient_descent(g.Xe, g.y, 500, 0.0000000132)
+print(f"""Gradient descent beta: 
+Gradient descent cost: {g.calc_cost(g.Xe, g.y, gradient_descent)}
+Gradient descent beta for benchmark: {g.calc_benchmark(benchmark_NORMALIZED_VALUES, gradient_descent)}""")
 
 print()
