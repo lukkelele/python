@@ -7,6 +7,7 @@ import csv_parser
 # f(X) = B0 + B1*X + B2*X**2 + ... + B*X**d
 
 # The fourth degree is what gives the best fit in my opinion. MOTIVATE!
+# Answer is NOT realistic.
 
 csv_path = "./data/housing_price_index.csv"
 
@@ -57,6 +58,7 @@ class House:
             plt.ylabel('y')
             plt.scatter(self.X, self.y, s=4, color="g", alpha=0.75)
             Xp = func.polynomial(self.X, i, self.n)
+            print(Xp)
             beta = func.calc_beta(Xp, self.y)
             XB = np.dot(Xp, beta)
             if i == 1: plt.scatter(self.X, XB, s=point_size, color="m")
@@ -69,7 +71,7 @@ class House:
             elif i == 4:
                 for k in range(4):
                     plt.scatter(self.X, XB, s=point_size, color="k")
-        plt.show()            
+        #plt.show()            
 
 h = House(csv_path)
 print(h.calc_price(4, 2.3))
