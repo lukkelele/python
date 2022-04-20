@@ -11,6 +11,7 @@ csv_path = "./data/housing_price_index.csv"
 class House:
     
     def __init__(self, path):
+        self.fig = plt.figure(figsize=(12,9))
         self.path = path
         self.parse_csv_file()
 
@@ -38,9 +39,21 @@ class House:
         return b
 
     def polynomial(self):
-        for i in range(4):
-            X = func.polynomial(self.X, i, self.n)
-            print(X)
+        for i in range(1,5):
+            plt.subplot(2,2,i)
+            Xp = func.polynomial(self.X, i, self.n)
+            beta = func.calc_beta(Xp, self.y)
+            if i == 1: plt.scatter(Xp[:,0], self.y, s=4, color="m")
+            elif i == 2:
+                for k in range(2):
+                    plt.scatter(Xp[:,k], self.y, s=4, color="b")
+            elif i == 3:
+                for k in range(3):
+                    plt.scatter(Xp[:,k], self.y, s=4, color="r")
+            elif i == 4:
+                for k in range(4):
+                    plt.scatter(Xp[:,k], self.y, s=4, color="k")
+            
 
 h = House(csv_path)
 
@@ -48,14 +61,7 @@ h = House(csv_path)
 
 h.polynomial()
 
-
-
-
-
-
-
-#func.plot_features(h.X, h.y, 1)
-#plt.show()
+plt.show()
 
 
 

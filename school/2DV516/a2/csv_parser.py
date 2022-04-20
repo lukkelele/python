@@ -31,5 +31,5 @@ def open_house_file(path):
             X = []
             for row in r: 
                 X.append([row[0], row[1]])
-            return np.array(X, dtype=int)
+            return np.array(X, dtype=float)
     except: print("An error has occured!")

@@ -77,7 +77,7 @@ def plot_subplot(x1, x2, y, i, c=['m', 'b']):
     plt.subplot(I)
     plt.scatter(x2, y, color=c[1], s=30, edgecolors='k', label='dad')
 
-def plot_features(X, y, r):
+def plot_features(X, y, r, row, col):
     if r == 1:
         current_column = X
         x_min, x_max = np.min(current_column) - 1, np.max(current_column) + 1
@@ -90,7 +90,7 @@ def plot_features(X, y, r):
         for i in range(r):
             current_column = X[:,i]
             x_min, x_max = np.min(current_column) - 1, np.max(current_column) + 1
-            plt.subplot(2, 3, i+1)
+            plt.subplot(row, col, i+1)
             plt.xlim(x_min, x_max)
             plt.xlabel(f"x_{i}")
             plt.ylabel("y")
