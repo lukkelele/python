@@ -39,20 +39,25 @@ class House:
         return b
 
     def polynomial(self):
+        point_size = 2
         for i in range(1,5):
             plt.subplot(2,2,i)
+            plt.scatter(self.X, self.y, s=4, color="g", alpha=0.75)
+            plt.xlim(0, 45)
             Xp = func.polynomial(self.X, i, self.n)
+            print(Xp)
             beta = func.calc_beta(Xp, self.y)
-            if i == 1: plt.scatter(Xp[:,0], self.y, s=4, color="m")
+            XB = np.dot(Xp, beta)
+            if i == 1: plt.scatter(self.X, XB, s=point_size, color="m")
             elif i == 2:
                 for k in range(2):
-                    plt.scatter(Xp[:,k], self.y, s=4, color="b")
+                    plt.scatter(self.X, XB, s=point_size, color="b")
             elif i == 3:
                 for k in range(3):
-                    plt.scatter(Xp[:,k], self.y, s=4, color="r")
+                    plt.scatter(self.X, XB, s=point_size, color="r")
             elif i == 4:
                 for k in range(4):
-                    plt.scatter(Xp[:,k], self.y, s=4, color="k")
+                    plt.scatter(self.X, XB, s=point_size, color="k")
             
 
 h = House(csv_path)
