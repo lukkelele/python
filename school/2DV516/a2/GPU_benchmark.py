@@ -98,20 +98,15 @@ class GPU_benchmark:
         return J
 
     def gradient_descent(self, Xe, y, N, a):
-        #b = [0,0,0,0,0,0,0]
         b = np.zeros((7,))
         for i in range(N):
             grad = -(Xe.T.dot(y - Xe.dot(b)) / self.n)
             b = b - a*grad
             cost = self.calc_cost(Xe, y, b)
-            #print(f"np.mean(b): {np.mean(b)} | mean_cost: {np.mean(cost)}")
             if i < 5: pass
            # plt.scatter(i, cost, s=3, color="k")
         return b
 
-    def plot(self):
-        plt.subplots_adjust(wspace=0.28)
-        plt.show()
 
 
 values = [2432, 1607, 1683, 8, 8, 256]
@@ -132,15 +127,13 @@ print(f"Cost_normal_equ: {cost_J_normal_equ}")
 cost_error_margin = 0.01 * cost_J_normal_equ
 print(f"""Cost J allowed for gradient descent:
 {round(cost_J_normal_equ-cost_error_margin, 3)} < {round(cost_J_normal_equ, 3)} < {round(cost_J_normal_equ+cost_error_margin, 3)}\n""")
-gradient_descent = g.gradient_descent(g.Xn_e, g.y, 10000, 0.052)
+gradient_descent = g.gradient_descent(g.Xn_e, g.y, 10000, 0.12)
 print(f"""Gradient descent beta: {gradient_descent}
 Gradient descent cost: {g.calc_cost(g.Xn_e, g.y, gradient_descent)}
 Gradient descent beta for benchmark: {g.calc_benchmark(benchmark_NORMALIZED_VALUES, gradient_descent)}""")
-#print(f"shape Xe * grad: {(g.Xe*gradient_descent).shape}")
 
-g.plot_grad_features(g.Xn_e, (g.Xn_e*gradient_descent))
 g.plot_features(g.Xn_e, g.y)
-#plt.show()
+plt.show()
 
 
 print()
