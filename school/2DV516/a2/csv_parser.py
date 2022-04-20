@@ -24,3 +24,12 @@ def open_gpu_file(path):
             return np.array(X, dtype=float)
     except: print("An error has occured!")
 
+def open_house_file(path):
+    try:
+        with open(path) as csv_data:
+            r = csv.reader(csv_data)
+            X = []
+            for row in r: 
+                X.append([row[0], row[1]])
+            return np.array(X, dtype=int)
+    except: print("An error has occured!")

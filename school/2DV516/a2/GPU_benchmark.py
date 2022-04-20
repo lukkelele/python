@@ -32,8 +32,8 @@ class GPU_benchmark:
 
     def create_extended_matrixes(self):
         self.Xn = self.normalize_X(self.X)
-        self.Xe = self.extend_matrix(self.X, self.n)
-        self.Xn_e = self.extend_matrix(self.Xn, self.n)
+        self.Xe = func.extend_matrix(self.X, self.n)
+        self.Xn_e = func.extend_matrix(self.Xn, self.n)
 
     def normalize_X(self, X):
         Xn = np.zeros((18, 6))
@@ -41,29 +41,15 @@ class GPU_benchmark:
             Xn[:,i] = func.normalize_column(X, i)
         return Xn
 
-    def normalize_column(self, X, col):
-        norm_col = func.normalize_column(X, col)
-        return norm_col
-
-    def extend_matrix(self, X, n):
-        return np.c_[np.ones((n, 1)), X]
-
     def calc_benchmark(self, X, beta):
         benchmark_result = (beta[0] + beta[1]*X[0] + beta[2]*X[1] + beta[3]*X[2] +
                             beta[4]*X[3] + beta[5]*X[4] + beta[6]*X[5])
         return benchmark_result
 
-    def normalize_val(self, X, col, val):
-        column = X[:,col]
-        mean = np.mean(column) 
-        std = np.std(column) 
-        norm_val = (val-mean)/std
-        return norm_val
-
     def normalize_features(self, features):
         norm_vals = []
         for i in range(6):
-            norm_vals.append(self.normalize_val(self.X, i, features[i]))
+            norm_vals.append(func.normalize_val(self.X, i, features[i]))
         return norm_vals
 
     def calc_cost(self, Xe, y, beta):
@@ -86,7 +72,7 @@ class GPU_benchmark:
         lower_boundary = norm - cost_error
         upper_boundary = norm + cost_error
         print(f"""Cost norm equ: {norm}\nCost grad desc: {grad}
-Allowed difference between norm and grad: {round(lower_boundary, 3)} < {round(norm, 3)} < {round(upper_boundary, 3)}""")
+Allowed difference between norm and grad:\n{round(lower_boundary, 3)} < {round(norm, 3)} < {round(upper_boundary, 3)}\n""")
         if norm - grad > lower_boundary and norm - grad < upper_boundary:
             print("The cost difference is within 1% --> SUCCESS!\n")
         else: print("The cost difference is within 1% --> SUCCESS!\n")
@@ -105,7 +91,7 @@ cost_norm = g.calc_cost(g.Xn_e, g.y, g.beta_n)
 cost_grad = g.calc_cost(g.Xn_e, g.y, gradient_descent)
 
 print(f"""Benchmark normal equ: {norm_benchmark}
-Benchmark grad desc: {g.calc_benchmark(norm_vals, gradient_descent)}""")
+Benchmark grad desc: {g.calc_benchmark(norm_vals, gradient_descent)}\n""")
 
 g.cost_diff(cost_norm, cost_grad, 0.01)
 

@@ -2,7 +2,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-
 # two columns only
 def normalize_matrix(X):
     x0_col, x1_col = X[:,0], X[:,1]
@@ -22,11 +21,12 @@ def normalize_column(X, col):
     return x_norm
 
 # Normalize a single value
-def normalize_val(x, X):
-    x_mean = np.mean(X)
-    x_std = np.std(X)
-    x_norm = (x-x_mean)/x_std
-    return x_norm
+def normalize_val(X, col, val):
+    column = X[:,col]
+    mean = np.mean(column) 
+    std = np.std(column) 
+    norm_val = (val-mean)/std
+    return norm_val
 
 def extend_matrix(X, n):
     return np.c_[np.ones((n, 1)), X]
@@ -73,13 +73,22 @@ def plot_subplot(x1, x2, y, i, c=['m', 'b']):
     plt.scatter(x2, y, color=c[1], s=30, edgecolors='k', label='dad')
 
 def plot_features(X, y, r):
-    for i in range(r):
-        current_column = X[:,i]
+    if r == 1:
+        current_column = X
         x_min, x_max = np.min(current_column) - 1, np.max(current_column) + 1
-        plt.subplot(2, 3, i+1)
+        plt.subplot(1,1,1)
         plt.xlim(x_min, x_max)
-        plt.xlabel(f"x_{i}")
+        plt.xlabel(f"x_1")
         plt.ylabel("y")
         plt.scatter(current_column, y, s=10, color="b")
+    else: 
+        for i in range(r):
+            current_column = X[:,i]
+            x_min, x_max = np.min(current_column) - 1, np.max(current_column) + 1
+            plt.subplot(2, 3, i+1)
+            plt.xlim(x_min, x_max)
+            plt.xlabel(f"x_{i}")
+            plt.ylabel("y")
+            plt.scatter(current_column, y, s=10, color="b")
 
 
