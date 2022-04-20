@@ -66,33 +66,40 @@ class Exercise_A:
         return J
 
         # X has to be extended
-    def gradient_descent(self, Xe, y, N=10, a=0.0001, b=[0,0,0]):
+    def gradient_descent(self, Xe, y, N=10, a=0.001, b=[0,0,0]):
         for i in range(N):
             grad = -(Xe.T.dot(y - Xe.dot(b)) / self.n)
             b = b - a*grad
-            cost = self.calc_cost(self.Xe, b, self.y, self.n)
+            cost = self.calc_cost(Xe, b, y, self.n)
+            print(b)
             if i < 10: pass
             plt.scatter(i, cost, s=3, color="b")
-        print(b)
+        print(f"returning beta: {b}")
         return b
 
     def calc_height(self, beta, mom, dad):
         height = beta[0] + beta[1]*mom + beta[2]*dad
         return height
 
-N = 200
+N = 1000
 a = Exercise_A(path=path)
 #a.plot_subplot(a.X[:,0], a.X[:,1], 1)
 b = a.calc_beta(a.Xe, a.y)
+Xn = a.normalize_extend(a.X)
+b_n = a.calc_beta(Xn, a.y)
 #print(a.calc_cost(a.Xe, b, a.y, a.n))
 plt.subplot(111)
 plt.ylabel("Cost")
 plt.xlabel("Iterations")
-grad = a.gradient_descent(a.Xe, a.y, N, 0.0000077)
-cost_grad = a.calc_cost(grad, b, a.y, a.n)
-grad_descent_height = a.calc_height(grad, 65, 70)
+grad = a.gradient_descent(Xn, a.y, N, 0.01)
+#cost_grad = a.calc_cost(grad, b, a.y, a.n)
+mom_n = a.normalize_x(65, a.X[:,0])
+dad_n = a.normalize_x(70, a.X[:,1])
+grad_descent_height = a.calc_height(grad, mom_n, dad_n)
 print(grad_descent_height)
+print(b)
+print(b_n)
 #a.plot_subplot(a.Xe[:,1], a.Xe[:,2], 1)
 #plt.ylim([1, N+50])
-plt.show()
+#plt.show()
 

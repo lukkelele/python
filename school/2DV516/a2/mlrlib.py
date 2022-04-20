@@ -58,7 +58,7 @@ def gradient_descent(Xe, y, b, N=10, a=0.001):
     n = len(Xe)     # column length 
     print(f"len_n: {n}")
     for i in range(N):
-        grad = (Xe.T.dot(y - Xe.dot(b)) / n)
+        grad = -(Xe.T.dot(y - Xe.dot(b)) / n)
         b = b - a*grad
     return b
 
