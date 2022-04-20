@@ -16,22 +16,25 @@ class GPU_benchmark:
         self.path = path
         self.parse_csv_file()
         self.fig = plt.figure(figsize=(12,9))
+        self.create_extended_matrixes()
+        self.beta = self.calc_beta(self.Xe, self.y) 
 
     def parse_csv_file(self):
         dataset = csv_parser.open_gpu_file(self.path)
         self.X = dataset[:,[0,1,2,3,4,5]]
         self.y = dataset[:,6]
         self.n = len(self.X)
-        self.Xn = self.normalize_X(self.X)
-        self.Xe = self.extend_matrix(self.X, self.n)
-        self.Xn_e = self.extend_matrix(self.Xn, self.n)
         self.x0 = dataset[:,0]
         self.x1 = dataset[:,1]
         self.x2 = dataset[:,2]
         self.x3 = dataset[:,3]
         self.x4 = dataset[:,4]
         self.x5 = dataset[:,5]
-        self.beta = self.calc_beta(self.Xe, self.y) 
+
+    def create_extended_matrixes(self):
+        self.Xn = self.normalize_X(self.X)
+        self.Xe = self.extend_matrix(self.X, self.n)
+        self.Xn_e = self.extend_matrix(self.Xn, self.n)
 
     def normalize_X(self, X):
         Xn = np.zeros((18, 6))
@@ -79,9 +82,9 @@ class GPU_benchmark:
             norm_vals.append(self.normalize_val(self.X, i, features[i]))
         return norm_vals
 
-    def calc_cost(self, Xe, y, beta, n):
+    def calc_cost(self, Xe, y, beta):
         j = np.dot(Xe, beta) - y
-        J = (j.T.dot(j)) / n
+        J = (j.T.dot(j)) / self.n
         return J
 
     def gradient_descent(self, Xe, y, N, a):
@@ -89,36 +92,30 @@ class GPU_benchmark:
         for i in range(N):
             grad = -(Xe.T.dot(y - Xe.dot(b)) / self.n)
             b = b - a*grad
-            cost = self.calc_cost(Xe, y, b, self.n)
+            cost = self.calc_cost(Xe, y, b)
             if i < 5: pass
             plt.scatter(i, cost, s=3, color="k")
         return b
 
-
+    def plot(self):
+        plt.subplots_adjust(wspace=0.28)
+        plt.show()
 
 
 values = [2432, 1607, 1683, 8, 8, 256]
 
 g = GPU_benchmark(csv_path)
+print()
 
-#print(g.Xe)
-#print(g.Xn_e)
 grad_b = g.gradient_descent(g.Xe, g.y, 350, 0.000000088)
-print(g.calc_cost(g.Xe, g.y, grad_b, g.n))
-print(g.calc_cost(g.Xe, g.y, g.beta, g.n))
-print(g.calc_benchmark(values, g.beta))
-print(g.calc_benchmark(values, grad_b))
-
-plt.subplots_adjust(wspace=0.28)
-#plt.show()
 
 
+benchmark_NORMAL_EQUATION = g.calc_benchmark(values, g.beta)
+print(f"Benchmark_normal_equ: {benchmark_NORMAL_EQUATION}")
+cost_J_normal_equ = g.calc_cost(g.Xe, g.y, g.beta)
+print(f"Cost_normal_equ: {cost_J_normal_equ}")
+cost_error_margin = 0.01 * cost_J_normal_equ
+print(f"""Cost J allowed for gradient descent:
+{round(cost_J_normal_equ-cost_error_margin, 3)} < {round(cost_J_normal_equ, 3)} < {round(cost_J_normal_equ+cost_error_margin, 3)}""")
 
-
-
-
-
-
-
-
-
+print()
