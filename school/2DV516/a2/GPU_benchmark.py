@@ -31,15 +31,9 @@ class GPU_benchmark:
         self.x5 = dataset[:,5]
 
     def create_extended_matrixes(self):
-        self.Xn = self.normalize_X(self.X)
+        self.Xn = func.normalize_matrix(self.X, 18, 6)
         self.Xe = func.extend_matrix(self.X, self.n)
         self.Xn_e = func.extend_matrix(self.Xn, self.n)
-
-    def normalize_X(self, X):
-        Xn = np.zeros((18, 6))
-        for i in range(6):
-            Xn[:,i] = func.normalize_column(X, i)
-        return Xn
 
     def calc_benchmark(self, X, beta):
         benchmark_result = (beta[0] + beta[1]*X[0] + beta[2]*X[1] + beta[3]*X[2] +

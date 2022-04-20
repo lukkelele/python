@@ -20,39 +20,19 @@ class House:
         self.y = dataset[:,1]
         self.n = len(self.X)
 
-    def create_extended_matrixes(self):
-        self.Xn = self.normalize_X(self.X, 6)
-        self.Xe = self.extend_matrix(self.X, self.n)
-        self.Xn_e = self.extend_matrix(self.Xn, self.n)
-
-    def normalize_X(self, X, r):
+    def normalize_X(self, X):
         Xn = np.zeros((18, 6))
-        for i in range(r):
+        for i in range(6):
             Xn[:,i] = func.normalize_column(X, i)
         return Xn
 
-    def normalize_column(self, X, col):
-        norm_col = func.normalize_column(X, col)
-        return norm_col
+    def create_extended_matrixes(self):
+        self.Xn = func.normalize_matrix(self.X, len(self.X), 1)
+        self.Xe = func.extend_matrix(self.X, self.n)
+        self.Xn_e = func.extend_matrix(self.Xn, self.n)
 
-    def extend_matrix(self, X, n):
-        return np.c_[np.ones((n, 1)), X]
-
-    def normalize_val(self, X, col, val):
-        column = X[:,col]
-        mean = np.mean(column) 
-        std = np.std(column) 
-        norm_val = (val-mean)/std
-        return norm_val
-
-    def normalize_features(self, features):
-        norm_vals = []
-        for i in range(6):
-            norm_vals.append(self.normalize_val(self.X, i, features[i]))
-        return norm_vals
-
-    def calc_cost(self, Xe, y, beta):
-        j = np.dot(Xe, beta) - y
+    def calc_cost(self, X, y, beta):
+        j = np.dot(X, beta) - y
         J = (j.T.dot(j)) / self.n
         return J
 

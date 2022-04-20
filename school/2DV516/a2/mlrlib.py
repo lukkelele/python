@@ -1,15 +1,20 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-
 # two columns only
-def normalize_matrix(X):
+def normalize_2D_matrix(X):
     x0_col, x1_col = X[:,0], X[:,1]
     x0_std, x1_std = np.std(x0_col), np.std(x1_col)
     x0_mean, x1_mean = np.mean(x0_col), np.mean(x1_col)
     x0_subt, x1_subt = np.subtract(x0_col, x0_mean), np.subtract(x1_col, x1_mean)
     x0_norm, x1_norm = np.divide(x0_subt, x0_std), np.divide(x1_subt, x1_std) 
     Xn = np.concatenate((x0_norm.reshape(len(x0_col), 1), x1_norm.reshape(len(x0_col), 1)), axis=1)
+    return Xn
+
+def normalize_matrix(X, rows, cols):
+    Xn = np.zeros((rows, cols))
+    for i in range(cols):
+        Xn[:,i] = normalize_column(X, i)
     return Xn
 
 def normalize_column(X, col):
@@ -32,8 +37,8 @@ def extend_matrix(X, n):
     return np.c_[np.ones((n, 1)), X]
 
 # Extend a matrix in its first column
-def normalize_extend(X):
-    Xn = normalize_matrix(X)
+def normalize_extend(X, rows, cols):
+    Xn = normalize_matrix(X, rows, cols)
     Xn_e = extend_matrix(Xn, len(Xn))
     return Xn_e
 
