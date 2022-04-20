@@ -6,6 +6,8 @@ import csv_parser
 # 1975 - 2017
 # f(X) = B0 + B1*X + B2*X**2 + ... + B*X**d
 
+# The fourth degree is what gives the best fit in my opinion. MOTIVATE!
+
 csv_path = "./data/housing_price_index.csv"
 
 class House:
@@ -38,14 +40,23 @@ class House:
             b = b - a*grad
         return b
 
+    def calc_price(self, d, c):
+        Xp = func.polynomial(self.X, d, self.n)
+        b = func.calc_beta(Xp, self.y)
+        if d == 1: price = b[0] + b[1]*c
+        if d == 2: price = b[0] + b[1]*c + b[2]*c**2
+        if d == 3: price = b[0] + b[1]*c + b[2]*c**2 + b[3]*c**3
+        if d == 4: price = b[0] + b[1]*c + b[2]*c**2 + b[3]*c**3 + b[4]*c**4
+        return price
+
     def polynomial(self):
         point_size = 2
         for i in range(1,5):
             plt.subplot(2,2,i)
+            plt.xlabel('x')
+            plt.ylabel('y')
             plt.scatter(self.X, self.y, s=4, color="g", alpha=0.75)
-            plt.xlim(0, 45)
             Xp = func.polynomial(self.X, i, self.n)
-            print(Xp)
             beta = func.calc_beta(Xp, self.y)
             XB = np.dot(Xp, beta)
             if i == 1: plt.scatter(self.X, XB, s=point_size, color="m")
@@ -58,16 +69,15 @@ class House:
             elif i == 4:
                 for k in range(4):
                     plt.scatter(self.X, XB, s=point_size, color="k")
-            
+        plt.show()            
 
 h = House(csv_path)
+print(h.calc_price(4, 2.3))
+print(h.calc_price(3, 2.3))
+print(h.calc_price(2, 2.3))
+print(h.calc_price(1, 2.3))
 
-
-
-h.polynomial()
-
-plt.show()
-
+#h.polynomial()
 
 
 
