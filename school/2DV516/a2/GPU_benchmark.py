@@ -17,7 +17,8 @@ class GPU_benchmark:
         self.parse_csv_file()
         self.fig = plt.figure(figsize=(12,9))
         self.create_extended_matrixes()
-        self.beta = self.calc_beta(self.Xe, self.y) 
+        self.beta = func.calc_beta(self.Xe, self.y)
+        self.beta_n = func.calc_beta(self.Xn_e, self.y)
 
     def parse_csv_file(self):
         dataset = csv_parser.open_gpu_file(self.path)
@@ -69,9 +70,6 @@ class GPU_benchmark:
             plt.ylabel("y")
             plt.scatter(current_column, y, s=10, color="b")
 
-    def calc_beta(self, Xe, y):
-        beta = func.calc_beta(Xe, y)
-        return beta
 
     def calc_benchmark(self, X, beta):
         benchmark_result = (beta[0] + beta[1]*X[0] + beta[2]*X[1] + beta[3]*X[2] +
@@ -107,7 +105,15 @@ class GPU_benchmark:
            # plt.scatter(i, cost, s=3, color="k")
         return b
 
-
+    def cost_diff(self, norm, grad, margin):
+        cost_error = margin * norm
+        lower_boundary = norm - cost_error
+        upper_boundary = norm + cost_error
+        print(f"""Cost norm equ: {norm}\nCost grad desc: {grad}
+Allowed difference between norm and grad: {round(lower_boundary, 3)} < {round(norm, 3)} < {round(upper_boundary, 3)}""")
+        if norm - grad > lower_boundary and norm - grad < upper_boundary:
+            print("The cost difference is within 1% --> SUCCESS!\n")
+        else: print("The cost difference is within 1% --> SUCCESS!\n")
 
 values = [2432, 1607, 1683, 8, 8, 256]
 
@@ -115,28 +121,17 @@ g = GPU_benchmark(csv_path)
 print()
 
 
-beta_normal = g.calc_beta(g.Xn_e, g.y)
-print(f"NORMAL EQU BETA: {beta_normal}")
 norm_vals = g.normalize_features(values)
-benchmark_NORMAL_EQUATION = g.calc_benchmark(norm_vals, beta_normal)
-#print(f"Normalized VALUES: {norm_vals}")
-print(f"Benchmark_normal_equ: {benchmark_NORMAL_EQUATION}")
-
-cost_J_normal_equ = g.calc_cost(g.Xn_e, g.y, beta_normal)
-print(f"Cost_normal_equ: {cost_J_normal_equ}")
-cost_error_margin = 0.01 * cost_J_normal_equ
-print(f"""Cost J allowed for gradient descent:
-{round(cost_J_normal_equ-cost_error_margin, 3)} < {round(cost_J_normal_equ, 3)} < {round(cost_J_normal_equ+cost_error_margin, 3)}\n""")
+norm_benchmark = g.calc_benchmark(norm_vals, g.beta_n)
 gradient_descent = g.gradient_descent(g.Xn_e, g.y, 10000, 0.12)
-print(f"""Gradient descent beta: {gradient_descent}
-Gradient descent cost: {g.calc_cost(g.Xn_e, g.y, gradient_descent)}
-Gradient descent beta for benchmark: {g.calc_benchmark(norm_vals, gradient_descent)}""")
+grad_benchmark = g.calc_benchmark(norm_vals, gradient_descent)
+cost_norm = g.calc_cost(g.Xn_e, g.y, g.beta_n)
+cost_grad = g.calc_cost(g.Xn_e, g.y, gradient_descent)
 
-g.plot_features(g.Xn_e, g.y)
-plt.show()
+print(f"""Benchmark normal equ: {norm_benchmark}
+Benchmark grad desc: {g.calc_benchmark(norm_vals, gradient_descent)}""")
 
-
-print()
+g.cost_diff(cost_norm, cost_grad, 0.01)
 
 
 
