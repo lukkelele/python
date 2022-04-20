@@ -20,12 +20,6 @@ class House:
         self.y = dataset[:,1]
         self.n = len(self.X)
 
-    def normalize_X(self, X):
-        Xn = np.zeros((18, 6))
-        for i in range(6):
-            Xn[:,i] = func.normalize_column(X, i)
-        return Xn
-
     def create_extended_matrixes(self):
         self.Xn = func.normalize_matrix(self.X, len(self.X), 1)
         self.Xe = func.extend_matrix(self.X, self.n)
@@ -37,20 +31,31 @@ class House:
         return J
 
     def gradient_descent(self, Xe, y, N, a):
-        b = np.zeros((7,))
+        b = np.zeros((1,))
         for i in range(N):
             grad = -(Xe.T.dot(y - Xe.dot(b)) / self.n)
             b = b - a*grad
-            cost = self.calc_cost(Xe, y, b)
-            if i < 5: pass
-           # plt.scatter(i, cost, s=3, color="k")
         return b
 
+    def polynomial(self):
+        for i in range(4):
+            X = func.polynomial(self.X, i, self.n)
+            print(X)
 
 h = House(csv_path)
 
-func.plot_features(h.X, h.y, 1)
-plt.show()
+
+
+h.polynomial()
+
+
+
+
+
+
+
+#func.plot_features(h.X, h.y, 1)
+#plt.show()
 
 
 

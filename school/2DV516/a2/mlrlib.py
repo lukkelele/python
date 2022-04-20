@@ -96,4 +96,17 @@ def plot_features(X, y, r):
             plt.ylabel("y")
             plt.scatter(current_column, y, s=10, color="b")
 
+def polynomial(X, d, n):
+    if d == 1:
+        X = np.c_[np.ones((n,1)),X]
+    elif d == 2:
+        X = np.c_[np.ones((n,1)),X,X**2]
+    elif d == 3:
+        X = np.c_[np.ones((n,1)),X,X**2,X**3]
+    elif d == 4:
+        X = np.c_[np.ones((n,1)),X,X**2,X**3,X**4]
+    else: return 0  # if error
+    return X
+
+
 
