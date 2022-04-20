@@ -117,9 +117,9 @@ print()
 
 beta_normal = g.calc_beta(g.Xn_e, g.y)
 print(f"NORMAL EQU BETA: {beta_normal}")
-benchmark_NORMALIZED_VALUES = g.normalize_features(values)
-benchmark_NORMAL_EQUATION = g.calc_benchmark(benchmark_NORMALIZED_VALUES, beta_normal)
-#print(f"Normalized VALUES: {benchmark_NORMALIZED_VALUES}")
+norm_vals = g.normalize_features(values)
+benchmark_NORMAL_EQUATION = g.calc_benchmark(norm_vals, beta_normal)
+#print(f"Normalized VALUES: {norm_vals}")
 print(f"Benchmark_normal_equ: {benchmark_NORMAL_EQUATION}")
 
 cost_J_normal_equ = g.calc_cost(g.Xn_e, g.y, beta_normal)
@@ -130,7 +130,7 @@ print(f"""Cost J allowed for gradient descent:
 gradient_descent = g.gradient_descent(g.Xn_e, g.y, 10000, 0.12)
 print(f"""Gradient descent beta: {gradient_descent}
 Gradient descent cost: {g.calc_cost(g.Xn_e, g.y, gradient_descent)}
-Gradient descent beta for benchmark: {g.calc_benchmark(benchmark_NORMALIZED_VALUES, gradient_descent)}""")
+Gradient descent beta for benchmark: {g.calc_benchmark(norm_vals, gradient_descent)}""")
 
 g.plot_features(g.Xn_e, g.y)
 plt.show()
