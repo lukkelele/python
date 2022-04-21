@@ -35,11 +35,7 @@ class House:
         return J
 
     def gradient_descent(self, Xe, y, N, a):
-        b = np.zeros((1,))
-        for i in range(N):
-            grad = -(Xe.T.dot(y - Xe.dot(b)) / self.n)
-            b = b - a*grad
-        return b
+        return func.gradient_descent(Xe, y, N, a)
 
     def calc_index(self, d, c):
         c -= 1975
