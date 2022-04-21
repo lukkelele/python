@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
-from lib import mlrlib as func
 from lib import csv_parser
+import mlrlib as func
 import numpy as np
 
 # Parametric classification method
@@ -29,8 +29,8 @@ class B:
         f = func.gradient_descent(Xe, y, N, a)
         return f
 
-    def sigmoid_func(self):
-        print()
+    def sigmoid_func(self, X, beta):
+        func.sigmoid(X, beta)
 
     def max_likelihood(self):
         print()
@@ -50,7 +50,7 @@ class B:
                 plt.scatter(x0, x1, s=40, color='g', marker="v", label='Admitted' if admitted_flag==False else "", edgecolors='k')
                 admitted_flag = True
             else:
-                plt.scatter(x0, x1, s=40, color='r', marker="x", label='not Admitted' if not_admitted_flag==False else "")
+                plt.scatter(x0, x1, s=40, color='r', marker="x", label='Not admitted' if not_admitted_flag==False else "")
                 not_admitted_flag = True
         plt.legend()
 
@@ -58,5 +58,8 @@ class B:
 
 b = B(csv_path)
 b.plot_data()
+a = np.array([[0,1], [2,3]])
+beta = func.calc_beta(a, a[:,1])
+print(b.sigmoid_func(a, beta))
 
-plt.show()
+#plt.show()
