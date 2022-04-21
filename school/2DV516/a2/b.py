@@ -11,20 +11,17 @@ class B:
     
     def __init__(self, path):
         self.fig = plt.figure(figsize=(12,9))
-        self.path = path
-        self.parse_csv_file()
+        self.parse_csv_file(path)
 
-    def parse_csv_file(self):
-        self.dataset = csv_parser.open_admission_file(self.path)
-        self.n = len(self.dataset)
-        self.X = self.dataset[:,[0,1]]
-        self.y = self.dataset[:,2]
-        self.x0, self.x1 = self.dataset[:,0], self.dataset[:,1]
+    def parse_csv_file(self, path):
+        dataset = csv_parser.open_admission_file(path)
+        self.n = len(dataset)
+        self.X = dataset[:,[0,1]]
+        self.y = dataset[:,2]
         self.create_extended_matrixes()
 
     def create_extended_matrixes(self):
         self.Xn = func.normalize_matrix(self.X, len(self.X), 2)
-        print(self.Xn)
         self.Xe = func.extend_matrix(self.X, self.n)
         self.Xn_e = func.extend_matrix(self.Xn, self.n)
 
@@ -39,7 +36,6 @@ class B:
         not_admitted_flag = False
         y = self.y.reshape((100,1))
         X = np.concatenate((self.Xn, y), axis=1)
-        print(X)
         for a in X:
             x0 = a[0]
             x1 = a[1]
