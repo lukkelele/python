@@ -123,6 +123,7 @@ def sigmoid(X, beta):
     z = np.e
     print(z)
     print(np.divide(1, np.exp(X)+1))
+    print(math.pow(z, np.dot(X,beta)))
     s = np.divide(1, (1+np.exp(X)))
     return s
 
