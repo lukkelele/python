@@ -42,6 +42,7 @@ class House:
         return b
 
     def calc_index(self, d, c):
+        c -= 1975
         Xp = func.polynomial(self.X, d, self.n)
         b = func.calc_beta(Xp, self.y)
         if d == 1: index = b[0] + b[1]*c
@@ -50,12 +51,23 @@ class House:
         if d == 4: index = b[0] + b[1]*c + b[2]*c**2 + b[3]*c**3 + b[4]*c**4
         return index
 
+    def predict_price(self, d, initial_price, bought_year, sale_year):
+        print(f"\nBought for {initial_price} million in {bought_year} and sold in {sale_year}.")
+        init_idx = round(self.calc_index(d, bought_year), 2)
+        sold_idx = round(self.calc_index(d, sale_year), 2)
+        idx_growth = round((sold_idx - init_idx), 2)
+        new_price = round((idx_growth/100 * initial_price), 2)
+        print(f"Initial index in {bought_year}: {init_idx}\nSold index in {sale_year}: {sold_idx}\n"
+            + f"Index difference: {idx_growth}\nNew price in {sale_year}: {new_price} million\n")
+        return new_price
+
     def polynomial(self):
         point_size = 2
         for i in range(1,5):
             plt.subplot(2,2,i)
             plt.xlabel('year')
             plt.ylabel('index')
+            plt.xticks(np.arange(1975, 2018, 5))
             plt.scatter(np.add(self.X, 1975), self.y, s=4, color="g", alpha=0.75)
             Xp = func.polynomial(self.X, i, self.n)
             beta = func.calc_beta(Xp, self.y)
@@ -73,14 +85,11 @@ class House:
         plt.show()            
 
 h = House(csv_path)
-print(h.calc_index(4, 2.3))
-print(h.calc_index(3, 2.3))
-print(h.calc_index(2, 2.3))
-print(h.calc_index(1, 2.3))
+print(h.calc_index(4, 2015))
 
-print(h.calc_index(4, 2.3))
+h.predict_price(4, 2.3, 2015, 2022)
 
-h.polynomial()
+#h.polynomial()
 
 
 
