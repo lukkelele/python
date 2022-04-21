@@ -42,29 +42,22 @@ class B:
     def plot_data(self):
         plt.xlabel('points')
         plt.ylabel('admission result')
-        plots = [0,0]
-        flag_admitted = False
-        flag_not_admitted = False
+        admitted_flag = False
+        not_admitted_flag = False
         for admission in self.dataset:
             x = admission[0]
             y = admission[1]
             if admission[2] == 1: # current legend implementation need the self.admitted
-                if flag_admitted == False:
-                    admitted = plt.scatter(x, y, s=40, color='g', marker="v", label='Admitted', edgecolors='k')
-                    plots.insert(0, admitted)
-                    flag_admitted = True
-                else: plt.scatter(x, y, s=40, color='g', marker="v", label='Admitted', edgecolors='k')
+                plt.scatter(x, y, s=40, color='g', marker="v", label='Admitted' if admitted_flag==False else "", edgecolors='k')
+                admitted_flag = True
             else:
-                if flag_not_admitted == False:
-                    not_admitted = plt.scatter(x, y, s=40, color='r', marker="x", label='not Admitted')
-                    plots.insert(1, not_admitted)
-                    flag_not_admitted = True
-                else: plt.scatter(x, y, s=40, color='r', marker="x", label='not Admitted')
-        print(len(plots))
-        plt.legend([plots[0], plots[1]], ['Admitted', 'not Admitted'])
-        plt.show()
+                plt.scatter(x, y, s=40, color='r', marker="x", label='not Admitted' if not_admitted_flag==False else "")
+                not_admitted_flag = True
+        plt.legend()
+
 
 
 b = B(csv_path)
 b.plot_data()
 
+plt.show()
