@@ -27,7 +27,8 @@ class B:
         self.create_extended_matrixes()
 
     def create_extended_matrixes(self):
-        self.Xn = func.normalize_matrix(self.X, len(self.X), 1)
+        self.Xn = func.normalize_matrix(self.X, len(self.X), 2)
+        print(self.Xn)
         self.Xe = func.extend_matrix(self.X, self.n)
         self.Xn_e = func.extend_matrix(self.Xn, self.n)
 
@@ -41,15 +42,16 @@ class B:
 
     def plot_data(self):
         plt.xlabel('points')
-        plt.ylabel('admission result')
+        plt.ylabel('points')
         admitted_flag = False
         not_admitted_flag = False
-        i = 0
-        for a in self.dataset:
+        y = self.y.reshape((100,1))
+        X = np.concatenate((self.Xn, y), axis=1)
+        print(X)
+        for a in X:
             x0 = a[0]
             x1 = a[1]
             y = a[2]
-            print(y)
             if y == 1: # current legend implementation is not memory efficient
                 plt.scatter(x0, x1, s=40, color='g', marker="v", label='Admitted' if admitted_flag==False else "", edgecolors='k')
                 admitted_flag = True
