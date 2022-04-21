@@ -3,11 +3,7 @@ from lib import mlrlib as func
 from lib import csv_parser
 import numpy as np
 
-# 1975 - 2017
-# f(X) = B0 + B1*X + B2*X**2 + ... + B*X**d
-
-# The fourth degree is what gives the best fit in my opinion. MOTIVATE!
-# Answer is NOT realistic.
+# Parametric classification method
 
 csv_path = "./data/admission.csv"
 
@@ -32,13 +28,9 @@ class B:
         self.Xe = func.extend_matrix(self.X, self.n)
         self.Xn_e = func.extend_matrix(self.Xn, self.n)
 
-    def calc_cost(self, X, y, beta):
-        j = np.dot(X, beta) - y
-        J = (j.T.dot(j)) / self.n
-        return J
-
     def gradient_descent(self, Xe, y, N, a):
         f = func.gradient_descent(Xe, y, N, a)
+        return f
 
     def plot_data(self):
         plt.xlabel('points')
