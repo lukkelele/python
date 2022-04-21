@@ -29,12 +29,6 @@ class B:
         f = func.gradient_descent(Xe, y, N, a)
         return f
 
-    def sigmoid_func(self, X, beta):
-        func.sigmoid(X, beta)
-
-    def max_likelihood(self):
-        print()
-
     def plot_data(self):
         plt.xlabel('points')
         plt.ylabel('points')
@@ -60,6 +54,6 @@ b = B(csv_path)
 b.plot_data()
 a = np.array([[0,1], [2,3]])
 beta = func.calc_beta(a, a[:,1])
-print(b.sigmoid_func(a, beta))
+print(func.sigmoid(a))
 
 #plt.show()

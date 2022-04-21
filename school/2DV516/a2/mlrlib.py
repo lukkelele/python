@@ -119,11 +119,10 @@ def log_gradient_descent(Xe, y, N=10, a=0.001):
         b = b - a*grad
     return b
 
-def sigmoid(X, beta):
-    z = np.e
-    print(z)
-    print(np.divide(1, np.exp(X)+1))
-    s = np.divide(1, (1+np.exp(X)))
+def sigmoid(X):
+    z = -X
+    g = 1 + np.e**z
+    s = np.divide(1, g)
     return s
 
 # X is the test dataset
