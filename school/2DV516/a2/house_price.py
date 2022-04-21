@@ -41,45 +41,46 @@ class House:
             b = b - a*grad
         return b
 
-    def calc_price(self, d, c):
+    def calc_index(self, d, c):
         Xp = func.polynomial(self.X, d, self.n)
         b = func.calc_beta(Xp, self.y)
-        if d == 1: price = b[0] + b[1]*c
-        if d == 2: price = b[0] + b[1]*c + b[2]*c**2
-        if d == 3: price = b[0] + b[1]*c + b[2]*c**2 + b[3]*c**3
-        if d == 4: price = b[0] + b[1]*c + b[2]*c**2 + b[3]*c**3 + b[4]*c**4
-        return price
+        if d == 1: index = b[0] + b[1]*c
+        if d == 2: index = b[0] + b[1]*c + b[2]*c**2
+        if d == 3: index = b[0] + b[1]*c + b[2]*c**2 + b[3]*c**3
+        if d == 4: index = b[0] + b[1]*c + b[2]*c**2 + b[3]*c**3 + b[4]*c**4
+        return index
 
     def polynomial(self):
         point_size = 2
         for i in range(1,5):
             plt.subplot(2,2,i)
-            plt.xlabel('x')
-            plt.ylabel('y')
-            plt.scatter(self.X, self.y, s=4, color="g", alpha=0.75)
+            plt.xlabel('year')
+            plt.ylabel('index')
+            plt.scatter(np.add(self.X, 1975), self.y, s=4, color="g", alpha=0.75)
             Xp = func.polynomial(self.X, i, self.n)
-            print(Xp)
             beta = func.calc_beta(Xp, self.y)
             XB = np.dot(Xp, beta)
-            if i == 1: plt.scatter(self.X, XB, s=point_size, color="m")
+            if i == 1: plt.scatter(np.add(self.X, 1975), XB, s=point_size, color="m")
             elif i == 2:
                 for k in range(2):
-                    plt.scatter(self.X, XB, s=point_size, color="b")
+                    plt.scatter(np.add(self.X, 1975), XB, s=point_size, color="b")
             elif i == 3:
                 for k in range(3):
-                    plt.scatter(self.X, XB, s=point_size, color="r")
+                    plt.scatter(np.add(self.X, 1975), XB, s=point_size, color="r")
             elif i == 4:
                 for k in range(4):
-                    plt.scatter(self.X, XB, s=point_size, color="k")
-        #plt.show()            
+                    plt.scatter(np.add(self.X, 1975), XB, s=point_size, color="k")
+        plt.show()            
 
 h = House(csv_path)
-print(h.calc_price(4, 2.3))
-print(h.calc_price(3, 2.3))
-print(h.calc_price(2, 2.3))
-print(h.calc_price(1, 2.3))
+print(h.calc_index(4, 2.3))
+print(h.calc_index(3, 2.3))
+print(h.calc_index(2, 2.3))
+print(h.calc_index(1, 2.3))
 
-#h.polynomial()
+print(h.calc_index(4, 2.3))
+
+h.polynomial()
 
 
 
