@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
+import math
 
 # two columns only
 def normalize_2D_matrix(X):
@@ -109,5 +110,27 @@ def polynomial(X, d, n):
     else: return 0  # if error
     return X
 
+def log_gradient_descent(Xe, y, N=10, a=0.001):
+    cols = np.size(Xe, 1)
+    n = len(Xe)     # column length 
+    b = np.zeros((cols,))
+    for i in range(N):
+        grad = -(Xe.T.dot(y - Xe.dot(b)) / n)
+        b = b - a*grad
+    return b
 
+# f(X) = g(XB)
+def sigmoid(X, beta):
+    # 1 / (1+e^-z) --> z == B0+B1x
+    t = np.ones((len(X), 1))
+    z = np.dot(X, beta)
+    a = 1 + math.pow(math.e, -z) 
+    g = np.divide(t, a)
+    return g
 
+# X is the test dataset
+def log_predict(X, x0, x1):
+    X = np.array([x0, x1])
+    Xn = normalize_matrix(X, 1, 2)
+    Xn_e = extend_matrix(Xn, 1)
+    
