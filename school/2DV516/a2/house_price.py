@@ -85,11 +85,9 @@ class House:
         plt.show()            
 
 h = House(csv_path)
-print(h.calc_index(4, 2015))
 
 h.predict_price(4, 2.3, 2015, 2022)
-
-#h.polynomial()
+h.polynomial()
 
 
 
