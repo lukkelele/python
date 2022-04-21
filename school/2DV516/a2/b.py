@@ -29,6 +29,12 @@ class B:
         f = func.gradient_descent(Xe, y, N, a)
         return f
 
+    def sigmoid_func(self):
+        print()
+
+    def max_likelihood(self):
+        print()
+
     def plot_data(self):
         plt.xlabel('points')
         plt.ylabel('points')
