@@ -29,6 +29,10 @@ class B:
         f = func.gradient_descent(Xe, y, N, a)
         return f
 
+    def linear_assumption(self, x0, x1, beta):
+        y = beta[0] + beta[1] * x0 + beta[2] * x1
+        return y
+
     def plot_data(self):
         plt.xlabel('points')
         plt.ylabel('points')
@@ -48,12 +52,21 @@ class B:
                 not_admitted_flag = True
         plt.legend()
 
-
+    def log_calc_cost(self, X, beta, y, n):
+        g = func.sigmoid(X.dot(beta))
+        j = y.T.dot(np.log(g)) + (1 -y).T.dot(np.log(1 - g))
+        J = -j / n
+        print(J)
+        return J
 
 b = B(csv_path)
 b.plot_data()
 a = np.array([[0,1], [2,3]])
 beta = func.calc_beta(a, a[:,1])
-print(func.sigmoid(a))
+B = [0,0,0]
+Xe = func.extend_matrix(a, 2)
+b.log_calc_cost(Xe, B, a[:,1], len(a))
+#print(func.sigmoid(a))
+
 
 #plt.show()
