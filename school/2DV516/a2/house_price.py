@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
-import mlrlib as func
+from lib import mlrlib as func
+from lib import csv_parser
 import numpy as np
-import csv_parser
 
 # 1975 - 2017
 # f(X) = B0 + B1*X + B2*X**2 + ... + B*X**d

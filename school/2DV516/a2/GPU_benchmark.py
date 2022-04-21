@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
-import mlrlib as func
+from lib import mlrlib as func
+from lib import csv_parser
 import numpy as np
-import csv_parser
 
 # The 7th column is the response y
 # Find f(X) = B0 + B1*X1 + ... + B6*X6
