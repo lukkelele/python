@@ -44,15 +44,20 @@ class B:
         plt.ylabel('admission result')
         admitted_flag = False
         not_admitted_flag = False
-        for admission in self.dataset:
-            x = admission[0]
-            y = admission[1]
-            if admission[2] == 1: # current legend implementation need the self.admitted
-                plt.scatter(x, y, s=40, color='g', marker="v", label='Admitted' if admitted_flag==False else "", edgecolors='k')
+        i = 0
+        for a in self.dataset:
+            x0 = a[0]
+            x1 = a[1]
+            y = a[2]
+            print(y)
+            if y == 1: # current legend implementation is not memory efficient
+                plt.scatter(x0, y, s=40, color='g', marker="v", label='Admitted' if admitted_flag==False else "", edgecolors='k')
                 admitted_flag = True
+                plt.scatter(x1, y, s=40, color='g', marker="v", label='Admitted' if admitted_flag==False else "", edgecolors='k')
             else:
-                plt.scatter(x, y, s=40, color='r', marker="x", label='not Admitted' if not_admitted_flag==False else "")
+                plt.scatter(x0, y, s=40, color='r', marker="x", label='not Admitted' if not_admitted_flag==False else "")
                 not_admitted_flag = True
+                plt.scatter(x1, y, s=40, color='r', marker="x", label='not Admitted' if not_admitted_flag==False else "")
         plt.legend()
 
 
