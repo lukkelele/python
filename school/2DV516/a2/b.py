@@ -19,11 +19,11 @@ class B:
         self.parse_csv_file()
 
     def parse_csv_file(self):
-        dataset = csv_parser.open_admission_file(self.path)
-        self.n = len(dataset)
-        self.X = dataset[:,[0,1]]
-        self.y = dataset[:,2]
-        self.x0, self.x1 = dataset[:,0], dataset[:,1]
+        self.dataset = csv_parser.open_admission_file(self.path)
+        self.n = len(self.dataset)
+        self.X = self.dataset[:,[0,1]]
+        self.y = self.dataset[:,2]
+        self.x0, self.x1 = self.dataset[:,0], self.dataset[:,1]
         self.create_extended_matrixes()
 
     def create_extended_matrixes(self):
@@ -36,10 +36,22 @@ class B:
         J = (j.T.dot(j)) / self.n
         return J
 
-    def gradient_descent(self, N, a):
-        f = func.gradient_descent(self.Xe, self.y)
-        print(f)
+    def gradient_descent(self, Xe, y, N, a):
+        f = func.gradient_descent(Xe, y, N, a)
+
+    def plot_data(self):
+        plt.xlabel('points')
+        plt.ylabel('admission result')
+        for admission in self.dataset:
+            y = np.array([admission[2], admission[2]]).reshape(2,)
+            if admission[2] == 1:
+                plt.scatter(admission[:2], y, s=4, color='g', marker="v", label='Admitted')
+            else:
+                plt.scatter(admission[:2], y, s=4, color='r', marker="x", label='not Admitted')
 
 
 b = B(csv_path)
-b.gradient_descent(10, 0.1)
+b.plot_data()
+
+
+plt.show()
