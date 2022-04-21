@@ -72,16 +72,22 @@ class House:
             Xp = func.polynomial(self.X, i, self.n)
             beta = func.calc_beta(Xp, self.y)
             XB = np.dot(Xp, beta)
-            if i == 1: plt.scatter(np.add(self.X, 1975), XB, s=point_size, color="m")
+            if i == 1:
+                plt.title('f(x) = B0 + B1*x')
+                plt.scatter(np.add(self.X, 1975), XB, s=point_size, color="m")
             elif i == 2:
+                plt.title('f(x) = B0 + B1*x + B2*x^2')
                 for k in range(2):
                     plt.scatter(np.add(self.X, 1975), XB, s=point_size, color="b")
             elif i == 3:
+                plt.title('f(x) = B0 + B1*x + B2*x^2 + B3*x^3')
                 for k in range(3):
                     plt.scatter(np.add(self.X, 1975), XB, s=point_size, color="r")
             elif i == 4:
+                plt.title('f(x) = B0 + B1*x + B2*x^2 + B3*x^3 + B4*x^4')
                 for k in range(4):
                     plt.scatter(np.add(self.X, 1975), XB, s=point_size, color="k")
+        plt.subplots_adjust(wspace=0.3, hspace=0.3)
         plt.show()            
 
 h = House(csv_path)
