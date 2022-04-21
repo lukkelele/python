@@ -51,13 +51,11 @@ class B:
             y = a[2]
             print(y)
             if y == 1: # current legend implementation is not memory efficient
-                plt.scatter(x0, y, s=40, color='g', marker="v", label='Admitted' if admitted_flag==False else "", edgecolors='k')
+                plt.scatter(x0, x1, s=40, color='g', marker="v", label='Admitted' if admitted_flag==False else "", edgecolors='k')
                 admitted_flag = True
-                plt.scatter(x1, y, s=40, color='g', marker="v", label='Admitted' if admitted_flag==False else "", edgecolors='k')
             else:
-                plt.scatter(x0, y, s=40, color='r', marker="x", label='not Admitted' if not_admitted_flag==False else "")
+                plt.scatter(x0, x1, s=40, color='r', marker="x", label='not Admitted' if not_admitted_flag==False else "")
                 not_admitted_flag = True
-                plt.scatter(x1, y, s=40, color='r', marker="x", label='not Admitted' if not_admitted_flag==False else "")
         plt.legend()
 
 
