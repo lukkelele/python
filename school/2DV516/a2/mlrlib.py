@@ -2,7 +2,16 @@ from matplotlib import pyplot as plt
 import numpy as np
 import math
 
-# two columns only
+def get_column_length(X):
+    try: count = np.size(X,1)
+    except: count = 1
+    return count
+
+def get_row_length(X):
+    try: count = np.size(X,0)
+    except: count = 1
+    return count
+
 def normalize_2D_matrix(X):
     x0_col, x1_col = X[:,0], X[:,1]
     x0_std, x1_std = np.std(x0_col), np.std(x1_col)
@@ -12,10 +21,7 @@ def normalize_2D_matrix(X):
     Xn = np.concatenate((x0_norm.reshape(len(x0_col), 1), x1_norm.reshape(len(x0_col), 1)), axis=1)
     return Xn
 
-def normalize_matrix(X):
-    rows = np.size(X,0) 
-    cols = np.size(X,1)
-    print(f"rows: {rows}\ncols: {cols}")
+def normalize_matrix(X, rows, cols):
     Xn = np.zeros((rows, cols))
     for i in range(cols):
         Xn[:,i] = normalize_column(X, i)
@@ -38,14 +44,7 @@ def normalize_val(X, col, val):
     return norm_val
 
 def extend_matrix(X):
-    n = np.size(X,0)
-    return np.c_[np.ones((n, 1)), X]
-
-# Extend a matrix in its first column
-def normalize_extend(X):
-    Xn = normalize_matrix(X)
-    Xn_e = extend_matrix(Xn)
-    return Xn_e
+    return np.c_[np.ones((len(X), 1)), X]
 
 def calc_beta(Xe, y):
     B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
@@ -115,9 +114,9 @@ def polynomial(X, d, n):
     return X
 
 def create_extended_matrixes(X):
-    cols = len(X)
-    rows = X.shape[1]
-    Xn = normalize_matrix(X)
+    rows = len(X)
+    cols = np.size(X,1)
+    Xn = normalize_matrix(X, rows, cols)
     Xe = extend_matrix(X)
     Xn_e = extend_matrix(Xn)
     return [Xn, Xe, Xn_e]
@@ -125,7 +124,7 @@ def create_extended_matrixes(X):
 def log_gradient_descent(X, y, N=10, a=0.001):
     cols = np.size(X, 1)
     b = np.zeros((cols,))
-    n = X.shape[1]     # column length 
+    n = X.shape[0]     # column length 
     for i in range(N):
         s = sigmoid(X.dot(b)) - y
         grad = (-1/n) * X.T.dot(s)
@@ -134,9 +133,7 @@ def log_gradient_descent(X, y, N=10, a=0.001):
 
 def predict_score(a, beta):
     X = np.array(a)
-    print(X.shape)
-    print(X)
-    Xn = normalize_matrix(X.reshape(1,2))
+    Xn = normalize_matrix(X,1,2) # MATRIX, ROW, COLUMN
     Xn_e = extend_matrix(Xn)
     prob = sigmoid(Xn_e.dot(beta))
     print(f"Adm. prob. for scores {X[0]}, {X[1]} is {round(prob[0], 2)}")
@@ -146,12 +143,6 @@ def log_compute_errors(X, y, b):
     p = sigmoid(z)
     pp = np.round(p)
     print(f"Training errors: {np.sum(y!=pp)}")
-
-def sigmoid2(X):
-    z = -X
-    g = 1 + np.e**z
-    s = np.divide(1, g)
-    return s
 
 def sigmoid(X):
     return 1 / (1 + np.exp(-X))
@@ -165,6 +156,6 @@ def log_calc_cost(X, y, b):
 # X is the test dataset
 def log_predict(X, x0, x1):
     X = np.array([x0, x1])
-    Xn = normalize_matrix(X)
+    Xn = normalize_matrix(X, 1, 2)
     Xn_e = extend_matrix(Xn)
     
