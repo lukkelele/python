@@ -13,7 +13,9 @@ def normalize_2D_matrix(X):
     return Xn
 
 def normalize_matrix(X):
-    rows, cols = np.size(X,0), np.size(X,1)
+    rows = np.size(X,0) 
+    cols = np.size(X,1)
+    print(f"rows: {rows}\ncols: {cols}")
     Xn = np.zeros((rows, cols))
     for i in range(cols):
         Xn[:,i] = normalize_column(X, i)
@@ -123,26 +125,27 @@ def create_extended_matrixes(X):
 def log_gradient_descent(X, y, N=10, a=0.001):
     cols = np.size(X, 1)
     b = np.zeros((cols,))
-    n = X.shape[0]     # column length 
+    n = X.shape[1]     # column length 
     for i in range(N):
         s = sigmoid(X.dot(b)) - y
-        print(f"s: {s}\ns.reshape(-1,1):\n{s.reshape(-1,1)}")
         grad = (-1/n) * X.T.dot(s)
         b = b - a*grad 
     return b
 
-def predict_score(a):
+def predict_score(a, beta):
     X = np.array(a)
-    Xn = normalize_matrix(X)
+    print(X.shape)
+    print(X)
+    Xn = normalize_matrix(X.reshape(1,2))
+    Xn_e = extend_matrix(Xn)
+    prob = sigmoid(Xn_e.dot(beta))
+    print(f"Adm. prob. for scores {X[0]}, {X[1]} is {round(prob[0], 2)}")
 
 def log_compute_errors(X, y, b):
     z = np.dot(X, b)#.reshape(-1,1)
     p = sigmoid(z)
     pp = np.round(p)
-    #yy = y.reshape(-1,1)
-    print(pp)
-    print("---")
-    print(y)
+    print(f"Training errors: {np.sum(y!=pp)}")
 
 def sigmoid2(X):
     z = -X
