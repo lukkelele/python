@@ -110,13 +110,22 @@ def polynomial(X, d, n):
     else: return 0  # if error
     return X
 
+def create_extended_matrixes(X):
+    cols = len(X)
+    rows = X.shape[1]
+    Xn = normalize_matrix(X, cols, rows)
+    Xe = extend_matrix(X, cols)
+    Xn_e = extend_matrix(Xn, cols)
+    return [Xn, Xe, Xn_e]
+
 def log_gradient_descent(X, y, N=10, a=0.001):
     cols = np.size(X, 1)
     b = np.zeros((cols,))
     print(b)
     n = X.shape[0]     # column length 
     for i in range(N):
-        grad = (-1/n) * X.T.dot(sigmoid(np.dot(X,b))-y)
+        s = sigmoid(X.dot(b)) - y
+        grad = (-1/n) * X.T.dot(s)
         b = b - a*grad 
         print(f"b: {b}")
     return b

@@ -21,14 +21,8 @@ class B:
         self.create_extended_matrixes()
 
     def create_extended_matrixes(self):
-        self.Xn = func.normalize_matrix(self.X, len(self.X), 2)
-        self.Xe = func.extend_matrix(self.X, self.n)
-        self.Xn_e = func.extend_matrix(self.Xn, self.n)
-
-    def gradient_descent(self, Xe, y, N, a):
-        f = func.gradient_descent(Xe, y, N, a)
-        return f
-
+        matrixes = func.create_extended_matrixes(self.X)
+        self.Xn, self.Xe, self.Xn_e = matrixes[0], matrixes[1], matrixes[2]
 
     def plot_data(self):
         plt.xlabel('points')
