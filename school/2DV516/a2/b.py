@@ -19,6 +19,10 @@ class B:
         self.X = dataset[:,[0,1]]
         self.y = dataset[:,2]
         self.create_extended_matrixes()
+        self.x0_std = np.std(self.X[:,0])
+        self.x1_std = np.std(self.X[:,1])
+        self.x0_mean = np.mean(self.X[:,0])
+        self.x1_mean = np.mean(self.X[:,1])
 
     def create_extended_matrixes(self):
         matrixes = func.create_extended_matrixes(self.X)
@@ -43,16 +47,27 @@ class B:
                 not_admitted_flag = True
         plt.legend()
 
+    def predict_score(self, score, X, beta):
+        X = np.array(score)
+        x0 = (score[0] - self.x0_mean) / self.x0_std
+        x1 = (score[1] - self.x1_mean) / self.x1_std
+        Xn = np.array([x0, x1])
+        Xn_e = np.c_[1, Xn[0], Xn[1]]
+        prob = func.sigmoid(Xn_e.dot(beta))
+        print(prob)
+        print(f"Adm. prob. for scores {X[0]}, {X[1]} is {round(prob[0], 2)}")
+
 
 
 b = B(csv_path)
 b.plot_data()
 a = np.array([[0,1], [2,3]])
 Xe = func.extend_matrix(a)
-grad_desc_log = func.log_gradient_descent(Xe, a[:,1], 1, 0.5)
+grad_desc_log = func.log_gradient_descent(b.Xe, b.y, 1, 0.5)
 #print(func.log_calc_cost(Xe, a[:,1], grad_desc_log))
 #print(grad_desc_log)
-func.log_compute_errors(Xe, a[:,1], grad_desc_log)
-#func.predict_score([45,85], a, grad_desc_log)
+func.log_compute_errors(b.Xe, b.y, grad_desc_log)
+beta = func.calc_beta(b.Xe, b.y)
+b.predict_score([45,85], b.X, beta)
 
 #plt.show()

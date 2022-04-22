@@ -131,13 +131,6 @@ def log_gradient_descent(X, y, N=10, a=0.001):
         b = b - a*grad 
     return b
 
-def predict_score(a, beta):
-    X = np.array(a)
-    Xn = normalize_matrix(X,1,2) # MATRIX, ROW, COLUMN
-    Xn_e = extend_matrix(Xn)
-    prob = sigmoid(Xn_e.dot(beta))
-    print(f"Adm. prob. for scores {X[0]}, {X[1]} is {round(prob[0], 2)}")
-
 def log_compute_errors(X, y, b):
     z = np.dot(X, b)#.reshape(-1,1)
     p = sigmoid(z)
@@ -153,9 +146,4 @@ def log_calc_cost(X, y, b):
     J = -(y.T.dot(np.log(j)) + (1-y).T.dot(np.log(1-j))) / n
     return J
 
-# X is the test dataset
-def log_predict(X, x0, x1):
-    X = np.array([x0, x1])
-    Xn = normalize_matrix(X, 1, 2)
-    Xn_e = extend_matrix(Xn)
     
