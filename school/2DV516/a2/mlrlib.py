@@ -113,9 +113,10 @@ def polynomial(X, d, n):
 def log_gradient_descent(X, y, N=10, a=0.001):
     cols = np.size(X, 1)
     b = np.zeros((cols,))
+    print(b)
     n = X.shape[0]     # column length 
     for i in range(N):
-        grad = (-1/n) * np.dot(X.T, sigmoid(np.dot(X,b))-y)
+        grad = (-1/n) * X.T.dot(sigmoid(np.dot(X,b))-y)
         b = b - a*grad 
         print(f"b: {b}")
     return b
@@ -128,7 +129,7 @@ def sigmoid2(X):
     return s
 
 def sigmoid(X):
-    return 1/(1+np.exp(-X))
+    return 1 / (1 + np.exp(-X))
 
 def log_calc_cost(X, y, b):
     n = len(X)
