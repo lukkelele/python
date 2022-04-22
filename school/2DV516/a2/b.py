@@ -54,20 +54,18 @@ class B:
         Xn = np.array([x0, x1])
         Xn_e = np.c_[1, Xn[0], Xn[1]]
         prob = func.sigmoid(Xn_e.dot(beta))
-        print(prob)
         print(f"Adm. prob. for scores {X[0]}, {X[1]} is {round(prob[0], 2)}")
-
 
 
 b = B(csv_path)
 b.plot_data()
 a = np.array([[0,1], [2,3]])
 Xe = func.extend_matrix(a)
-grad_desc_log = func.log_gradient_descent(b.Xe, b.y, 1, 0.5)
-#print(func.log_calc_cost(Xe, a[:,1], grad_desc_log))
-#print(grad_desc_log)
-func.log_compute_errors(b.Xe, b.y, grad_desc_log)
+grad_desc_log = func.log_gradient_descent(Xe, a[:,1], 1, 0.5)
+
+print(func.log_calc_cost(Xe, a[:,1], [0,0,0]))
 beta = func.calc_beta(b.Xe, b.y)
+func.log_compute_errors(b.Xe, b.y, beta)
 b.predict_score([45,85], b.X, beta)
 
 #plt.show()
