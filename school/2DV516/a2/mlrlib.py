@@ -129,7 +129,6 @@ def log_gradient_descent(X, y, N=10, a=0.001):
         s = sigmoid(np.dot(X, b)) - y
         grad = (1/n) * np.dot(X.T, s)
         b = b - a*grad 
-        print(log_calc_cost(X,y,b))
     return b
 
 def log_compute_errors(X, y, b):

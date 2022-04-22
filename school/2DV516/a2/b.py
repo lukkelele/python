@@ -56,24 +56,22 @@ class B:
         prob = func.sigmoid(Xn_e.dot(beta))
         print(f"Adm. prob. for scores {X[0]}, {X[1]} is {round(prob[0], 2)}")
 
+    def plot_boundary(self):
+        b = func.log_gradient_descent(self.Xn_e, self.y, 1000, 0.5)
+        x1, x2 = self.Xn[:,0], self.Xn[:,1]
+        min_x1, max_x1 = np.min(x1), np.max(x1)
+        XB = np.dot(self.Xn_e, b)
+        xx = np.arange(min_x1, max_x1, 0.1)
+        x = -(b[0] + b[1]*xx) / b[2]
+        plt.plot(xx, x)
 
 b = B(csv_path)
 b.plot_data()
 a = np.array([[0,1], [2,3]])
 X = func.normalize_matrix(a, 2,2)
 Xe = func.extend_matrix(X)
-print(X)
-print("\n")
-print(Xe)
-print("\n")
-#print(func.log_calc_cost(Xe, a[:,1], [0,0,0]))
-#beta = func.calc_beta(b.Xe, b.y)
-#grad_desc = func.log_gradient_descent(Xe, a[:,1], 100, 0.5)
 grad_desc = func.log_gradient_descent(b.Xn_e, b.y, 1000, 0.5)
 print(grad_desc)
+b.plot_boundary()
+plt.show()
 
-#func.log_compute_errors(b.Xe, b.y, beta)
-#b.predict_score([45,85], b.X, beta)
-
-
-#plt.show()
