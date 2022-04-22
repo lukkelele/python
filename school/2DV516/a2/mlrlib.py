@@ -126,8 +126,8 @@ def log_gradient_descent(X, y, N=10, a=0.001):
     cols = np.size(X, 1)
     b = np.zeros((cols,))
     for i in range(N):
-        s = sigmoid(np.matmul(X, b)) - y
-        grad = (1/n) * np.matmul(X.T, s)
+        s = sigmoid(np.dot(X, b)) - y
+        grad = (1/n) * np.dot(X.T, s)
         b = b - a*grad 
         print(log_calc_cost(X,y,b))
     return b
