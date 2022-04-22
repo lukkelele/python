@@ -1,8 +1,8 @@
 # EXERCISE A
 
 from matplotlib import pyplot as plt
-from lib import mlrlib as func
 from lib import csv_parser as csv
+import mlrlib as func
 import numpy as np
 import math
 

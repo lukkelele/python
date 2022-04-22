@@ -12,7 +12,8 @@ def normalize_2D_matrix(X):
     Xn = np.concatenate((x0_norm.reshape(len(x0_col), 1), x1_norm.reshape(len(x0_col), 1)), axis=1)
     return Xn
 
-def normalize_matrix(X, rows, cols):
+def normalize_matrix(X):
+    rows, cols = np.size(X,0), np.size(X,1)
     Xn = np.zeros((rows, cols))
     for i in range(cols):
         Xn[:,i] = normalize_column(X, i)
@@ -34,13 +35,14 @@ def normalize_val(X, col, val):
     norm_val = (val-mean)/std
     return norm_val
 
-def extend_matrix(X, n):
+def extend_matrix(X):
+    n = np.size(X,0)
     return np.c_[np.ones((n, 1)), X]
 
 # Extend a matrix in its first column
-def normalize_extend(X, rows, cols):
-    Xn = normalize_matrix(X, rows, cols)
-    Xn_e = extend_matrix(Xn, len(Xn))
+def normalize_extend(X):
+    Xn = normalize_matrix(X)
+    Xn_e = extend_matrix(Xn)
     return Xn_e
 
 def calc_beta(Xe, y):
@@ -113,28 +115,39 @@ def polynomial(X, d, n):
 def create_extended_matrixes(X):
     cols = len(X)
     rows = X.shape[1]
-    Xn = normalize_matrix(X, cols, rows)
-    Xe = extend_matrix(X, cols)
-    Xn_e = extend_matrix(Xn, cols)
+    Xn = normalize_matrix(X)
+    Xe = extend_matrix(X)
+    Xn_e = extend_matrix(Xn)
     return [Xn, Xe, Xn_e]
 
 def log_gradient_descent(X, y, N=10, a=0.001):
     cols = np.size(X, 1)
     b = np.zeros((cols,))
-    print(b)
     n = X.shape[0]     # column length 
     for i in range(N):
         s = sigmoid(X.dot(b)) - y
+        print(f"s: {s}\ns.reshape(-1,1):\n{s.reshape(-1,1)}")
         grad = (-1/n) * X.T.dot(s)
         b = b - a*grad 
-        print(f"b: {b}")
     return b
+
+def predict_score(a):
+    X = np.array(a)
+    Xn = normalize_matrix(X)
+
+def log_compute_errors(X, y, b):
+    z = np.dot(X, b)#.reshape(-1,1)
+    p = sigmoid(z)
+    pp = np.round(p)
+    #yy = y.reshape(-1,1)
+    print(pp)
+    print("---")
+    print(y)
 
 def sigmoid2(X):
     z = -X
     g = 1 + np.e**z
     s = np.divide(1, g)
-    print(f"returning sigmoid: {s}")
     return s
 
 def sigmoid(X):
@@ -149,6 +162,6 @@ def log_calc_cost(X, y, b):
 # X is the test dataset
 def log_predict(X, x0, x1):
     X = np.array([x0, x1])
-    Xn = normalize_matrix(X, 1, 2)
-    Xn_e = extend_matrix(Xn, 1)
+    Xn = normalize_matrix(X)
+    Xn_e = extend_matrix(Xn)
     

@@ -48,8 +48,10 @@ class B:
 b = B(csv_path)
 b.plot_data()
 a = np.array([[0,1], [2,3]])
-Xe = func.extend_matrix(a, 2)
-grad_desc_log = func.log_gradient_descent(Xe, Xe[:,2], 1, 0.5)
+Xe = func.extend_matrix(a)
+grad_desc_log = func.log_gradient_descent(Xe, a[:,1], 1, 0.5)
 print(func.log_calc_cost(Xe, a[:,1], grad_desc_log))
 
+func.log_compute_errors(Xe, a[:,1], grad_desc_log)
 
+plt.show()
