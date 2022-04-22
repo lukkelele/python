@@ -122,13 +122,14 @@ def create_extended_matrixes(X):
     return [Xn, Xe, Xn_e]
 
 def log_gradient_descent(X, y, N=10, a=0.001):
+    n = X.shape[0]     # column length 
     cols = np.size(X, 1)
     b = np.zeros((cols,))
-    n = X.shape[0]     # column length 
     for i in range(N):
-        s = sigmoid(X.dot(b)) - y
-        grad = (-1/n) * X.T.dot(s)
+        s = sigmoid(np.matmul(X, b)) - y
+        grad = (1/n) * np.matmul(X.T, s)
         b = b - a*grad 
+        print(log_calc_cost(X,y,b))
     return b
 
 def log_compute_errors(X, y, b):
