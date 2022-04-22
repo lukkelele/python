@@ -55,6 +55,10 @@ b = B(csv_path)
 b.plot_data()
 a = np.array([[0,1], [2,3]])
 Xe = func.extend_matrix(a, 2)
-beta = func.calc_beta(a, a[:,1])
-print(func.sigmoid(a))
-print(func.log_calc_cost(Xe, a[:,1], [0,0,0]))
+#beta = func.calc_beta(a, a[:,1])
+#print(func.log_calc_cost(Xe, a[:,1], [0,0,0]))
+grad_desc_log = func.log_gradient_descent(Xe, a[:,1], 1, 0.5)
+print(f"grad_desc_log: {grad_desc_log}")
+#print(func.log_calc_cost(Xe, a[:,1], grad_desc_log))
+
+
