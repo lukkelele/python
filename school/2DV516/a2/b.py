@@ -72,6 +72,14 @@ X = func.normalize_matrix(a, 2,2)
 Xe = func.extend_matrix(X)
 grad_desc = func.log_gradient_descent(b.Xn_e, b.y, 1000, 0.5)
 print(grad_desc)
+print(func.log_calc_cost(b.Xn_e, b.y, grad_desc))
+b.predict_score([45,85], b.Xn_e, grad_desc)
+func.log_compute_errors(b.Xn_e, b.y, grad_desc)
+
 b.plot_boundary()
-plt.show()
+
+#plt.show()
+
+
+
 
