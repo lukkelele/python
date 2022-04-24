@@ -47,24 +47,35 @@ class Cancer:
     def train_model(self, X, y, N, a, verbose=False, plot=False):
         return func.log_gradient_descent(X, y, N, a, verbose, plot)
 
-    def get_errors(self):
+    def compute_accuracy(self):
         training_errors = func.log_compute_errors(self.training_set, self.y_training, self.b_grad_training)
         test_errors = func.log_compute_errors(self.test_set, self.y_test, self.b_grad_test) 
         tot_training = len(self.training_set)
         tot_test = len(self.test_set)
         training_correct = tot_training - training_errors
         test_correct = tot_test - test_errors
-        training_accuracy = training_correct / tot_training
-        test_accuracy = test_correct / tot_test
-        print(f"Training accuracy: {round(training_accuracy, 3)}\nTest accuracy: {round(test_accuracy, 3)}")
+        training_accuracy = round((training_correct / tot_training), 3)
+        test_accuracy = round((test_correct / tot_test), 3)
+        print(f"Training errors: {training_errors}\nTest errors: {test_errors}\nTraining accuracy: {training_accuracy}\nTest accuracy: {test_accuracy}\n")
+        return [training_accuracy, test_accuracy]
 
 
-c = Cancer(csv_path)
 
-c.train_model(c.training_set, c.y_training, 100, 0.5, verbose=False, plot=True)
+training = []
+test = []
 
-c.get_errors()
+for i in range(10):
+    c = Cancer(csv_path)
+    a = c.compute_accuracy()
+    training.append(a[0])
+    test.append(a[1])
+
+training_mean = round(np.mean(training), 3)
+test_mean = round(np.mean(test), 3)
+diff = round((training_mean - test_mean), 4)
+if diff < 0: diff = -diff
+print(f"Average training accuracy: {training_mean}\nAverage test accuracy: {test_mean}\nDifference: {diff}")
+
 
 #plt.show()
-
 
