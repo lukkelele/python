@@ -61,7 +61,6 @@ class Microships:
 
 
 
-
 m = Microships(csv_path)
 f = plt.figure(figsize=(12,9))
 

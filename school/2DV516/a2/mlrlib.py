@@ -153,4 +153,21 @@ def log_calc_cost(X, y, b):
     J = -(y.T.dot(np.log(j)) + (1-y).T.dot(np.log(1-j))) / n
     return J
 
-    
+
+def desicion_boundary(X, y):
+    h = 0.01    # STEP SIZE
+    offset = 0.1
+    x_min, x_max = np.min(X) - offset, np.max(X) + offset
+    y_min, y_max = np.min(y) - offset, np.max(y) + offset
+    xx, yy = np.meshgrid(np.arange(x_min, y_max, h),
+                         np.arange(y_min, y_max, h))
+    x1, x2 = xx.ravel(), yy.ravel()
+    # IMPLEMENT MAP FEATURES
+
+def map_features(X):
+    X1 = X[:,0]
+    X2 = X[:,1]
+
+
+
+
