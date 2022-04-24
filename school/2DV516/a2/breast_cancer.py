@@ -35,6 +35,10 @@ class Cancer:
             else: self.y[idx] = 1
             idx += 1
 
+    def plot_cost(self):
+        self.train_model(self.training_set, self.y_training, 100, 0.5, verbose=False, plot=True)
+        plt.show()
+
     def divide_data(self, X, training):
         test = 1 - training
         rows = np.size(X,0)
@@ -60,7 +64,6 @@ class Cancer:
         return [training_accuracy, test_accuracy]
 
 
-
 training = []
 test = []
 runs = 10
@@ -68,7 +71,7 @@ fig = plt.figure(figsize=(12,9))
 print("===== RUNNING =====")
 for i in range(runs):
     c = Cancer(csv_path)
-    a = c.compute_accuracy()
+    a = c.compute_accuracy(verbose=True)
     training.append(a[0])
     test.append(a[1])
 
@@ -76,7 +79,4 @@ training_mean = round(np.mean(training), 3)
 test_mean = round(np.mean(test), 3)
 p = round(((training_mean/test_mean) * 100), 2)
 print(f"Average training accuracy: {training_mean}\nAverage test accuracy: {test_mean}\nTraining / Test: {p}%")
-
-
-#plt.show()
-
+Cancer(csv_path).plot_cost()
