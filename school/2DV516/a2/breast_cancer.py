@@ -20,6 +20,7 @@ class Cancer:
         self.X = dataset[:,[0,1,2,3,4,5,6,7,8]]
         self.y = dataset[:, 9]
         self.create_extended_matrixes()
+        self.b = func.calc_beta(self.Xe, self.y)
 
     def create_extended_matrixes(self):
         matrixes = func.create_extended_matrixes(self.X)
@@ -36,17 +37,39 @@ class Cancer:
         test = 1 - training
         rows = np.size(X,0)
         idx = round(test*rows) - 1
-        sets = np.split(X, [idx])
-        self.training_set = sets[0]
-        self.test_set = sets[1]
+        #sets = np.split(X, [idx])
+        #y_sets = np.split(self.y, [idx])
+        self.test_set = X[:idx]
+        self.y_test = self.y[:idx]
+        self.training_set = X[idx:]
+        self.y_training = self.y[idx:]
 
-    def train_model(self, X, N, a, verbose=False, plot=False):
-        b = func.log_gradient_descent(X, self.y, N, a, verbose, plot)
+    def train_model(self, X, y, N, a, verbose=False, plot=False):
+        self.b_grad = func.log_gradient_descent(X, y, N, a, verbose, plot)
+
+    def get_errors(self):
+        print(c.training_set)
+        sum_errors = func.log_compute_errors(self.training_set, self.y_training, self.b_grad)
+        
 
 
 
 c = Cancer(csv_path)
-c.train_model(c.Xn_e, 100, 0.5, verbose=False, plot=True)
+print(c.y_training.shape)
+print(c.training_set.shape)
+print("\n\n")
+
+print(len(c.y_training))
+print(len(c.y_test))
+print(c.y_training)
+print("\n")
+print(len(c.test_set))
+print(len(c.training_set))
+print(c.y_test)
+#c.train_model(c.training_set, c.y_training, 100, 0.5, verbose=False, plot=True)
+
+#c.get_errors()
+
+#plt.show()
 
 
-plt.show()

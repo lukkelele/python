@@ -137,10 +137,12 @@ def log_gradient_descent(X, y, N=10, a=0.001, verbose=False, plot=False):
     return b
 
 def log_compute_errors(X, y, b):
-    z = np.dot(X, b)#.reshape(-1,1)
+    z = np.dot(X, b)
     p = sigmoid(z)
     pp = np.round(p)
-    print(f"Training errors: {np.sum(y!=pp)}")
+    errors = np.sum(y!=pp)
+    print(f"Training errors: {errors}")
+    return errors
 
 def sigmoid(X):
     return 1 / (1 + np.exp(-X))

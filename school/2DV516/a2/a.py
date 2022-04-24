@@ -72,7 +72,6 @@ class Exercise_A:
             grad = -(Xe.T.dot(y - Xe.dot(b)) / self.n)
             b = b - a*grad
             cost = self.calc_cost(Xe, b, y, self.n)
-            print(b)
             if i < 10: pass
             plt.scatter(i, cost, s=3, color="b")
         print(f"returning beta: {b}")
@@ -98,6 +97,8 @@ mom_n = a.normalize_x(65, a.X[:,0])
 dad_n = a.normalize_x(70, a.X[:,1])
 grad_descent_height = a.calc_height(grad, mom_n, dad_n)
 print(grad_descent_height)
+print('\n')
+print(grad)
 print(b)
 print(b_n)
 #a.plot_subplot(a.Xe[:,1], a.Xe[:,2], 1)
