@@ -12,6 +12,8 @@ class Cancer:
         self.parse_csv_file(path)
         self.adjust_response()
         self.divide_data(self.Xn_e, 0.8)
+        self.b_grad_test = self.train_model(self.test_set, self.y_test, 200, 0.5)
+        self.b_grad_training = self.train_model(self.training_set, self.y_training, 200, 0.5)
 
     def parse_csv_file(self, path):
         dataset = csv_parser.open_cancer_file(path)
@@ -37,38 +39,31 @@ class Cancer:
         test = 1 - training
         rows = np.size(X,0)
         idx = round(test*rows) - 1
-        #sets = np.split(X, [idx])
-        #y_sets = np.split(self.y, [idx])
         self.test_set = X[:idx]
         self.y_test = self.y[:idx]
         self.training_set = X[idx:]
         self.y_training = self.y[idx:]
 
     def train_model(self, X, y, N, a, verbose=False, plot=False):
-        self.b_grad = func.log_gradient_descent(X, y, N, a, verbose, plot)
+        return func.log_gradient_descent(X, y, N, a, verbose, plot)
 
     def get_errors(self):
-        print(c.training_set)
-        sum_errors = func.log_compute_errors(self.training_set, self.y_training, self.b_grad)
-        
-
+        training_errors = func.log_compute_errors(self.training_set, self.y_training, self.b_grad_training)
+        test_errors = func.log_compute_errors(self.test_set, self.y_test, self.b_grad_test) 
+        tot_training = len(self.training_set)
+        tot_test = len(self.test_set)
+        training_correct = tot_training - training_errors
+        test_correct = tot_test - test_errors
+        training_accuracy = training_correct / tot_training
+        test_accuracy = test_correct / tot_test
+        print(f"Training accuracy: {round(training_accuracy, 3)}\nTest accuracy: {round(test_accuracy, 3)}")
 
 
 c = Cancer(csv_path)
-print(c.y_training.shape)
-print(c.training_set.shape)
-print("\n\n")
 
-print(len(c.y_training))
-print(len(c.y_test))
-print(c.y_training)
-print("\n")
-print(len(c.test_set))
-print(len(c.training_set))
-print(c.y_test)
-#c.train_model(c.training_set, c.y_training, 100, 0.5, verbose=False, plot=True)
+c.train_model(c.training_set, c.y_training, 100, 0.5, verbose=False, plot=True)
 
-#c.get_errors()
+c.get_errors()
 
 #plt.show()
 

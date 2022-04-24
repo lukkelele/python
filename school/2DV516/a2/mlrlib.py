@@ -141,7 +141,7 @@ def log_compute_errors(X, y, b):
     p = sigmoid(z)
     pp = np.round(p)
     errors = np.sum(y!=pp)
-    print(f"Training errors: {errors}")
+    #print(f"Training errors: {errors}")
     return errors
 
 def sigmoid(X):
