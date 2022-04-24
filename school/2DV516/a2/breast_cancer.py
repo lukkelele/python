@@ -5,8 +5,6 @@ import numpy as np
 
 csv_path = "./data/breast_cancer.csv"
 
-# Divide 80/20
-
 class Cancer:
     
     def __init__(self, path):
@@ -42,9 +40,13 @@ class Cancer:
         self.training_set = sets[0]
         self.test_set = sets[1]
 
+    def train_model(self, X, N, a, verbose=False, plot=False):
+        b = func.log_gradient_descent(X, self.y, N, a, verbose, plot)
+
 
 
 c = Cancer(csv_path)
+c.train_model(c.Xn_e, 100, 0.5, verbose=False, plot=True)
 
 
-
+plt.show()
