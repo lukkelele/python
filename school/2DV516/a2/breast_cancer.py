@@ -13,6 +13,7 @@ class Cancer:
         self.fig = plt.figure(figsize=(12,9))
         self.parse_csv_file(path)
         self.adjust_response()
+        self.divide_data(self.Xn_e, 0.8)
 
     def parse_csv_file(self, path):
         dataset = csv_parser.open_cancer_file(path)
@@ -33,5 +34,17 @@ class Cancer:
             else: self.y[idx] = 1
             idx += 1
 
+    def divide_data(self, X, training):
+        test = 1 - training
+        rows = np.size(X,0)
+        idx = round(test*rows) - 1
+        sets = np.split(X, [idx])
+        self.training_set = sets[0]
+        self.test_set = sets[1]
+
+
+
 c = Cancer(csv_path)
+
+
 
