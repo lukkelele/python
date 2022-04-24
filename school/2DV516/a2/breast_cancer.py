@@ -8,7 +8,7 @@ csv_path = "./data/breast_cancer.csv"
 class Cancer:
     
     def __init__(self, path):
-        self.fig = plt.figure(figsize=(12,9))
+        #self.fig = plt.figure(figsize=(12,9))
         self.parse_csv_file(path)
         self.adjust_response()
         self.divide_data(self.Xn_e, 0.8)
@@ -47,7 +47,7 @@ class Cancer:
     def train_model(self, X, y, N, a, verbose=False, plot=False):
         return func.log_gradient_descent(X, y, N, a, verbose, plot)
 
-    def compute_accuracy(self):
+    def compute_accuracy(self, verbose=False):
         training_errors = func.log_compute_errors(self.training_set, self.y_training, self.b_grad_training)
         test_errors = func.log_compute_errors(self.test_set, self.y_test, self.b_grad_test) 
         tot_training = len(self.training_set)
@@ -56,15 +56,17 @@ class Cancer:
         test_correct = tot_test - test_errors
         training_accuracy = round((training_correct / tot_training), 3)
         test_accuracy = round((test_correct / tot_test), 3)
-        print(f"Training errors: {training_errors}\nTest errors: {test_errors}\nTraining accuracy: {training_accuracy}\nTest accuracy: {test_accuracy}\n")
+        if verbose: print(f"Training errors: {training_errors}\nTest errors: {test_errors}\nTraining accuracy: {training_accuracy}\nTest accuracy: {test_accuracy}\n")
         return [training_accuracy, test_accuracy]
 
 
 
 training = []
 test = []
-
-for i in range(10):
+runs = 10
+fig = plt.figure(figsize=(12,9))
+print("===== RUNNING =====")
+for i in range(runs):
     c = Cancer(csv_path)
     a = c.compute_accuracy()
     training.append(a[0])
@@ -72,9 +74,8 @@ for i in range(10):
 
 training_mean = round(np.mean(training), 3)
 test_mean = round(np.mean(test), 3)
-diff = round((training_mean - test_mean), 4)
-if diff < 0: diff = -diff
-print(f"Average training accuracy: {training_mean}\nAverage test accuracy: {test_mean}\nDifference: {diff}")
+p = round(((training_mean/test_mean) * 100), 2)
+print(f"Average training accuracy: {training_mean}\nAverage test accuracy: {test_mean}\nTraining / Test: {p}%")
 
 
 #plt.show()
