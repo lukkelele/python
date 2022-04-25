@@ -164,11 +164,14 @@ def desicion_boundary(X, y):
     x1, x2 = xx.ravel(), yy.ravel()
     # IMPLEMENT MAP FEATURES
 
-def map_features(X, d):
+def map_features(X, d, ones=True):
     X1 = X[:,0]
     X2 = X[:,1]
-    ones = np.ones([len(X1), 1])
-    Xe = np.c_[ones, X1, X2]
+    if ones: 
+        ones = np.ones([len(X1), 1])
+        Xe = np.c_[ones, X1, X2]
+    else:
+        Xe = np.array([X1, X2])
     for i in range(2, d+1):
         for j in range(0, i+1):
             X_new = X1**(i-j)*X2**j
