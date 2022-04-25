@@ -57,7 +57,7 @@ class GPU_benchmark:
             b = b - a*grad
             cost = self.calc_cost(Xe, y, b)
             if i < 5: pass
-           # plt.scatter(i, cost, s=3, color="k")
+            plt.scatter(i, cost, s=3, color="k")
         return b
 
     def cost_diff(self, norm, grad, margin):
@@ -70,12 +70,10 @@ Allowed difference between norm and grad:\n{round(lower_boundary, 3)} < {round(n
             print("The cost difference is within 1% --> SUCCESS!\n")
         else: print("The cost difference is within 1% --> SUCCESS!\n")
 
-values = [2432, 1607, 1683, 8, 8, 256]
 
+values = [2432, 1607, 1683, 8, 8, 256]
 g = GPU_benchmark(csv_path)
 print()
-
-
 norm_vals = g.normalize_features(values)
 norm_benchmark = g.calc_benchmark(norm_vals, g.beta_n)
 gradient_descent = g.gradient_descent(g.Xn_e, g.y, 10000, 0.12)
@@ -87,6 +85,4 @@ print(f"""Benchmark normal equ: {norm_benchmark}
 Benchmark grad desc: {g.calc_benchmark(norm_vals, gradient_descent)}\n""")
 
 g.cost_diff(cost_norm, cost_grad, 0.01)
-
-
-
+plt.show()

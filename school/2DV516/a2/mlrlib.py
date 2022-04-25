@@ -142,7 +142,6 @@ def log_compute_errors(X, y, b):
     p = sigmoid(z)
     pp = np.round(p)
     errors = np.sum(y!=pp)
-    #print(f"Training errors: {errors}")
     return errors
 
 def sigmoid(X):
@@ -155,7 +154,7 @@ def log_calc_cost(X, y, b):
     return J
 
 def decision_boundary(X1, X2, d, beta):
-    h = 0.01    # STEP SIZE
+    h = 0.005    # STEP SIZE
     offset = 0.1
     x_min, x_max = np.min(X1) - offset, np.max(X1) + offset
     y_min, y_max = np.min(X2) - offset, np.max(X2) + offset
