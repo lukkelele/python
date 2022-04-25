@@ -76,13 +76,12 @@ g = GPU_benchmark(csv_path)
 print()
 norm_vals = g.normalize_features(values)
 norm_benchmark = g.calc_benchmark(norm_vals, g.beta_n)
-gradient_descent = g.gradient_descent(g.Xn_e, g.y, 10000, 0.12)
+gradient_descent = g.gradient_descent(g.Xn_e, g.y, 1000, 0.12)
 grad_benchmark = g.calc_benchmark(norm_vals, gradient_descent)
 cost_norm = g.calc_cost(g.Xn_e, g.y, g.beta_n)
 cost_grad = g.calc_cost(g.Xn_e, g.y, gradient_descent)
 
 print(f"""Benchmark normal equ: {norm_benchmark}
 Benchmark grad desc: {g.calc_benchmark(norm_vals, gradient_descent)}\n""")
-
 g.cost_diff(cost_norm, cost_grad, 0.01)
 plt.show()

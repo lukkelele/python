@@ -3,25 +3,6 @@ from matplotlib import colors
 import numpy as np
 import math
 
-def get_column_length(X):
-    try: count = np.size(X,1)
-    except: count = 1
-    return count
-
-def get_row_length(X):
-    try: count = np.size(X,0)
-    except: count = 1
-    return count
-
-def normalize_2D_matrix(X):
-    x0_col, x1_col = X[:,0], X[:,1]
-    x0_std, x1_std = np.std(x0_col), np.std(x1_col)
-    x0_mean, x1_mean = np.mean(x0_col), np.mean(x1_col)
-    x0_subt, x1_subt = np.subtract(x0_col, x0_mean), np.subtract(x1_col, x1_mean)
-    x0_norm, x1_norm = np.divide(x0_subt, x0_std), np.divide(x1_subt, x1_std) 
-    Xn = np.concatenate((x0_norm.reshape(len(x0_col), 1), x1_norm.reshape(len(x0_col), 1)), axis=1)
-    return Xn
-
 def normalize_matrix(X, rows, cols):
     Xn = np.zeros((rows, cols))
     for i in range(cols):
@@ -72,35 +53,6 @@ def gradient_descent(Xe, y, N=10, a=0.001):
         grad = -(Xe.T.dot(y - Xe.dot(b)) / n)
         b = b - a*grad
     return b
-
-# Plot two subplots with different x values but same y values
-def plot_subplot(x1, x2, y, i, c=['m', 'b']):
-    j = 2
-    I = int(f"{j}2{i}")
-    plt.subplot(I)
-    plt.scatter(x1, y, color=c[0], s=30, edgecolors='k', label='mom')
-    I = int(f"{j}2{i+1}")
-    plt.subplot(I)
-    plt.scatter(x2, y, color=c[1], s=30, edgecolors='k', label='dad')
-
-def plot_features(X, y, r, row, col):
-    if r == 1:
-        current_column = X
-        x_min, x_max = np.min(current_column) - 1, np.max(current_column) + 1
-        plt.subplot(1,1,1)
-        plt.xlim(x_min, x_max)
-        plt.xlabel(f"x_1")
-        plt.ylabel("y")
-        plt.scatter(current_column, y, s=10, color="b")
-    else: 
-        for i in range(r):
-            current_column = X[:,i]
-            x_min, x_max = np.min(current_column) - 1, np.max(current_column) + 1
-            plt.subplot(row, col, i+1)
-            plt.xlim(x_min, x_max)
-            plt.xlabel(f"x_{i}")
-            plt.ylabel("y")
-            plt.scatter(current_column, y, s=10, color="b")
 
 def polynomial(X, d, n):
     if d == 1:

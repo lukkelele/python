@@ -5,15 +5,17 @@ import numpy as np
 
 csv_path = "./data/breast_cancer.csv"
 
+# How the data is divided does not really make a difference in the end results.
+# The dataset is shuffled at the beginning which helps keep randomized datasets per simulation.
+
 class Cancer:
-    
     def __init__(self, path):
         #self.fig = plt.figure(figsize=(12,9))
         self.parse_csv_file(path)
         self.adjust_response()
         self.divide_data(self.Xn_e, 0.8)
-        self.b_grad_test = self.train_model(self.test_set, self.y_test, 200, 0.5)
-        self.b_grad_training = self.train_model(self.training_set, self.y_training, 200, 0.5)
+        self.b_grad_test = self.train_model(self.test_set, self.y_test, 500, 0.5)
+        self.b_grad_training = self.train_model(self.training_set, self.y_training, 500, 0.5)
 
     def parse_csv_file(self, path):
         dataset = csv_parser.open_cancer_file(path)
@@ -36,7 +38,7 @@ class Cancer:
             idx += 1
 
     def plot_cost(self):
-        self.train_model(self.training_set, self.y_training, 100, 0.5, verbose=False, plot=True)
+        self.train_model(self.training_set, self.y_training, 1000, 0.5, verbose=False, plot=True)
         plt.show()
 
     def divide_data(self, X, training):
