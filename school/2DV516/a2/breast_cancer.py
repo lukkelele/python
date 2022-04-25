@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
+from lib import mlrlib as func
 from lib import csv_parser
-import mlrlib as func
 import numpy as np
 
 csv_path = "./data/breast_cancer.csv"

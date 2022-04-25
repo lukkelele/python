@@ -1,7 +1,6 @@
 from matplotlib import pyplot as plt
 from matplotlib import colors
 import numpy as np
-import math
 
 def normalize_matrix(X, rows, cols):
     Xn = np.zeros((rows, cols))
@@ -25,26 +24,32 @@ def normalize_val(X, col, val):
     norm_val = (val-mean)/std
     return norm_val
 
+# Extend matrix
 def extend_matrix(X):
     return np.c_[np.ones((len(X), 1)), X]
 
+# Calculate beta
 def calc_beta(Xe, y):
     B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
     return B
 
+# Calculate part of cost function
 def calc_j(Xe, y, beta):
     j = np.dot(Xe, beta) - y
     return j
 
+# Calculate cost
 def calc_cost(X, beta, y, n):
     j = np.dot(X, beta) - y
     J = (j.T.dot(j)) / n
     return J
 
+# Used for introductory exercise A
 def calc_height(beta, x0, x1):
     height = beta[0] + beta[1]*x0 + beta[2]*x1
     return height
 
+# Gradient descent
 def gradient_descent(Xe, y, N=10, a=0.001):
     cols = np.size(Xe, 1)
     n = len(Xe)     # column length 
@@ -66,6 +71,8 @@ def polynomial(X, d, n):
     else: return 0  # if error
     return X
 
+# Create the most used matrixes used in the exercises.
+# Used in respective __init__
 def create_extended_matrixes(X):
     rows = len(X)
     cols = np.size(X,1)
@@ -74,6 +81,7 @@ def create_extended_matrixes(X):
     Xn_e = extend_matrix(Xn)
     return [Xn, Xe, Xn_e]
 
+# Gradient descent for logaritmic regression
 def log_gradient_descent(X, y, N=10, a=0.001, verbose=False, plot=False):
     n = X.shape[0]     # column length 
     cols = np.size(X, 1)
@@ -89,6 +97,7 @@ def log_gradient_descent(X, y, N=10, a=0.001, verbose=False, plot=False):
             plt.scatter(i, cost, s=3, color="k")
     return b
 
+# Compute errors for logaritmic regression
 def log_compute_errors(X, y, b):
     z = np.dot(X, b)
     p = sigmoid(z)
@@ -96,9 +105,11 @@ def log_compute_errors(X, y, b):
     errors = np.sum(y!=pp)
     return errors
 
+# Sigmoid function
 def sigmoid(X):
     return 1 / (1 + np.exp(-X))
 
+# Calculate the cost function for logaritmic regression problems
 def log_calc_cost(X, y, b):
     n = len(X)
     j = sigmoid(np.dot(X,b))

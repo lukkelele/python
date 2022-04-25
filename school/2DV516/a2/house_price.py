@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
+from lib import mlrlib as func
 from lib import csv_parser
-import mlrlib as func
 import numpy as np
 
 # 1975 - 2017

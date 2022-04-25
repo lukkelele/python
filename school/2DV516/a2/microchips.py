@@ -1,12 +1,12 @@
 from matplotlib import pyplot as plt
+from lib import mlrlib as func
 from lib import csv_parser
-import mlrlib as func
 import numpy as np
 
 csv_path = "./data/microchips.csv"
 
 # Quadratic model XB = B0 + B1X1 + B2X2 + B3(X1)^2 + B4X1X2 + B5(X2)^2
-class Microships:
+class Microchips:
     
     def __init__(self, path):
         self.parse_csv_file(path)
@@ -78,6 +78,6 @@ class Microships:
         plt.legend()
 
 
-m = Microships(csv_path)
+m = Microchips(csv_path)
 m.model()
 plt.show()
