@@ -20,7 +20,7 @@ class Microships:
         self.X = dataset[:,[0,1]]
         self.y = dataset[:,2]
         self.create_extended_matrixes()
-        self.XN = self.create_polynomial_X()
+        self.create_polynomial_X()
 
     def create_polynomial_X(self):
         Xn1 = self.Xn[:,0].reshape(self.n, 1)
@@ -30,8 +30,12 @@ class Microships:
         Xn22 = np.square(Xn2)
         Xn = np.concatenate((self.Xn_e, Xn11), axis=1)
         Xn = np.concatenate((Xn,Xn12), axis=1)
-        Xn = np.concatenate((Xn,Xn22), axis=1)
-        return Xn
+        Xn = np.concatenate((Xn,Xn22), axis=1) 
+        self.XN_e = Xn
+        Xn = np.concatenate((self.Xn, Xn11), axis=1)
+        Xn = np.concatenate((Xn,Xn12), axis=1)
+        Xn = np.concatenate((Xn,Xn22), axis=1) 
+        self.XN = Xn
 
     def create_extended_matrixes(self):
         matrixes = func.create_extended_matrixes(self.X)
@@ -42,15 +46,15 @@ class Microships:
     def model(self, X, y):
         x1, x2 = X[:,1], X[:,2]
         plt.subplot(1,2,1)
-        b = func.log_gradient_descent(X, y, N=1000, a=0.5, verbose=False, plot=True)
+        b = func.log_gradient_descent(self.XN, y, N=100, a=0.001, verbose=False, plot=True)
         min_x1, max_x1 = np.min(x1), np.max(x1)
-        min_y, max_y = np.min(x2), np.max(x2)
         xx = np.arange(min_x1, max_x1, 0.1)
-        x = -(b[0] + b[1]*xx)/b[2]
+        #x = -(b[0] + b[1]*X + b[2]*X + b[3]*X + b[4]*X) / b[5]
         plt.subplot(1,2,2)
         self.plot_data()
-        #func.desicion_boundary(x1,x2, 1,b)
-        #plt.plot(xx, x)
+        #func.decision_boundary2(x1, x2, b, self.XN)
+        func.desicion_boundary(x1, x2, 2, b)
+        #plt.plot(x, p)
 
     def map_features(self, Xe, d):
         X1, X2 = Xe[:,1], Xe[:,2]
@@ -84,6 +88,6 @@ m = Microships(csv_path)
 X = func.map_features(m.Xe[:,1], m.Xe[:,2], 2)
 beta = func.calc_beta(X, m.y)
 #func.desicion_boundary(X[:,1], X[:,2], 2, beta)
-m.model(m.Xe, m.y)
+m.model(m.XN, m.y)
 
 plt.show()
