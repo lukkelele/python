@@ -169,7 +169,7 @@ def desicion_boundary(X1, X2, d, beta):
     clz_mesh = classes.reshape(xx.shape)
     cmap_bold = colors.ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # mesh plot
     cmap_light = colors.ListedColormap(['#FFAAAA', '#AAFFAA', '#AAAAFF']) # mesh plot
-    plt.figure(2)
+    #plt.figure(2)
     plt.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
     plt.scatter(X1, X2, marker='.', cmap=cmap_bold)
 

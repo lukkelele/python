@@ -11,6 +11,7 @@ class Microships:
     
     def __init__(self, path):
         self.parse_csv_file(path)
+        self.fig = plt.figure(figsize=(12,10))
         self.b = func.calc_beta(self.Xe, self.y)
 
     def parse_csv_file(self, path):
@@ -19,6 +20,9 @@ class Microships:
         self.X = dataset[:,[0,1]]
         self.y = dataset[:,2]
         self.create_extended_matrixes()
+        self.XN = self.create_polynomial_X()
+
+    def create_polynomial_X(self):
         Xn1 = self.Xn[:,0].reshape(self.n, 1)
         Xn2 = self.Xn[:,1].reshape(self.n, 1)
         Xn12 = np.concatenate((Xn1, Xn2), axis=1)
@@ -27,31 +31,27 @@ class Microships:
         Xn = np.concatenate((self.Xn_e, Xn11), axis=1)
         Xn = np.concatenate((Xn,Xn12), axis=1)
         Xn = np.concatenate((Xn,Xn22), axis=1)
-        self.XN_e = Xn
-        Xn = np.concatenate((self.Xn, Xn11), axis=1)
-        Xn = np.concatenate((Xn,Xn12), axis=1)
-        Xn = np.concatenate((Xn,Xn22), axis=1)
-        self.XN = Xn
+        return Xn
 
     def create_extended_matrixes(self):
         matrixes = func.create_extended_matrixes(self.X)
         self.Xn, self.Xe, self.Xn_e = matrixes[0], matrixes[1], matrixes[2]
-
-    def model2(self, X, y):
+    
+    # TODO: FIX THE DECISION BOUNDARY
+    def model(self, X, y):
         x1, x2 = X[:,1], X[:,2]
-        b = func.log_gradient_descent(X, y, N=10, a=0.5, verbose=True, plot=True)
+        plt.subplot(1,2,1)
+        b = func.log_gradient_descent(X, y, N=10, a=0.5, verbose=False, plot=True)
         c = b[0] + b[1]*x1 + b[2]*x2 + b[3]*x1**2 + b[4]*x1*x2 +b[5]*x2**2
-        idx = 0
-        for i in range(len(x1)):
-            x11, x22 = x1[idx], x2[idx]
-            c = b[0] + b[1]*x11 + b[2]*x22 + b[3]*x11**2 + b[4]*x11*x22 +b[5]*x22**2
-            idx += 1
-            print(f"\nModel: {c}\n")
-        #print(f"GRADIENT DESCENT BETA: {b}")
-
-    def model(self, X, d):
-        b = self.map_features(X, d)
-
+        min_x1, max_x1 = np.min(x1), np.max(x1)
+        XB = np.dot(X, b)
+        xx = np.arange(min_x1, max_x1, 0.1)
+        x = -(b[0] + b[1]*xx + b[2]*xx + b[3]*xx + b[4]*xx) / b[5]
+        plt.subplot(1,2,2)
+        plt.ylim(np.min(x1), np.max(x1))
+        plt.plot(xx, x)
+        self.plot_data()
+        #print(f"Model: {c}")
 
     def map_features(self, Xe, d):
         X1, X2 = Xe[:,1], Xe[:,2]
@@ -84,9 +84,9 @@ m = Microships(csv_path)
 
 X = func.map_features(m.Xe[:,1], m.Xe[:,2], 2)
 beta = func.calc_beta(X, m.y)
-#b = func.log_gradient_descent(m.XN, m.y)
-#func.desicion_boundary(m.XN[:,1], m.XN[:,2], 5, beta)
-func.desicion_boundary(X[:,1], X[:,2], 2, beta)
+#func.desicion_boundary(X[:,1], X[:,2], 2, beta)
+m.model(m.XN, m.y)
+#m.plot_data()
 #m.plot_data()
 plt.show()
 
