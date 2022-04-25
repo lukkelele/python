@@ -41,20 +41,14 @@ class Microships:
         matrixes = func.create_extended_matrixes(self.X)
         self.Xn, self.Xe, self.Xn_e = matrixes[0], matrixes[1], matrixes[2]
     
+
     # TODO: FIX THE DECISION BOUNDARY
     # NEEDS FIXING
-    def model(self, X, y):
-        x1, x2 = X[:,1], X[:,2]
-        plt.subplot(1,2,1)
-        b = func.log_gradient_descent(self.XN, y, N=100, a=0.001, verbose=False, plot=True)
-        min_x1, max_x1 = np.min(x1), np.max(x1)
-        xx = np.arange(min_x1, max_x1, 0.1)
-        #x = -(b[0] + b[1]*X + b[2]*X + b[3]*X + b[4]*X) / b[5]
-        plt.subplot(1,2,2)
+    def model(self, X, y, b):
+        #XB = b[0] + b[1]*x1 + b[2]*x2 + b[3]*x1*x2 + b[4]*x1**2 + b[5]*x2**2
         self.plot_data()
-        #func.decision_boundary2(x1, x2, b, self.XN)
-        func.desicion_boundary(x1, x2, 2, b)
-        #plt.plot(x, p)
+        func.decision_boundary(self.X[:,0], self.X[:,1], 2, b)
+
 
     def map_features(self, Xe, d):
         X1, X2 = Xe[:,1], Xe[:,2]
@@ -87,7 +81,6 @@ m = Microships(csv_path)
 
 X = func.map_features(m.Xe[:,1], m.Xe[:,2], 2)
 beta = func.calc_beta(X, m.y)
-#func.desicion_boundary(X[:,1], X[:,2], 2, beta)
-m.model(m.XN, m.y)
+m.model(X, m.y, beta)
 
 plt.show()

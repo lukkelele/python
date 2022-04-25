@@ -155,7 +155,7 @@ def log_calc_cost(X, y, b):
     return J
 
 
-def desicion_boundary(X1, X2, d, beta):
+def decision_boundary(X1, X2, d, beta):
     h = 0.01    # STEP SIZE
     offset = 0.1
     x_min, x_max = np.min(X1) - offset, np.max(X1) + offset
@@ -182,13 +182,13 @@ def decision_boundary2(X1, X2, beta, XXe):
                          np.arange(y_min, y_max, h))
     x1, x2 = xx.ravel(), yy.ravel()
     p = sigmoid(np.dot(XXe, beta)) # classify mesh
-    print(p.shape)
     classes = p>0.5
+    #print(classes)
     #clz_mesh = classes.reshape(xx.shape)
     cmap_bold = colors.ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # mesh plot
     cmap_light = colors.ListedColormap(['#FFAAAA', '#AAFFAA', '#AAAAFF']) # mesh plot
-    #plt.figure(2)
     #plt.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
+    plt.plot(p, XXe)
     plt.scatter(X1, X2, marker='.', cmap=cmap_bold)
 
 def map_features(X1, X2, d, ones=True):
