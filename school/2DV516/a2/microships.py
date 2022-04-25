@@ -11,9 +11,10 @@ class Microships:
     
     def __init__(self, path):
         self.parse_csv_file(path)
-        self.fig = plt.figure(figsize=(12,10))
+        self.fig = plt.figure(figsize=(12,12))
         self.b = func.calc_beta(self.Xe, self.y)
 
+    # Read the csv file and parse the data
     def parse_csv_file(self, path):
         dataset = csv_parser.open_microships_file(path)
         self.n = len(dataset)
@@ -22,6 +23,7 @@ class Microships:
         self.create_extended_matrixes()
         self.create_polynomial_X()
 
+    # Before the mapfeatures implementation
     def create_polynomial_X(self):
         Xn1 = self.Xn[:,0].reshape(self.n, 1)
         Xn2 = self.Xn[:,1].reshape(self.n, 1)
@@ -44,10 +46,16 @@ class Microships:
 
     # TODO: FIX THE DECISION BOUNDARY
     # NEEDS FIXING
-    def model(self, X, y, b):
+    def model(self):
         #XB = b[0] + b[1]*x1 + b[2]*x2 + b[3]*x1*x2 + b[4]*x1**2 + b[5]*x2**2
+        X1, X2 = self.X[:,0], self.X[:,1]
+        plt.subplot(1,2,1)
+        b = func.log_gradient_descent(self.XN, self.y, N=1000, a=0.02, verbose=False, plot=True)  # Cost plot
+        plt.subplot(1,2,2)
+        b_mapfeatures = func.map_features(X1, X2, 2)
+        b = func.calc_beta(b_mapfeatures, self.y)
+        func.decision_boundary(X1, X2, 2, b)
         self.plot_data()
-        func.decision_boundary(self.X[:,0], self.X[:,1], 2, b)
 
 
     def map_features(self, Xe, d):
@@ -77,10 +85,9 @@ class Microships:
 
 
 m = Microships(csv_path)
-#f = plt.figure(figsize=(12,9))
 
-X = func.map_features(m.Xe[:,1], m.Xe[:,2], 2)
-beta = func.calc_beta(X, m.y)
-m.model(X, m.y, beta)
+#X = func.map_features(m.Xe[:,1], m.Xe[:,2], 2)
+beta = func.calc_beta(m.Xe, m.y)
+m.model()
 
 plt.show()

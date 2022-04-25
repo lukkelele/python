@@ -154,7 +154,6 @@ def log_calc_cost(X, y, b):
     J = -(y.T.dot(np.log(j)) + (1-y).T.dot(np.log(1-j))) / n
     return J
 
-
 def decision_boundary(X1, X2, d, beta):
     h = 0.01    # STEP SIZE
     offset = 0.1
@@ -169,26 +168,7 @@ def decision_boundary(X1, X2, d, beta):
     clz_mesh = classes.reshape(xx.shape)
     cmap_bold = colors.ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # mesh plot
     cmap_light = colors.ListedColormap(['#FFAAAA', '#AAFFAA', '#AAAAFF']) # mesh plot
-    #plt.figure(2)
     plt.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
-    plt.scatter(X1, X2, marker='.', cmap=cmap_bold)
-
-def decision_boundary2(X1, X2, beta, XXe):
-    h = 0.0001    # STEP SIZE
-    offset = 0.1
-    x_min, x_max = np.min(X1) - offset, np.max(X1) + offset
-    y_min, y_max = np.min(X2) - offset, np.max(X2) + offset
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
-                         np.arange(y_min, y_max, h))
-    x1, x2 = xx.ravel(), yy.ravel()
-    p = sigmoid(np.dot(XXe, beta)) # classify mesh
-    classes = p>0.5
-    #print(classes)
-    #clz_mesh = classes.reshape(xx.shape)
-    cmap_bold = colors.ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # mesh plot
-    cmap_light = colors.ListedColormap(['#FFAAAA', '#AAFFAA', '#AAAAFF']) # mesh plot
-    #plt.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
-    plt.plot(p, XXe)
     plt.scatter(X1, X2, marker='.', cmap=cmap_bold)
 
 def map_features(X1, X2, d, ones=True):
@@ -196,7 +176,6 @@ def map_features(X1, X2, d, ones=True):
         one = np.ones([len(X1), 1])
         Xe = np.c_[one, X1, X2]
     else:
-
         Xe = np.array([X1, X2])
     for i in range(2, d+1):
         for j in range(0, i+1):
