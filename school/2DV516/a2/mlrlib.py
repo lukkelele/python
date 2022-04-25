@@ -160,11 +160,12 @@ def desicion_boundary(X1, X2, d, beta):
     offset = 0.1
     x_min, x_max = np.min(X1) - offset, np.max(X1) + offset
     y_min, y_max = np.min(X2) - offset, np.max(X2) + offset
-    xx, yy = np.meshgrid(np.arange(x_min, y_max, h),
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
                          np.arange(y_min, y_max, h))
     x1, x2 = xx.ravel(), yy.ravel()
     XXe = map_features(x1,x2,d,ones=True)
-    p = sigmoid(np.dot(XXe, beta.reshape(len(beta),1))) # classify mesh
+    print(XXe.shape)
+    p = sigmoid(np.dot(XXe, beta)) # classify mesh
     classes = p>0.5
     clz_mesh = classes.reshape(xx.shape)
     cmap_bold = colors.ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # mesh plot
@@ -176,8 +177,8 @@ def desicion_boundary(X1, X2, d, beta):
 
 def map_features(X1, X2, d, ones=True):
     if ones: 
-        ones = np.ones([len(X1), 1])
-        Xe = np.c_[ones, X1, X2]
+        one = np.ones([len(X1), 1])
+        Xe = np.c_[one, X1, X2]
     else:
         Xe = np.array([X1, X2])
     for i in range(2, d+1):
