@@ -164,7 +164,6 @@ def desicion_boundary(X1, X2, d, beta):
                          np.arange(y_min, y_max, h))
     x1, x2 = xx.ravel(), yy.ravel()
     XXe = map_features(x1,x2,d,ones=True)
-    print(XXe.shape)
     p = sigmoid(np.dot(XXe, beta)) # classify mesh
     classes = p>0.5
     clz_mesh = classes.reshape(xx.shape)

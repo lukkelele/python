@@ -81,10 +81,12 @@ class Microships:
 
 m = Microships(csv_path)
 #f = plt.figure(figsize=(12,9))
-B = func.map_features(m.Xe[:,1], m.Xe[:,2], 2)
-b = func.log_gradient_descent(m.XN, m.y)
-print(f"B.shape: {B.shape}")
-func.desicion_boundary(m.XN[:,1], m.XN[:,2], 2, B)
+
+X = func.map_features(m.Xe[:,1], m.Xe[:,2], 2)
+beta = func.calc_beta(X, m.y)
+#b = func.log_gradient_descent(m.XN, m.y)
+#func.desicion_boundary(m.XN[:,1], m.XN[:,2], 5, beta)
+func.desicion_boundary(X[:,1], X[:,2], 2, beta)
 #m.plot_data()
 plt.show()
 
