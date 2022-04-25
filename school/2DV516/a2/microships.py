@@ -27,6 +27,10 @@ class Microships:
         Xn = np.concatenate((self.Xn_e, Xn11), axis=1)
         Xn = np.concatenate((Xn,Xn12), axis=1)
         Xn = np.concatenate((Xn,Xn22), axis=1)
+        self.XN_e = Xn
+        Xn = np.concatenate((self.Xn, Xn11), axis=1)
+        Xn = np.concatenate((Xn,Xn12), axis=1)
+        Xn = np.concatenate((Xn,Xn22), axis=1)
         self.XN = Xn
 
     def create_extended_matrixes(self):
@@ -76,9 +80,9 @@ class Microships:
 
 
 m = Microships(csv_path)
-f = plt.figure(figsize=(12,9))
+#f = plt.figure(figsize=(12,9))
 
-b = func.log_gradient_descent(m.Xe, m.y)
+b = func.log_gradient_descent(m.XN, m.y)
 func.desicion_boundary(m.Xe[:,1], m.Xe[:,2], 2, b)
 #m.plot_data()
 plt.show()
