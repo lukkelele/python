@@ -78,7 +78,7 @@ func.log_compute_errors(b.Xn_e, b.y, grad_desc)
 
 b.plot_boundary()
 
-#plt.show()
+plt.show()
 
 
 

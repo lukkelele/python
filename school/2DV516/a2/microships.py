@@ -42,18 +42,15 @@ class Microships:
     def model(self, X, y):
         x1, x2 = X[:,1], X[:,2]
         plt.subplot(1,2,1)
-        b = func.log_gradient_descent(X, y, N=10, a=0.5, verbose=False, plot=True)
-        #c = b[0] + b[1]*x1 + b[2]*x2 + b[3]*x1**2 + b[4]*x1*x2 +b[5]*x2**2
+        b = func.log_gradient_descent(X, y, N=1000, a=0.5, verbose=False, plot=True)
         min_x1, max_x1 = np.min(x1), np.max(x1)
         min_y, max_y = np.min(x2), np.max(x2)
-        print(f"min_x1 ==> {min_x1}\nmax_x1 ==> {max_x1}")
-        XB = np.dot(X, b)
         xx = np.arange(min_x1, max_x1, 0.1)
-        x = -(b[0] + b[1]*x1)/b[2]
+        x = -(b[0] + b[1]*xx)/b[2]
         plt.subplot(1,2,2)
         self.plot_data()
-        plt.ylim(min_y, max_y)
-        plt.plot(xx, XB)
+        #func.desicion_boundary(x1,x2, 1,b)
+        #plt.plot(xx, x)
 
     def map_features(self, Xe, d):
         X1, X2 = Xe[:,1], Xe[:,2]
