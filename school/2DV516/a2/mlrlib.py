@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from matplotlib import colors
 import numpy as np
 import math
 
@@ -154,19 +155,26 @@ def log_calc_cost(X, y, b):
     return J
 
 
-def desicion_boundary(X, y):
+def desicion_boundary(X1, X2, d, beta):
     h = 0.01    # STEP SIZE
     offset = 0.1
-    x_min, x_max = np.min(X) - offset, np.max(X) + offset
-    y_min, y_max = np.min(y) - offset, np.max(y) + offset
+    x_min, x_max = np.min(X1) - offset, np.max(X1) + offset
+    y_min, y_max = np.min(X2) - offset, np.max(X2) + offset
     xx, yy = np.meshgrid(np.arange(x_min, y_max, h),
                          np.arange(y_min, y_max, h))
     x1, x2 = xx.ravel(), yy.ravel()
-    # IMPLEMENT MAP FEATURES
+    XXe = map_features(x1,x2,d,ones=False)
+    p = sigmoid(np.dot(XXe, beta)) # classify mesh
+    classes = p>0.5
+    clz_mesh = classes.reshape(xx.shape)
+    cmap_bold = colors.ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # mesh plot
+    cmap_light = colors.ListedColormap(['#FFAAAA', '#AAFFAA', '#AAAAFF']) # mesh plot
+    plt.figure(2)
+    plt.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
+    plt.scatter(X1, X2, marker='.', cmap=cmap_bold)
 
-def map_features(X, d, ones=True):
-    X1 = X[:,0]
-    X2 = X[:,1]
+
+def map_features(X1, X2, d, ones=True):
     if ones: 
         ones = np.ones([len(X1), 1])
         Xe = np.c_[ones, X1, X2]

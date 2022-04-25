@@ -47,20 +47,11 @@ class Microships:
 
     def model(self, X, d):
         b = self.map_features(X, d)
-        sum_b = np.sum(b)
-        print(f"Model: {sum_b}\n")
-        #print(f"GRADIENT DESCENT BETA: {b}\n")
 
-    def model_iterate(self, X, y):
-        idx = 0
-        x1, x2 = X[:,1].ravel(), X[:,2].ravel()
-        for x in x1:
-            #print(x1[idx])
-            self.model(X, y)
-            idx += 1
 
     def map_features(self, Xe, d):
-        X = func.map_features(Xe, d)
+        X1, X2 = Xe[:,1], Xe[:,2]
+        X = func.map_features(X1, X2, d)
         return X
 
     def plot_data(self):
@@ -87,12 +78,10 @@ class Microships:
 m = Microships(csv_path)
 f = plt.figure(figsize=(12,9))
 
-m.model(m.X, 5)
-b = func.log_gradient_descent(m.XN, m.y)
-m.model2(m.XN, m.y)
-
+b = func.log_gradient_descent(m.Xe, m.y)
+func.desicion_boundary(m.Xe[:,1], m.Xe[:,2], 2, b)
 #m.plot_data()
-#plt.show()
+plt.show()
 
 
 
