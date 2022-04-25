@@ -33,11 +33,35 @@ class Microships:
         matrixes = func.create_extended_matrixes(self.X)
         self.Xn, self.Xe, self.Xn_e = matrixes[0], matrixes[1], matrixes[2]
 
-    def model(self, X, y, x1, x2):
-        b = func.log_gradient_descent(X, y, N=100, a=0.5, verbose=False, plot=True)
+    def model2(self, X, y):
+        x1, x2 = X[:,1], X[:,2]
+        b = func.log_gradient_descent(X, y, N=10, a=0.5, verbose=True, plot=True)
         c = b[0] + b[1]*x1 + b[2]*x2 + b[3]*x1**2 + b[4]*x1*x2 +b[5]*x2**2
-        print(f"GRADIENT DESCENT BETA: {b}\nModel: {c}")
+        idx = 0
+        for i in range(len(x1)):
+            x11, x22 = x1[idx], x2[idx]
+            c = b[0] + b[1]*x11 + b[2]*x22 + b[3]*x11**2 + b[4]*x11*x22 +b[5]*x22**2
+            idx += 1
+            print(f"\nModel: {c}\n")
+        #print(f"GRADIENT DESCENT BETA: {b}")
 
+    def model(self, X, d):
+        b = self.map_features(X, d)
+        sum_b = np.sum(b)
+        print(f"Model: {sum_b}\n")
+        #print(f"GRADIENT DESCENT BETA: {b}\n")
+
+    def model_iterate(self, X, y):
+        idx = 0
+        x1, x2 = X[:,1].ravel(), X[:,2].ravel()
+        for x in x1:
+            #print(x1[idx])
+            self.model(X, y)
+            idx += 1
+
+    def map_features(self, Xe, d):
+        X = func.map_features(Xe, d)
+        return X
 
     def plot_data(self):
         plt.xlabel('points')
@@ -57,17 +81,18 @@ class Microships:
                 plt.scatter(x0, x1, s=40, color='r', marker="x", label='0' if red_flag==False else "")
                 red_flag = True
         plt.legend()
-        plt.show()
 
 
 
 m = Microships(csv_path)
 f = plt.figure(figsize=(12,9))
 
-m.model(m.XN, m.y, 1, 1)
+m.model(m.X, 5)
+b = func.log_gradient_descent(m.XN, m.y)
+m.model2(m.XN, m.y)
 
 #m.plot_data()
-plt.show()
+#plt.show()
 
 
 
