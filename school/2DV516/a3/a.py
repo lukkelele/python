@@ -10,19 +10,17 @@ SAMPLE_SIZE = 5000
 class a:
 
     def __init__(self, path):
-        cols = ['x0', 'x1', 'y']
         data = pd.read_csv(path).values
-        print(type(data))
         self.X = data[:,[0,1]] 
         self.y = data[:,2]
         self.x0 = data[:,0]
         self.x1 = data[:,1]
 
     def generate_sample(self, datapoints):
-        np.random.seed(7)
+        np.random.seed(7)   # 7 for comparison in the code
         r = np.random.permutation(datapoints)
-        X_s, y_s = X[:datapoints, :], y[:datapoints]
-        print(len(X_s))
+        X, y = self.X[r, :], self.y[r]
+        X_s, y_s = X[:5000:1], y[:5000:1]
 
 
 
