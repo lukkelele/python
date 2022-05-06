@@ -4,8 +4,10 @@ import sklearn as sk
 import pandas as pd
 import numpy as np
 
+
 path = './data/bm.csv'
 SAMPLE_SIZE = 5000
+
 
 class a:
 
@@ -22,6 +24,7 @@ class a:
         X, y = self.X[r, :], self.y[r]
         X_s, y_s = X[:5000:1], y[:5000:1]
 
+    
 
 
 a = a(path)
