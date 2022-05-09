@@ -6,14 +6,21 @@ from Crypto import Random
 import argparse
 import logging
 import hashlib
-import uuid
 import base64
+import uuid
+import time
 
 class Encryptor:
 
     def __init__(self, path=''):
         if path == '':
             print('No key import executed')
+        self.arg_parser = argparse.ArgumentParser()
+        self.arg_parser.add_argument(
+            '-v', '--verbose',
+            help='Increase output verbosity',
+            action="store_true")
+        self.args = self.arg_parser.parse_args()
 
     def hash(self, password, salt):
         return hashlib.sha512(salt.encode() + password.encode()).hexdigest() + ":" + salt
@@ -35,27 +42,27 @@ class Encryptor:
         return encrypted_data
 
     def generate_keypair(self):
+        if self.args.verbose == True:
+            print("==> Generating new keypair...")
         keysize = 256*4
         private_key = RSA.generate(keysize, Random.new().read)
         public_key = private_key.publickey()
         return private_key, public_key
 
-    def encrypt(self, data, public_key, verbose=False):
+    def encrypt(self, data, public_key, encode=False):
+        if self.args.verbose == True:
+            print(f"==> Encrypting: {data}")
         encryptor = PKCS1_OAEP.new(public_key)
-        encrypted_data = encryptor.encrypt(data.encode())
+        if encode: encrypted_data = encryptor.encrypt(data.encode())
+        else: encrypted_data = encryptor.encrypt(data)
         return encrypted_data
 
-    def decrypt(self, encrypted_data, private_key, decode=True, verbose=False):
+    def decrypt(self, encrypted_data, private_key, decode=True):
+        if self.args.verbose == True:
+            print(f"==> Decrypting: {encrypted_data}")
         decryptor = PKCS1_OAEP.new(private_key)
         decrypted_data = decryptor.decrypt(encrypted_data)
         if decode == True: return decrypted_data.decode()
         else: return decrypted_data
 
-test = 'lukas'
-e = Encryptor()
-private_key, public_key = e.generate_keypair()
-encrypted_msg = e.encrypt(test, public_key)
-decrypted_msg = e.decrypt(encrypted_msg, private_key)
-print(encrypted_msg)
-print(decrypted_msg)
 
