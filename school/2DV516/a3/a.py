@@ -32,13 +32,13 @@ class a:
         return [X_s, y_s, X_test, Y_test]
 
     def make_meshgrid(self, x, y, step=0.05):
-        x_min, x_max = x.min() - 1, x.max() + 1
-        y_min, y_max = y.min() - 1, y.max() + 1
+        x_min, x_max = x.min() - 3, x.max() + 3
+        y_min, y_max = y.min() - 3, y.max() + 3
         plt.xlim(x_min, x_max), plt.ylim(y_min, y_max)
         xx, yy = np.meshgrid(np.arange(x_min, x_max, step), np.arange(y_min, y_max, step))
         return xx, yy
 
-    def plot_decision_boundary(self, clf, xx, yy):
+    def plot_contour(self, clf, xx, yy):
         p = plt.subplot(211)
         pred = clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
         plot = p.contourf(xx, yy, pred) 
@@ -50,10 +50,6 @@ class a:
         classifier = svm.SVC(kernel=kernel, gamma=gamma, C=C, verbose=verbose)
         return classifier
     
-    def make_prediction(self, clf, prediction):
-        pred = clf.predict(prediction)
-        return pred
-
     def evaluate(self, test, pred):
         conf_matrix = metrics.confusion_matrix(test, pred)
         classification_report = metrics.classification_report(test, pred)
@@ -65,12 +61,10 @@ X, Y, X_test, Y_test = sample[0], sample[1], sample[2], sample[3]
 clf = a.get_classifier('rbf', 0.5, 20)
 score = clf.fit(X, Y).score(X, Y)
 xx, yy = a.make_meshgrid(X_test, Y_test)
-plot = a.plot_decision_boundary(clf, xx, yy)
-print(X_test.size)
-print("====")
-print(Y_test.size)
+plot = a.plot_contour(clf, xx, yy)
 
-plt.scatter(X_test[:,0], Y_test, cmap=plt.cm.coolwarm)
-plt.scatter(X_test[:,1], Y_test, cmap=plt.cm.coolwarm)
+#predicted_Y = clf.predict(X_test[:,0])
+#plt.scatter(X_test[:,0], predicted_Y) 
+#plt.scatter(X_test[:,1], Y_test)
 
-#plt.show()
+plt.show()
