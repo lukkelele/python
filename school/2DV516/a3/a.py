@@ -7,10 +7,8 @@ import csv_parser as csv
 import pandas as pd
 import numpy as np
 
-
 path = './data/bm.csv'
 SAMPLE_SIZE = 5000
-
 
 class a:
 
@@ -63,7 +61,7 @@ score = clf.fit(X, Y).score(X, Y)
 xx, yy = a.make_meshgrid(X_test, Y_test)
 plot = a.plot_contour(clf, xx, yy)
 
-#predicted_Y = clf.predict(X_test[:,0])
+predicted_Y = clf.predict(X_test)
 #plt.scatter(X_test[:,0], predicted_Y) 
 #plt.scatter(X_test[:,1], Y_test)
 
