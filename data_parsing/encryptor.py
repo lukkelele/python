@@ -1,8 +1,11 @@
 from cryptography import fernet
+from Crypto.PublicKey import RSA
+from Crypto import Hash
 from Crypto import Random
-from Crypto import Hash 
+from Crypto.Cipher import PKCS1_OAEP
 import hashlib
 import uuid
+import base64
 
 
 def hash(password, salt):
@@ -24,13 +27,25 @@ def SHA512_hash(data):
     encrypted_data = SHA_hash.digest()
     return encrypted_data
 
-def generate_keypair(KEYSIZE):
-    keys = []
-    for i in range(2):
-        keys.append(Random.get_random_bytes(KEYSIZE))
-    private_key, public_key = keys[0], keys[1]
+def generate_keypair():
+    keysize = 256*4
+    private_key = RSA.generate(keysize, Random.new().read)
+    public_key = private_key.publickey()
     return private_key, public_key
 
+def encrypt(data, public_key):
+    encryptor = PKCS1_OAEP.new(public_key)
+    encrypted_data = encryptor.encrypt(data.encode())
+    return encrypted_data
+
+def decrypt(encrypted_data, private_key, decode=True):
+    decryptor = PKCS1_OAEP.new(private_key)
+    decrypted_data = decryptor.decrypt(encrypted_data)
+    if decode == True: return decrypted_data.decode()
+    else: return decrypted_data
 
 test_data = 'Lukas'
-
+priv_key, pub_key = generate_keypair()
+print(f"Encrypted data: {encrypt(test_data, pub_key)}")
+encrypted_data = encrypt(test_data, pub_key)
+print(f"Decrypted data: {decrypt(encrypted_data, priv_key)}")
