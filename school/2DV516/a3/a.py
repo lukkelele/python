@@ -13,7 +13,7 @@ SAMPLE_SIZE = 5000
 class a:
 
     def __init__(self, path):
-        self.fig = plt.figure(figsize=(12,10))
+        self.fig = plt.figure(figsize=(18,8))
         data = pd.read_csv(path).values
         self.X = data[:,[0,1]] 
         self.y = data[:,2]
@@ -29,18 +29,16 @@ class a:
         X_test, Y_test = X[sample_end:datapoints:1], y[sample_end:datapoints:1]
         return [X_s, y_s, X_test, Y_test]
 
-    def make_meshgrid(self, x, y, step=0.05):
-        x_min, x_max = x.min() - 3, x.max() + 3
-        y_min, y_max = y.min() - 3, y.max() + 3
-        plt.xlim(x_min, x_max), plt.ylim(y_min, y_max)
+    def make_meshgrid(self, x, y, step=0.1, h=3):
+        x_min, x_max = x.min() - h, x.max() + h
+        y_min, y_max = y.min() - h, y.max() + h
         xx, yy = np.meshgrid(np.arange(x_min, x_max, step), np.arange(y_min, y_max, step))
+        plt.xlim(x_min, x_max), plt.ylim(y_min, y_max)
         return xx, yy
 
     def plot_contour(self, clf, xx, yy):
-        p = plt.subplot(211)
         pred = clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-        plot = p.contourf(xx, yy, pred, levels=[0.8,0.9]) 
-        return plot
+        plot = plt.contourf(xx, yy, pred, cmap="summer", alpha=0.4, levels=[0.1,2]) 
 
     def get_support_vectors(self, clf, X):
         support_vector_indices = clf.support_
@@ -63,9 +61,9 @@ class a:
         plt.scatter(
                 support_vectors[:,0],
                 support_vectors[:,1],
+                s=22,
                 edgecolors='k',
-                s=100,
-                c='r'
+                c='g'
                 )
 
 
@@ -74,12 +72,13 @@ sample = a.generate_training_sample(SAMPLE_SIZE)
 X, Y, X_test, Y_test = sample[0], sample[1], sample[2], sample[3]
 clf = a.get_classifier('rbf', 0.5, 20)
 score = clf.fit(X, Y).score(X, Y)
+plt.subplot(121)
 xx, yy = a.make_meshgrid(X_test, Y_test)
 plot = a.plot_contour(clf, xx, yy)
-
+a.plot_support_vectors(clf, X)
 predicted_Y = clf.predict(X_test)
-#plt.scatter(X_test[:,0], predicted_Y) 
-#plt.scatter(X_test[:,1], Y_test)
-plt.subplot(212)
-a.plot_support_vectors(clf, X_test)
+plt.subplot(122)
+a.plot_support_vectors(clf, X)
+a.plot_contour(clf, xx, yy)
+plt.scatter(X[:,0], X[:,1], s=7, c='m', cmap='brg')
 plt.show()
