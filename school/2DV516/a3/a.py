@@ -39,7 +39,7 @@ class a:
     def plot_contour(self, clf, xx, yy):
         p = plt.subplot(211)
         pred = clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-        plot = p.contourf(xx, yy, pred) 
+        plot = p.contourf(xx, yy, pred, levels=[0.8,0.9]) 
         return plot
 
     def get_support_vectors(self, clf, X):
@@ -58,6 +58,17 @@ class a:
         classification_report = metrics.classification_report(test, pred)
         print(f"Confusion matrix:\n{conf_matrix}\n---------\nClassification report:\n{classification_report}\n=====================")
 
+    def plot_support_vectors(self, clf, X):
+        support_vectors = self.get_support_vectors(clf, X)
+        plt.scatter(
+                support_vectors[:,0],
+                support_vectors[:,1],
+                edgecolors='k',
+                s=100,
+                c='r'
+                )
+
+
 a = a(path)
 sample = a.generate_training_sample(SAMPLE_SIZE)
 X, Y, X_test, Y_test = sample[0], sample[1], sample[2], sample[3]
@@ -69,14 +80,6 @@ plot = a.plot_contour(clf, xx, yy)
 predicted_Y = clf.predict(X_test)
 #plt.scatter(X_test[:,0], predicted_Y) 
 #plt.scatter(X_test[:,1], Y_test)
-support_vectors = a.get_support_vectors(clf, X_test)
 plt.subplot(212)
-plt.scatter(
-        support_vectors[:,0],
-        support_vectors[:,1],
-        edgecolors='k',
-        s=100,
-        c='r'
-        )
-#plt.scatter(X_test, Y_test, s=40, c='b')
+a.plot_support_vectors(clf, X_test)
 plt.show()
