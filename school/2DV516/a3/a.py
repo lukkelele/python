@@ -71,7 +71,12 @@ predicted_Y = clf.predict(X_test)
 #plt.scatter(X_test[:,1], Y_test)
 support_vectors = a.get_support_vectors(clf, X_test)
 plt.subplot(212)
-print(support_vectors.size)
-print(X_test.size)
-plt.scatter(support_vectors, Y_test)
+plt.scatter(
+        support_vectors[:,0],
+        support_vectors[:,1],
+        edgecolors='k',
+        s=100,
+        c='r'
+        )
+#plt.scatter(X_test, Y_test, s=40, c='b')
 plt.show()
