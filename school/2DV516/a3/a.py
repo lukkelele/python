@@ -42,6 +42,11 @@ class a:
         plot = p.contourf(xx, yy, pred) 
         return plot
 
+    def get_support_vectors(self, clf, X):
+        support_vector_indices = clf.support_
+        support_vectors = X[support_vector_indices]
+        return support_vectors
+
     # C trades off misclassification of training examples 
     # gamma defines how much influence a single training example has
     def get_classifier(self, kernel, gamma, C, verbose=False):
@@ -64,5 +69,9 @@ plot = a.plot_contour(clf, xx, yy)
 predicted_Y = clf.predict(X_test)
 #plt.scatter(X_test[:,0], predicted_Y) 
 #plt.scatter(X_test[:,1], Y_test)
-
+support_vectors = a.get_support_vectors(clf, X_test)
+plt.subplot(212)
+print(support_vectors.size)
+print(X_test.size)
+plt.scatter(support_vectors, Y_test)
 plt.show()
