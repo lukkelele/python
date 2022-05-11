@@ -18,31 +18,24 @@ path = './data/mnistsub.csv'
 
 # Linear: C | RBF: C, gamma | Poly: C, degree, gamma |
 #   idx 0   |   idx 0, 1    |      idx 0, 1, 2       | 
-param_linear = {'C': [0.1, 1, 5, 10, 50, 100, 1000],
-                'kernel': ['linear']    }
 param_rbf  = {'C': [0.1, 1, 10, 100, 1000, 10000],
              'gamma': [1, 0.1, 0.01, 0.001, 0.0001],
              'kernel': ['rbf']      }
-param_poly = {'C': [0.1, 1, 10, 100, 1000],
-             'gamma': [1, 0.1, 0.01, 0.001, 0.0001],
-             'degree': [1, 2, 3, 4],
-             'kernel': ['poly']     }
-
-params = [param_linear, param_rbf, param_poly]
-optimized_params = [[1], [1000, 0.01], [1, 1, 1]] 
 
 class OneVersusAll:
 
     def __init__(self, path, tune_params=False):
-        data = pd.read_csv(path).values
         self.fig = plt.figure(figsize=(20,11))
-        self.X = data[:,[0,1]] 
-        self.Y = data[:,2]
-        self.divide_data(self.X, self.Y, 0.8)
-        if tune_params: self.tune_hyperparams(X, Y)
-        else: self.param_rbf = optimized_params[1]
-        self.create_classifiers(verbose=False)
-        self.clf_rbf.fit(self.X, self.Y)
+        self.load_mnist_data()
+        self.clf_rbf = svm.SVC(kernel='rbf', C=1000, gamma=0.01)
+        self.clf_rbf.fit(self.x_training, self.y_training)
+
+    def load_mnist_data(self):
+        (self.x_training, self.y_training), (self.x_test, self.y_test) = mnist.load_data()
+        print(self.x_training.shape)
+        n, nx, ny = self.x_training.shape
+        self.x_training = self.x_training.reshape((n,nx*ny))
+        print(self.x_training.shape)
 
     def divide_data(self, X, Y, training):
         test = 1 - training
@@ -53,10 +46,6 @@ class OneVersusAll:
         self.x_training = X[idx:]
         self.y_training = Y[idx:]
 
-    def create_classifiers(self, verbose=False):
-        self.clf_rbf = svm.SVC(kernel='rbf', C=self.param_rbf[0], gamma=self.param_rbf[1])
-        if verbose: print(f"All classifiers created!\nrbf: {self.clf_rbf}\n")
-        
     def tune_hyperparams(self, X, Y):
         start = time()
         grid_search = GridSearchCV(svm.SVC(), param_rbf, refit=True)
