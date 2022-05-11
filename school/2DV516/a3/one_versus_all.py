@@ -26,15 +26,17 @@ class OneVersusAll:
 
     def __init__(self, path, tune_params=False):
         self.fig = plt.figure(figsize=(20,11))
-        self.load_mnist_data()
+        self.load_mnist_data(t=0.05)
         self.clf_rbf = svm.SVC(kernel='rbf', C=1000, gamma=0.01)
         self.clf_rbf.fit(self.x_training, self.y_training)
 
-    def load_mnist_data(self):
+    def load_mnist_data(self, t=0.25):
         (self.x_training, self.y_training), (self.x_test, self.y_test) = mnist.load_data()
-        print(self.x_training.shape)
         n, nx, ny = self.x_training.shape
-        self.x_training = self.x_training.reshape((n,nx*ny))
+        rows = np.size(self.x_training,0)
+        idx = round(t*rows) - 1
+        self.x_training = self.x_training.reshape((n,nx*ny))[idx:]
+        self.y_training = self.y_training[idx:]
         print(self.x_training.shape)
 
     def divide_data(self, X, Y, training):
