@@ -64,13 +64,14 @@ class Kernel:
         xx, yy = a3.make_meshgrid(X, Y)
         plt.subplot(131)
         plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k') 
-        a3.plot_contour(self.clf_linear, xx, yy)
+        #a3.plot_contour(self.clf_linear, xx, yy, cmap="gray")
+        plt.imshow(X, cmap="gray")
         plt.subplot(132)
         plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k')
-        a3.plot_contour(self.clf_rbf, xx, yy)
+        a3.plot_contour(self.clf_rbf, xx, yy, cmap="summer")
         plt.subplot(133)
         plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k')
-        a3.plot_contour(self.clf_poly, xx, yy, cmap="summer")
+        a3.plot_contour(self.clf_poly, xx, yy, cmap="gray")
 
 
 
