@@ -9,13 +9,13 @@ import pandas as pd
 import a3_lib as a3
 import numpy as np
 
+path = './data/mnistsub.csv'
 # Optimized parameters
 # Linear ==> C=1
 # Poly ==> C=1, degree=1, gamma=1
 # RBF ==> C=1000, gamma=0.01
 # 2D to determine a number (1, 3, 5, 9)
 
-path = './data/mnistsub.csv'
 # Linear: C | RBF: C, gamma | Poly: C, degree, gamma |
 #   idx 0   |   idx 0, 1    |      idx 0, 1, 2       | 
 param_linear = {'C': [0.1, 1, 5, 10, 50, 100, 1000],
@@ -61,23 +61,25 @@ class Kernel:
             print(grid_search.best_params_)
 
     def plot_data(self, X, Y):
-        xx, yy = a3.make_meshgrid(X, Y)
+        xx, yy = a3.make_meshgrid(X, Y, h=12)
         plt.subplot(131)
         plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k') 
-        #a3.plot_contour(self.clf_linear, xx, yy, cmap="gray")
-        plt.imshow(X, cmap="gray")
+        pred_lin = self.clf_linear.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
+        plt.contourf(xx, yy, pred_lin, values=[2,3], cmap='summer', alpha=0.4)
         plt.subplot(132)
         plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k')
-        a3.plot_contour(self.clf_rbf, xx, yy, cmap="summer")
+        pred_poly = self.clf_poly.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
+        plt.contourf(xx, yy, pred_poly, values=[0.2,1], cmap='gray', alpha=0.4)
         plt.subplot(133)
         plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k')
-        a3.plot_contour(self.clf_poly, xx, yy, cmap="gray")
+        pred_rbf = self.clf_rbf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
+        plt.contourf(xx, yy, pred_rbf, values=[0.1,1], cmap='gray', alpha=0.4)
 
 
 
 k = Kernel(path)
 lin_prediction = k.clf_linear.predict([[-4,3]])
-poly_pred = k.clf_poly.predict([[-4,3]])
+poly_pred = k.clf_poly.predict([[-5,-5]])
 rbf_pred = k.clf_rbf.predict([[-4,3]])
 print(f"lin_prediction ==> {lin_prediction}")
 print(f"poly_pred ==> {poly_pred}")
