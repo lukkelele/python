@@ -61,21 +61,25 @@ class Kernel:
             print(grid_search.best_params_)
 
     def plot_data(self, X, Y):
-        point_size = 25
+        point_size = 12
         cmap = ""
         xx, yy = a3.make_meshgrid(X, Y, h=12)
         plt.subplot(131)
         pred_lin = self.clf_linear.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-        plt.contourf(xx, yy, pred_lin, alpha=0.4)
-        plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k') 
+        plt.contour(xx, yy, pred_lin, alpha=0.4, c=Y)
+        plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k')
+        a3.set_lims(X)
         plt.subplot(132)
         pred_poly = self.clf_poly.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
         plt.contourf(xx, yy, pred_poly, alpha=0.4)
         plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k')
+        a3.set_lims(X)
         plt.subplot(133)
         pred_rbf = self.clf_rbf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
         plt.contourf(xx, yy, pred_rbf, alpha=0.4)
         plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k')
+        a3.set_lims(X)
+
 
 
 

@@ -19,8 +19,16 @@ def make_meshgrid(x, y, step=0.1, h=3):
     x_min, x_max = x.min() - h, x.max() + h
     y_min, y_max = y.min() - h, y.max() + h
     xx, yy = np.meshgrid(np.arange(x_min, x_max, step), np.arange(y_min, y_max, step))
-    plt.xlim(x_min, x_max), plt.ylim(y_min, y_max)
     return xx, yy
+
+def get_xylims(X, h=1):
+    x_min, x_max, y_min, y_max = np.min(X[:,0])-h, np.max(X[:,0])+h, np.min(X[:,1])-h, np.max(X[:,1])+h
+    return x_min, x_max, y_min, y_max
+
+def set_lims(X, h=1):
+    x_min, x_max, y_min, y_max = get_xylims(X)
+    plt.xlim(x_min, x_max)
+    plt.ylim(y_min, y_max)
 
 def plot_contour(clf, xx, yy, cmap="gray"):
     pred = clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
