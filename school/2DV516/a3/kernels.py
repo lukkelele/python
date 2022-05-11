@@ -61,19 +61,21 @@ class Kernel:
             print(grid_search.best_params_)
 
     def plot_data(self, X, Y):
+        point_size = 25
+        cmap = ""
         xx, yy = a3.make_meshgrid(X, Y, h=12)
         plt.subplot(131)
-        plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k') 
         pred_lin = self.clf_linear.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-        plt.contourf(xx, yy, pred_lin, values=[2,3], cmap='summer', alpha=0.4)
+        plt.contourf(xx, yy, pred_lin, alpha=0.4)
+        plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k') 
         plt.subplot(132)
-        plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k')
         pred_poly = self.clf_poly.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-        plt.contourf(xx, yy, pred_poly, values=[0.2,1], cmap='gray', alpha=0.4)
+        plt.contourf(xx, yy, pred_poly, alpha=0.4)
+        plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k')
         plt.subplot(133)
-        plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k')
         pred_rbf = self.clf_rbf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-        plt.contourf(xx, yy, pred_rbf, values=[0.1,1], cmap='gray', alpha=0.4)
+        plt.contourf(xx, yy, pred_rbf, alpha=0.4)
+        plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k')
 
 
 
