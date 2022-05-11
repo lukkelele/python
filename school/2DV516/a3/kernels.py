@@ -1,15 +1,14 @@
 from sklearn.model_selection import train_test_split, GridSearchCV
 from matplotlib import pyplot as plt
-from sklearn import gaussian_process
 from sklearn import metrics
 from sklearn import svm 
-from time import sleep
 from time import time
 import pandas as pd
 import a3_lib as a3
 import numpy as np
 
 path = './data/mnistsub.csv'
+
 # Optimized parameters
 # Linear ==> C=1
 # Poly ==> C=1, degree=1, gamma=1
@@ -35,13 +34,12 @@ class Kernel:
 
     def __init__(self, path, tune_params=False):
         data = pd.read_csv(path).values
-        self.fig = plt.figure(figsize=(18,8))
+        self.fig = plt.figure(figsize=(20,11))
         self.X = data[:,[0,1]] 
         self.Y = data[:,2]
         if tune_params: self.tune_hyperparams(X, Y)
         else: self.param_linear, self.param_rbf, self.param_poly = optimized_params[0], optimized_params[1], optimized_params[2]
         self.create_classifiers(verbose=False)
-        print(self.X.shape)
         self.clf_linear.fit(self.X, self.Y), self.clf_rbf.fit(self.X, self.Y), self.clf_poly.fit(self.X, self.Y)
 
     def create_classifiers(self, verbose=False):
@@ -62,39 +60,28 @@ class Kernel:
 
     def plot_data(self, X, Y):
         point_size = 12
-        cmap = ""
-        xx, yy = a3.make_meshgrid(X, Y, h=12)
+        alpha = 0.5
+        xx, yy = a3.make_meshgrid(X, Y, h=12, step=0.05) # Y isn't used in this particular case
         plt.subplot(131)
         pred_lin = self.clf_linear.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-        plt.contour(xx, yy, pred_lin, alpha=0.4, c=Y)
-        plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k')
+        plt.contourf(xx, yy, pred_lin, alpha=alpha)
+        scatter_linear = plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k')
         a3.set_lims(X)
+        plt.legend(*scatter_linear.legend_elements(), loc="best", bbox_to_anchor=(0.5, 0., 0.5, 0.5), title="Linear")
         plt.subplot(132)
         pred_poly = self.clf_poly.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-        plt.contourf(xx, yy, pred_poly, alpha=0.4)
-        plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k')
+        plt.contourf(xx, yy, pred_poly, alpha=alpha)
+        scatter_poly = plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k')
         a3.set_lims(X)
+        plt.legend(*scatter_poly.legend_elements(), loc="best", bbox_to_anchor=(0.5, 0., 0.5, 0.5), title="Poly")
         plt.subplot(133)
         pred_rbf = self.clf_rbf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-        plt.contourf(xx, yy, pred_rbf, alpha=0.4)
-        plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k')
+        plt.contourf(xx, yy, pred_rbf, alpha=alpha)
+        scatter_rbf = plt.scatter(X[:,0], X[:,1], s=point_size, c=Y, edgecolors='k')
         a3.set_lims(X)
-
-
+        plt.legend(*scatter_rbf.legend_elements(), loc="best", bbox_to_anchor=(0.5, 0., 0.5, 0.5), title="RBF")
 
 
 k = Kernel(path)
-lin_prediction = k.clf_linear.predict([[-4,3]])
-poly_pred = k.clf_poly.predict([[-5,-5]])
-rbf_pred = k.clf_rbf.predict([[-4,3]])
-print(f"lin_prediction ==> {lin_prediction}")
-print(f"poly_pred ==> {poly_pred}")
-print(f"rbf_pred ==> {rbf_pred}")
 k.plot_data(k.X, k.Y)
 plt.show()
-
-
-
-
-
-
