@@ -7,6 +7,7 @@ import pandas as pd
 import a3_lib as a3
 import numpy as np
 
+# TODO: Fix the training set for the clf.fit for each classifier
 path = './data/mnistsub.csv'
 
 # Optimized parameters
@@ -37,10 +38,20 @@ class Kernel:
         self.fig = plt.figure(figsize=(20,11))
         self.X = data[:,[0,1]] 
         self.Y = data[:,2]
+        self.divide_data(self.X, self.Y, 0.8)
         if tune_params: self.tune_hyperparams(X, Y)
         else: self.param_linear, self.param_rbf, self.param_poly = optimized_params[0], optimized_params[1], optimized_params[2]
         self.create_classifiers(verbose=False)
-        self.clf_linear.fit(self.X, self.Y), self.clf_rbf.fit(self.X, self.Y), self.clf_poly.fit(self.X, self.Y)
+        self.clf_linear.fit(self.x_training, self.y_training), self.clf_rbf.fit(self.X, self.Y), self.clf_poly.fit(self.X, self.Y)
+
+    def divide_data(self, X, Y, training):
+        test = 1 - training
+        rows = np.size(X,0)
+        idx = round(test*rows) - 1
+        self.x_test = X[:idx]
+        self.y_test = Y[:idx]
+        self.x_training = X[idx:]
+        self.y_training = Y[idx:]
 
     def create_classifiers(self, verbose=False):
         self.clf_linear = svm.SVC(kernel='linear', C=self.param_linear[0])
@@ -83,5 +94,5 @@ class Kernel:
 
 
 k = Kernel(path)
-k.plot_data(k.X, k.Y)
+k.plot_data(k.x_test, k.y_test)
 plt.show()
