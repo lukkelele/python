@@ -13,9 +13,12 @@ import numpy as np
 # Linear ==> C=1
 # Poly ==> C=1, degree=1, gamma=1
 # RBF ==> C=1000, gamma=0.01
+# Split the data 
 
 path = './data/mnistsub.csv'
-SAMPLE_SIZE = 5000
+# Linear: C | RBF: C, gamma | Poly: C, degree, gamma
+params = [param_linear, param_rbf, param_poly]
+optimized_params = [[1], [1000, 0.01], [1, 1, 1]] 
 
 param_linear = {'C': [0.1, 1, 5, 10, 50, 100, 1000],
                 'kernel': ['linear']        
@@ -30,15 +33,16 @@ param_poly = {'C': [0.1, 1, 10, 100, 1000],
              'kernel': ['poly']
              }
 
-params = [param_linear, param_rbf, param_poly]
 
 class Kernel:
 
-    def __init__(self, path):
+    def __init__(self, path, tune_params=False):
         data = pd.read_csv(path).values
         self.fig = plt.figure(figsize=(18,8))
         self.X = data[:,[0,1]] 
         self.Y = data[:,2]
+        if tune_params: self.tune_hyperparams(X, Y)
+        else: self.param_linear, self.param_rbf, self.param_poly = params[0], params[1], params[2]
 
     def create_classifiers(self, ):
         clf_linear = a3.get_classifier(kernel='linear')
@@ -53,26 +57,9 @@ class Kernel:
             else: print(f"Grid search for {param['kernel']} completed in {time_spent} seconds")
             print(grid_search.best_params_)
 
-    def tune_linear(self, X, Y):
-        linear_grid_search = GridSearchCV(svm.SVC(), param_linear, refit=True)
-        linear_grid_search.fit(X, Y)
-        self.linear_params = linear_grid_search.best_params_
-        print(linear_grid_search.best_params_)
-
-    def tune_poly(self, X, Y):
-        poly_grid_search = GridSearchCV(svm.SVC(), param_poly, refit=True)
-        poly_grid_search.fit(X, Y)
-        self.poly_params = poly_grid_search.best_params_
-        print(poly_grid_search.best_params_)
-
-    def tune_rbf(self, X, Y):
-        rbf_grid_search = GridSearchCV(svm.SVC(), param_rbf, refit=True)
-        rbf_grid_search.fit(X, Y)
-        self.rbf_params = rbf_grid_search.best_params_
-        print(rbf_grid_search.best_params_)
-
 
 
 k = Kernel(path)
-k.tune_hyperparams(k.X, k.Y)
 
+
+print("end")
