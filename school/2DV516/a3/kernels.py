@@ -42,7 +42,7 @@ class Kernel:
         else: self.param_linear, self.param_rbf, self.param_poly = optimized_params[0], optimized_params[1], optimized_params[2]
         self.create_classifiers(verbose=True)
         print(self.X.shape)
-        self.clf_linear.fit(self.X, self.Y)
+        self.clf_linear.fit(self.X, self.Y), self.clf_rbf.fit(self.X, self.Y), self.clf_poly.fit(self.X, self.Y)
 
     def create_classifiers(self, verbose=False):
         self.clf_linear = svm.SVC(kernel='linear', C=self.param_linear[0])
@@ -61,15 +61,16 @@ class Kernel:
             print(grid_search.best_params_)
 
     def plot_data(self, X, Y):
+        xx, yy = a3.make_meshgrid(X, Y)
         plt.subplot(131)
         plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k') 
-        #self.clf_linear.predict([X[:,0], X[:,1]])
+        a3.plot_contour(self.clf_linear, xx, yy)
         plt.subplot(132)
         plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k')
+        a3.plot_contour(self.clf_rbf, xx, yy)
         plt.subplot(133)
         plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k')
-
-
+        a3.plot_contour(self.clf_poly, xx, yy)
 
 
 
