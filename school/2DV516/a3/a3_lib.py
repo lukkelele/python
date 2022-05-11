@@ -22,9 +22,9 @@ def make_meshgrid(x, y, step=0.1, h=3):
     plt.xlim(x_min, x_max), plt.ylim(y_min, y_max)
     return xx, yy
 
-def plot_contour(clf, xx, yy):
+def plot_contour(clf, xx, yy, cmap="gray"):
     pred = clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-    plot = plt.contourf(xx, yy, pred, cmap="summer", alpha=0.4, levels=[0.1,2]) 
+    plot = plt.contourf(xx, yy, pred, cmap=cmap, alpha=0.4, levels=[0.1,2]) 
 
 def get_support_vectors(clf, X):
     support_vector_indices = clf.support_

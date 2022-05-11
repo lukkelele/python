@@ -40,7 +40,7 @@ class Kernel:
         self.Y = data[:,2]
         if tune_params: self.tune_hyperparams(X, Y)
         else: self.param_linear, self.param_rbf, self.param_poly = optimized_params[0], optimized_params[1], optimized_params[2]
-        self.create_classifiers(verbose=True)
+        self.create_classifiers(verbose=False)
         print(self.X.shape)
         self.clf_linear.fit(self.X, self.Y), self.clf_rbf.fit(self.X, self.Y), self.clf_poly.fit(self.X, self.Y)
 
@@ -70,10 +70,22 @@ class Kernel:
         a3.plot_contour(self.clf_rbf, xx, yy)
         plt.subplot(133)
         plt.scatter(X[:,0], X[:,1], s=12, edgecolors='k')
-        a3.plot_contour(self.clf_poly, xx, yy)
+        a3.plot_contour(self.clf_poly, xx, yy, cmap="summer")
 
 
 
 k = Kernel(path)
+lin_prediction = k.clf_linear.predict([[-4,3]])
+poly_pred = k.clf_poly.predict([[-4,3]])
+rbf_pred = k.clf_rbf.predict([[-4,3]])
+print(f"lin_prediction ==> {lin_prediction}")
+print(f"poly_pred ==> {poly_pred}")
+print(f"rbf_pred ==> {rbf_pred}")
 k.plot_data(k.X, k.Y)
 plt.show()
+
+
+
+
+
+
