@@ -23,9 +23,9 @@ optimized_gamma = 1
 
 class OneVersusAll:
 
-    def __init__(self, path, tune_params=False):
+    def __init__(self, path, tune_params=False, train_size=0.20, test_size=0.05, verbose=True):
         self.fig = plt.figure(figsize=(20,11))
-        self.load_mnist_data(train=0.40, test=0.20, verbose=True)
+        self.load_mnist_data(train=train_size, test=test_size, verbose=verbose)
         if tune_params == False: self.tune_hyperparams(self.x_train, self.y_train) # only prints best, does not set them
         print("==> Creating classifier...")
         self.clf_rbf = svm.SVC(kernel='rbf', C=optimized_C, gamma=optimized_gamma)
@@ -64,8 +64,8 @@ class OneVersusAll:
         else: print(f"Grid search for RBF completed in {time_spent} seconds")
         print(grid_search.best_params_)
 
-print("\n==> Starting...")
-one = OneVersusAll(path)
+print("\n| Starting...")
+one = OneVersusAll(path, train_size=0.05, test_size=0.02)
 one.evaluate_model()
 
 
