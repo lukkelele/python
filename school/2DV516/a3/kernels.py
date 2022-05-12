@@ -9,7 +9,6 @@ import numpy as np
 
 # TODO: Fix the training set for the clf.fit for each classifier
 path = './data/mnistsub.csv'
-
 # Optimized parameters
 # Linear ==> C=1
 # Poly ==> C=1, degree=1, gamma=1
