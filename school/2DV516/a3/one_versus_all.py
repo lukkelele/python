@@ -26,27 +26,29 @@ class OneVersusAll:
 
     def __init__(self, path, tune_params=False):
         self.fig = plt.figure(figsize=(20,11))
-        self.load_mnist_data(t=0.05)
+        self.load_mnist_data(train=0.05, test=0.02)
         self.clf_rbf = svm.SVC(kernel='rbf', C=1000, gamma=0.01)
-        self.clf_rbf.fit(self.x_training, self.y_training)
+        self.clf_rbf.fit(self.x_train, self.y_train)
 
-    def load_mnist_data(self, t=0.25):
-        (self.x_training, self.y_training), (self.x_test, self.y_test) = mnist.load_data()
-        n, nx, ny = self.x_training.shape
-        rows = np.size(self.x_training,0)
-        idx = round(t*rows) - 1
-        self.x_training = self.x_training.reshape((n,nx*ny))[idx:]
-        self.y_training = self.y_training[idx:]
-        print(self.x_training.shape)
+    def load_mnist_data(self, train=0.10, test=0.05, verbose=False):
+        start = time()
+        (X, y), (x_test, y_test) = mnist.load_data()
+        x_train, x_test, y_train, self.y_test = train_test_split(
+            X, y, train_size=train)
+        n, nx, ny = x_train.shape
+        self.x_train = x_train.reshape((n,nx*ny))
+        n, nx, ny = x_test.shape
+        self.x_test = x_test.reshape((n, nx*ny))
+        self.y_train = y_train
+        if verbose: print(f"Time spent loading MNIST dataset ==> {round((time()-start), 2)} seconds")
 
-    def divide_data(self, X, Y, training):
-        test = 1 - training
-        rows = np.size(X,0)
-        idx = round(test*rows) - 1
-        self.x_test = X[:idx]
-        self.y_test = Y[:idx]
-        self.x_training = X[idx:]
-        self.y_training = Y[idx:]
+    def evaluate_model(self):
+        pred = self.clf_rbf.predict(self.x_test)
+        actual = self.y_test
+        conf_matrix = metrics.confusion_matrix(actual, pred)
+        clf_report = metrics.classification_report(actual, pred)
+        print(conf_matrix)
+        print(clf_report)
 
     def tune_hyperparams(self, X, Y):
         start = time()
@@ -58,9 +60,5 @@ class OneVersusAll:
         print(grid_search.best_params_)
 
 
-
 one = OneVersusAll(path)
-print(one.x_training.size)
-print(one.x_test.size)
-print(one.x_training.shape)
-print(one.x_test.shape)
+one.evaluate_model()
