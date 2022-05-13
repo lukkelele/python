@@ -48,16 +48,15 @@ class Ensemble:
         self.Y = Y
        
     def predict_data(self):
-        #plt.figure(figsize=(18,13))
+        plt.figure(figsize=(18,15))
         xx, yy = a3.make_meshgrid(self.x_train[:,0], self.x_train[:,1])
-        plt.subplots()
         point_size = 4
         print("==> Predicting data...")
-        for i in range(1):
+        for i in range(100):
             plt.subplot(10,10,i+1)
             current_clf = self.clfs[i]
             pred_xy = current_clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
-            plot = plt.contourf(xx, yy, pred_xy)
+            plot = plt.contour(xx, yy, pred_xy, cmap='bwr')
         
 
 
