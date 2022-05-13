@@ -12,8 +12,6 @@ import pandas as pd
 import a3_lib as a3
 import numpy as np
 
-path = './data/mnistsub.csv'
-
 # Optimized parameters
 # C = 837.67 
 # Gamma = 3.16 * e^-6
@@ -23,13 +21,12 @@ path = './data/mnistsub.csv'
 C_range = np.logspace(-4, 11, 14)
 gamma_range = np.logspace(-14, 3, 13)
 param_grid = dict(gamma=gamma_range, C=C_range)
-
 optimized_C = 800
 optimized_gamma = 0.001 #3.16*e**-6
 
 class OneVersusAll:
 
-    def __init__(self, path, tune_params=False, test_size=0.10, train_size=0.30, verbose=True):
+    def __init__(self, tune_params=False, test_size=0.10, train_size=0.30, verbose=True):
         print("\n==> Executing script...")
         self.start_time = time()
         if tune_params == False: print(f"==> Preconfigured parameters:\n"+
@@ -83,7 +80,7 @@ class OneVersusAll:
         if time_spent > 60: print(f"Grid search for RBF completed in {round((time_spent/60), 2)} minutes")
         else: print(f"Grid search for RBF completed in {time_spent} seconds")
         print("BEST PARAMETERS ARE %s WITH A SCORE OF %0.2f" % (grid_search.best_params_, grid_search.best_score_))
-        opt_C, opt_gamma = grid_search.best_params_['C'], grid_search.best_params_['gamma']
+        self.opt_C, self.opt_gamma = grid_search.best_params_['C'], grid_search.best_params_['gamma']
 
-one = OneVersusAll(path, test_size=0.20, train_size=0.80)
+one = OneVersusAll(test_size=0.20, train_size=0.80)
 
