@@ -1,6 +1,7 @@
 from sklearn.model_selection import train_test_split, GridSearchCV
 from matplotlib import pyplot as plt
 from keras.datasets import mnist
+from sklearn import datasets
 from sklearn import metrics
 from sklearn import svm 
 from time import time
@@ -15,14 +16,11 @@ path = './data/mnistsub.csv'
 
 # Linear: C | RBF: C, gamma | Poly: C, degree, gamma |
 #   idx 0   |   idx 0, 1    |      idx 0, 1, 2       | 
-param_rbf  = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000, 1000],
-             'gamma': [1, 0.1, 0.01, 0.001, 0.0001, 0.00001],
-             'kernel': ['rbf']      }
-C_range = np.logspace(-3, 5, 7)
-gamma_range = np.logspace(-3, 5, 7)
+C_range = np.logspace(-1, 10, 8)
+gamma_range = np.logspace(-6, 3, 8)
 param_grid = dict(gamma=gamma_range, C=C_range)
 
-optimized_C = 0.001
+optimized_C = 100
 optimized_gamma = 0.001
 
 class OneVersusAll:
@@ -41,21 +39,26 @@ class OneVersusAll:
     def load_mnist_data(self, train=0.10, test=0.05, verbose=False):
         if verbose: print(f"==> Loading MNIST...\n  TRAINING: {train*100}%\n  TESTING: {test*100}%")
         start = time()
-        (X, y), (xx_test, yy_test) = mnist.load_data()
-        x_train, x_test, self.y_train, self.y_test = train_test_split(X, y, train_size=train, test_size=test)
+        numbers = datasets.load_digits()
+        n_samples = len(numbers.images)
+        data = numbers.images.reshape((n_samples, -1))
+        #(X, y), (xx_test, yy_test) = mnist.load_data()
+        #x_train, x_test, self.y_train, self.y_test = train_test_split(X, y, train_size=train, test_size=test)
+        self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(data, numbers.target, test_size=0.25, shuffle=False)
         if verbose: print("==> Data SPLIT!\n  Beginning to reshape training and test data...")
-        n, nx, ny = x_train.shape
-        self.x_train = x_train.reshape((n,nx*ny))
-        n, nx, ny = x_test.shape
-        self.x_test = x_test.reshape((n, nx*ny))
+        #n, nx, ny = x_train.shape
+        #self.x_train = x_train.reshape((n,nx*ny))
+        #n, nx, ny = x_test.shape
+        #self.x_test = x_test.reshape((n, nx*ny))
         if verbose: print(f"  Time spent loading MNIST dataset: {round((time()-start), 2)} seconds")
 
     def evaluate_model(self):
         print("==> Beginning to evaluate model...")
-        #pred_y = self.clf_rbf.predict(self.x_test)
-        #actual = self.y_test
+        pred_y = self.clf_rbf.predict(self.x_test)
+        actual = self.y_test
         #conf_matrix = metrics.confusion_matrix(actual, pred)
-        #clf_report = metrics.classification_report(actual, pred)
+        clf_report = metrics.classification_report(actual, pred_y)
+        print(clf_report)
         score = round((self.clf_rbf.score(self.x_test, self.y_test)), 6)
         error = round((1-score), 6)
         print(f"  Accuracy: {score*100}%\n  Error: {error*100}%\n----------------------------\n")
@@ -69,7 +72,8 @@ class OneVersusAll:
         else: print(f"Grid search for RBF completed in {time_spent} seconds")
         print(grid_search.best_params_)
 
-one = OneVersusAll(path, train_size=0.10, test_size=0.05, tune_params=False)
+one = OneVersusAll(path, train_size=0.12, test_size=0.05, tune_params=False)
 #one.tune_hyperparams(one.x_train, one.y_train)
 one.evaluate_model()
 
+print(len(one.x_test))
