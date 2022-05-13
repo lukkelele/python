@@ -21,30 +21,29 @@ C_range = np.logspace(-1, 10, 8)
 gamma_range = np.logspace(-6, 3, 8)
 param_grid = dict(gamma=gamma_range, C=C_range)
 
-optimized_C = 100
-optimized_gamma = 0.001
+optimized_C = 0.01
+optimized_gamma = 10
 
 class OneVersusAll:
 
-    def __init__(self, path, tune_params=False, test_size=0.15, verbose=True):
-        print("\nSTARTING SCRIPT...")
+    def __init__(self, path, tune_params=False, test_size=0.15, train_size=0.20, verbose=True):
+        print("\n||  STARTING SCRIPT...\n=====================\n")
         self.fig = plt.figure(figsize=(20,11))
-        self.load_mnist_data(test=test_size, verbose=verbose)
-        if tune_params == True: self.tune_hyperparams(self.x_train, self.y_train) # only prints best, does not set them
+        self.load_mnist_data(test=test_size, train=train_size, verbose=verbose)
         print("==> Creating classifier...")
         self.clf_rbf = svm.SVC(kernel='rbf', C=optimized_C, gamma=optimized_gamma)
         print("    Classifier CREATED!\n==> Training model...")
         self.clf_rbf.fit(self.x_train, self.y_train)
         print("    Model successfully trained!")
 
-    def load_mnist_data(self, test=0.05, verbose=True):
-        if verbose: print(f"==> Loading MNIST...\n    TRAINING: {(1-test)*100}%\n    TESTING: {test*100}%")
+    def load_mnist_data(self, test, train, verbose=True):
+        if verbose: print(f"==> Loading MNIST...\n    TRAINING: {train*100}%\n    TESTING: {test*100}%")
         start = time()
         X, Y = datasets.fetch_openml("mnist_784", version=1, return_X_y=True, as_frame=False)
         X = X.reshape((X.shape[0], -1))
 
-        self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(X, Y, test_size=test, shuffle=False)
-        print(f"    Training samples: {(1-test)*len(self.y_train)}\n    Test samples: {(test)*len(self.y_test)}")
+        self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(X, Y, test_size=test, train_size=train, shuffle=False)
+        print(f"    Training samples: {train*len(self.y_train)}\n    Test samples: {(test)*len(self.y_test)}")
         #scaler = StandardScaler()
         #self.x_train = scaler.fit_transform(self.x_train)
         #self.x_test = scaler.fit_transform(self.x_test)
@@ -73,7 +72,7 @@ class OneVersusAll:
         else: print(f"Grid search for RBF completed in {time_spent} seconds")
         print(grid_search.best_params_)
 
-one = OneVersusAll(path, test_size=0.20, tune_params=False)
+one = OneVersusAll(path, test_size=0.02, train_size=0.04, tune_params=False)
 #one.tune_hyperparams(one.x_train, one.y_train)
 one.evaluate_model()
 
