@@ -2,7 +2,6 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.preprocessing import StandardScaler
 from matplotlib import pyplot as plt
-from keras.datasets import mnist
 from sklearn import datasets
 from sklearn import metrics
 from sklearn import svm 

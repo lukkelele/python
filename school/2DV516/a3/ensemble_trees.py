@@ -45,6 +45,8 @@ class Ensemble:
             Y[:,:,i] = y[r[:,i]]
         self.XX = XX
         self.Y = Y
+        
 
 
 en = Ensemble(path)
+
