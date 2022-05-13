@@ -61,5 +61,4 @@ class Ensemble:
 
 
 en = Ensemble(path)
-
 plt.show()
