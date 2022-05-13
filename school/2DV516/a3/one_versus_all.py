@@ -1,6 +1,7 @@
 from sklearn.model_selection import train_test_split, GridSearchCV
 from matplotlib import pyplot as plt
 from keras.datasets import mnist
+from sklearn.preprocessing import StandardScaler
 from sklearn import datasets
 from sklearn import metrics
 from sklearn import svm 
@@ -41,10 +42,16 @@ class OneVersusAll:
         start = time()
         X, Y = datasets.fetch_openml("mnist_784", version=1, return_X_y=True, as_frame=False)
         X = X.reshape((X.shape[0], -1))
-        numbers = datasets.load_digits()
-        n_samples = len(numbers.images)
-        data = numbers.images.reshape((n_samples, -1))
-        self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(data, numbers.target, test_size=test, shuffle=False)
+
+        self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(X, Y, test_size=test, shuffle=False)
+        print(f"    Training samples: {(1-test)*len(self.y_train)}\n    Test samples: {(test)*len(self.y_test)}")
+        #scaler = StandardScaler()
+        #self.x_train = scaler.fit_transform(self.x_train)
+        #self.x_test = scaler.fit_transform(self.x_test)
+        #numbers = datasets.load_digits()
+        #n_samples = len(numbers.images)
+        #data = numbers.images.reshape((n_samples, -1))
+        #self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(data, numbers.target, test_size=test, shuffle=False)
         if verbose: print("==> Data SPLIT!\n    Beginning to reshape training and test data...")
         if verbose: print(f"    Time spent loading MNIST dataset: {round((time()-start), 2)} seconds")
 
@@ -66,7 +73,7 @@ class OneVersusAll:
         else: print(f"Grid search for RBF completed in {time_spent} seconds")
         print(grid_search.best_params_)
 
-one = OneVersusAll(path, test_size=0.05, tune_params=False)
+one = OneVersusAll(path, test_size=0.20, tune_params=False)
 #one.tune_hyperparams(one.x_train, one.y_train)
 one.evaluate_model()
 
