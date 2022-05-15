@@ -19,6 +19,7 @@ class Ensemble:
         self.bootstrap_data(self.x_train, self.y_train, len(self.x_train))
         #self.predict_data()
         self.calc_all_tree_errors(self.x_train, self.y_train)
+        self.calc_ensemble_errors(self.x_test, self.y_test)
 
     def divide_data(self, X, y, train_size=0.80, verbose=False):
         test = 1 - train_size
@@ -53,6 +54,16 @@ class Ensemble:
         err = 1 - acc
         if verbose: print(f"==> Accurarcy: {round(acc*100, 5)}%\n    Error: {round(err*100, 5)}%")
         return acc
+
+    def calc_ensemble_errors(self, X, y):
+        res = 0
+        for i in range(100):
+            clf = self.clfs[i]
+            pred_y = clf.predict(X)
+            score = clf.score(X, y)
+            print(score)
+            if np.sum(pred_y) > 2500: res += 1
+        print(res)
 
     def calc_all_tree_errors(self, X, y):
         res = 0
