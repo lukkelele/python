@@ -17,7 +17,8 @@ class Ensemble:
         self.y = data[:,2]
         self.divide_data(self.X, self.y, train_size=sample_size, verbose=True)
         self.bootstrap_data(self.x_train, self.y_train, len(self.x_train))
-        self.predict_data()
+        #self.predict_data()
+        self.calc_all_tree_errors(self.x_train, self.y_train)
 
     def divide_data(self, X, y, train_size=0.80, verbose=False):
         test = 1 - train_size
@@ -46,7 +47,21 @@ class Ensemble:
             self.clfs[i].fit(XX[:,:,i], Y[:,:,i])
         self.XX = XX
         self.Y = Y
-       
+
+    def calc_errors(self, clf, X, y):
+        acc = clf.score(X, y) 
+        err = 1 - acc
+        print(f"==> Accurarcy: {round(acc*100, 5)}%\n    Error: {round(err*100, 5)}%")
+
+    def calc_all_tree_errors(self, X, y):
+        for i in range(100):
+            X = self.XX[:,:,i]
+            y = self.Y[:,:,i]
+            X = self.x_train
+            y = self.y_train
+            clf = self.clfs[i]
+            self.calc_errors(clf, X, y)
+
     def predict_data(self):
         plt.figure(figsize=(18,15))
         xx, yy = a3.make_meshgrid(self.x_train[:,0], self.x_train[:,1])
@@ -61,4 +76,4 @@ class Ensemble:
 
 
 en = Ensemble(path)
-plt.show()
+#plt.show()
