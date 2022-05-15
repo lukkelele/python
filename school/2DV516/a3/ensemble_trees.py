@@ -48,19 +48,22 @@ class Ensemble:
         self.XX = XX
         self.Y = Y
 
-    def calc_errors(self, clf, X, y):
+    def calc_errors(self, clf, X, y, verbose=False):
         acc = clf.score(X, y) 
         err = 1 - acc
-        print(f"==> Accurarcy: {round(acc*100, 5)}%\n    Error: {round(err*100, 5)}%")
+        if verbose: print(f"==> Accurarcy: {round(acc*100, 5)}%\n    Error: {round(err*100, 5)}%")
+        return acc
 
     def calc_all_tree_errors(self, X, y):
+        res = 0
         for i in range(100):
-            X = self.XX[:,:,i]
-            y = self.Y[:,:,i]
             X = self.x_train
             y = self.y_train
             clf = self.clfs[i]
-            self.calc_errors(clf, X, y)
+            acc = self.calc_errors(clf, X, y)
+            res += acc
+        res = round(res, 4)
+        print(f"==> Mean accuracy for 100 trees: {res}%\n    Error rate: {round(100-res, 4)}%")
 
     def predict_data(self):
         plt.figure(figsize=(18,15))
