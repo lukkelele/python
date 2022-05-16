@@ -1,3 +1,4 @@
+from sklearn.model_selection import cross_val_score
 from matplotlib import pyplot as plt
 from sklearn import tree
 from time import time
@@ -20,6 +21,9 @@ class Ensemble:
         #self.predict_data()
         self.calc_all_tree_errors(self.x_train, self.y_train)
         self.calc_ensemble_errors(self.x_test, self.y_test)
+        clf = tree.DecisionTreeClassifier()
+        scores = cross_val_score(clf, self.x_test, self.y_test, verbose=2)
+        print(scores)
 
     def divide_data(self, X, y, train_size=0.80, verbose=False):
         test = 1 - train_size
@@ -40,12 +44,12 @@ class Ensemble:
         XX = np.zeros([n,2,100])
         Y = np.zeros([n,1,100])
         self.clfs = []
+        classifier = tree.DecisionTreeClassifier()
         for i in range(100):
-            self.clfs.append(tree.DecisionTreeClassifier())
             r[:,i] = rng.choice(n, size=n, replace=True)
             XX[:,:,i] = X[r[:,i], :]
             Y[:,:,i] = y[r[:,i]]
-            self.clfs[i].fit(XX[:,:,i], Y[:,:,i])
+            self.clfs.append(classifier.fit(XX[:,:,i], Y[:,:,i]))
         self.XX = XX
         self.Y = Y
 
@@ -61,7 +65,6 @@ class Ensemble:
             clf = self.clfs[i]
             pred_y = clf.predict(X)
             score = clf.score(X, y)
-            print(score)
             if np.sum(pred_y) > 2500: res += 1
         print(res)
 
