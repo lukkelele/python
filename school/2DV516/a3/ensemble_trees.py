@@ -24,6 +24,7 @@ class Ensemble:
         clf = tree.DecisionTreeClassifier()
         scores = cross_val_score(clf, self.x_test, self.y_test, verbose=2)
         print(scores)
+        self.simulate()
 
     def divide_data(self, X, y, train_size=0.80, verbose=False):
         test = 1 - train_size
@@ -52,6 +53,20 @@ class Ensemble:
             self.clfs.append(classifier.fit(XX[:,:,i], Y[:,:,i]))
         self.XX = XX
         self.Y = Y
+
+    def simulate(self):
+        X, y = self.x_test, self.y_test
+        res = np.zeros_like(y)
+        Y = np.zeros_like(y)
+        idx = 0
+        for clf in self.clfs:
+            pred_y = clf.predict(X)
+            res = np.add(res, pred_y)
+        for val in res:    
+            if val >= 50: Y[idx] = 1
+            else: Y[idx] = 0
+            idx += 1
+        return Y
 
     def calc_errors(self, clf, X, y, verbose=False):
         acc = clf.score(X, y) 
