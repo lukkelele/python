@@ -1,11 +1,11 @@
 from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn import gaussian_process
 from sklearn import svm 
 from sklearn import metrics
 import pandas as pd
 import numpy as np
 
+# NOT USED THAT MUCH...
 
 def prec_recall(x,y):
     return round((x/(x+y)), 3)
