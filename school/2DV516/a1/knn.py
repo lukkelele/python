@@ -1,14 +1,15 @@
 from matplotlib import pyplot as p
+import pandas as pd
+import numpy as np
 import math
 import csv
-import numpy as np
 
 
 csv_path = "./A1_datasets/microchips.csv"
 
 values = []
 simulation_k = [1, 3, 5, 7]  # k's to be used when simulating
-
+y_res = []
 chip1 = [-0.3, 1]
 chip2 = [-0.5, -0.1]
 chip3 = [0.6, 0]
@@ -21,10 +22,13 @@ def open_csv_file(path):
     try:
         with open(path) as csv_data:
             r = csv.reader(csv_data)
+            row_count = 0
             for row in r:
                 # row[0] == x0_val  | row[1] == x1_val  | row[2] == y_val
-            #    print(row)
-                values.append([row[0], row[1], row[2]]) 
+                if row_count != 0:
+                    values.append([row[0], row[1], row[2]]) 
+                else: row_count += 1
+            print(f"\nlen of values {len(values)}")
     except: print("An error has occured!")
 
 # Calc distance between point z and ALL other points in the data set
@@ -83,15 +87,18 @@ def training_errors(k):
 # TODO: get rid of counters and make use of numpy
 def draw_grid(i):
     chips.clear()
-    xx, yy = np.meshgrid(np.arange(-2, 2, 0.1),
-                         np.arange(-2, 2, 0.1)) 
+    h = 0.2
+    min_x, max_x, min_y, max_y = -1, 1.2, -1, 1.5
+    xx, yy = np.meshgrid(np.arange(min_x, max_x, h),
+                         np.arange(min_y, max_y, h)) 
     x_counter = 0
     counter = 0
     x_index = 0
     y_index = 0
-    while x_counter < 40:
+    z = (max_x - min_x) / h
+    while x_counter < z:
         counter = 0
-        while counter < 40:
+        while counter < z:
             chips.append([xx[0, x_index], yy[y_index, 0]])
             counter += 1
             y_index += 1
@@ -108,10 +115,12 @@ def base_plot():
     for vals in values:
         point_color = ""
         if int(vals[2]) == 0:
-            point_color = "r"
+        #    point_color = "r"
+            y_res.append('red')
         elif int(vals[2]) == 1:
-            point_color = "g"
-        p.scatter(float(vals[0]), float(vals[1]), color=point_color)
+        #    point_color = "g"
+            y_res.append('green')
+        #p.scatter(float(vals[0]), float(vals[1]), color=point_color, edgecolors='k')
 
 
 # Run simulation with the list k that hold amount of neighbors per test
@@ -128,8 +137,14 @@ def simulate(k):
             print("Even numbers are not allowed to use as k!")
             flag = False
     if flag == True:
+        values_matrix = pd.read_csv(csv_path).values
+        for val in values_matrix:
+            print(val)
+        x0, x1, y = values_matrix[:,0], values_matrix[:,1], values_matrix[:,2]
+        colors = {0:'red', 1:'green'}
         for i in k: # iterate list k
             print(f"\n-----------------\n| RUNNING k = {i} |\n-----------------")
+            y_res.clear()
             training_errors(i)
             draw_grid(i)
             base_plot()
@@ -142,6 +157,7 @@ def simulate(k):
                     p.scatter(float(chip[0][0]), float(chip[0][1]), color="r", marker='X')
                 elif int(chip[1]) == 1:
                     p.scatter(float(chip[0][0]), float(chip[0][1]), color="g", marker='X')
+            p.scatter(x0, x1, c=y_res, marker='o', s=30) # base data
             p.subplot(2, 2, index_count)
             index_count += 1
 
