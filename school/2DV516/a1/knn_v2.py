@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-from math import sqrt
+from math import sqrt, floor
 import pandas as pd
 import numpy as np
 
@@ -33,7 +33,7 @@ class KNN:
         Returns the squared distance.
         """
         d = 0
-        for i in range(len(v1)-1):
+        for i in range(len(v1)):
             d += (v1[i] - v2[i])**2
         return sqrt(d)
 
@@ -45,7 +45,7 @@ class KNN:
         """
         neighbors = []
         distances = []
-        dist = np.zeros_like(self.X, dtype=object)
+        dist = np.zeros_like(self.X[:,[0,1]], dtype=object)
         idx = 0
         for vector in self.X:
             distance = self.euclidean_distance(v, vector)
@@ -53,6 +53,7 @@ class KNN:
             dist[idx][1] = vector
             idx+=1
         dist = dist[dist[:,0].argsort()]
+        #print(dist)
         for i in range(k):
             neighbors.append(dist[i][1])  # Get the k closest points
         return np.array(neighbors)
@@ -63,7 +64,16 @@ class KNN:
         """
         half = round(len(neighbors)/2)
         y = np.sum(neighbors[:,2])
-        return y > half
+        return y >= half
+
+    def model(self, v, k):
+        """
+        Classification model determining 0 or 1 for a vector 'v'.
+        """
+        n = self.get_neighbors(v, k)
+        n_y = np.sum(n[:,2])
+        half = floor(k/2)
+        return n_y > half
 
     def simulate(self):
         """
@@ -74,25 +84,30 @@ class KNN:
         K = [1, 3, 5, 7]
         i = 1
         print("==> Simulation starting...")
-        xx, yy = self.meshgrid(self.X, self.y, 1, 0.1)
+        xx, yy = self.meshgrid(self.X, self.y, 1, 0.02)
         for k in K:
+            # Setup proper subplot parameters
             plt.subplot(2,2,i), plt.xlabel('x0'), plt.ylabel('x1'), plt.title(f"k == {k}")
+            # Plot the decision boundary by classifiying all points in the meshgrid
+            x_idx = 0
+            for x_val in xx:
+                x = x_val[x_idx]
+                y_idx = 0
+                for y_val in yy:
+                    y = y_val[y_idx]
+                    point = [x, y]
+                    flag = self.model(point, k)
+                    plt.scatter(x, y, c='g' if flag==True else 'r', alpha=0.4)
+                    y_idx += 1
+                x_idx += 1
             for x in self.X:
                 # Plot the original data
                 plt.scatter(x[0], x[1], c='g' if x[2] == 1 else 'r', s=13)
             for X in X_test:
                 # Plot the new data
-                neighbors = self.get_neighbors(X, k)
-                flag = self.determine_point(X, neighbors)
+                flag = self.model(X, k)
                 plt.scatter(X[0], X[1], s=85, edgecolors='k', c='g' if flag==True else 'r')
-            # Plot the decision boundary
-            for xy in xx:
-                for yx in yy:
-                    neighbors = self.get_neighbors(XY, k)
-                    flag = self.determine_point(XY, neighbors)
-                    plt.scatter(XY[0], XY[1], s=10, alpha=0.4 , c='g' if flag==True else 'r')
             i += 1 # Increasing index for new subplots
-
 
 
 
