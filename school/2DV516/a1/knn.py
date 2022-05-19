@@ -28,7 +28,6 @@ def open_csv_file(path):
                 if row_count != 0:
                     values.append([row[0], row[1], row[2]]) 
                 else: row_count += 1
-            print(f"\nlen of values {len(values)}")
     except: print("An error has occured!")
 
 # Calc distance between point z and ALL other points in the data set
