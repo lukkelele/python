@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+from matplotlib import colors
 from math import sqrt, floor
 import pandas as pd
 import numpy as np
@@ -22,9 +23,9 @@ class KNN:
         Create a meshgrid with a minimum of min(X, y)-h and
         a maximum of max(X, y)+h and a step size of z.
         """
-        x_min, x_max, y_min, y_max = X.min()-h, X.max()+h, y.min()-h, y.max()+h
-        xx, yy = np.meshgrid(np.arange(x_min, x_max, z),
-                             np.arange(y_min, y_max, z))
+        self.x_min, self.x_max, self.y_min, self.y_max = X.min()-(h/4), X.max()+(h/4), y.min()-h, y.max()+(h/4)
+        xx, yy = np.meshgrid(np.arange(self.x_min, self.x_max, z),
+                             np.arange(self.y_min, self.y_max, z))
         return xx, yy
 
     def euclidean_distance(self, v1, v2):
@@ -75,6 +76,37 @@ class KNN:
         half = floor(k/2)
         return n_y > half
 
+    def model_clf(self, X, k):
+        """
+        Classificaton on an entire set X.
+        """
+        #Y = np.zeros_like(X, dtype=int)
+        predicted_y = []
+        for vector in X:
+            pred_y = 0
+            flag = self.model(vector, k)
+            if flag == True:
+                pred_y = 1
+            predicted_y.append(pred_y)
+        Y = np.array(predicted_y)
+        return Y
+
+    def decision_boundary(self, xx, yy, k):
+        """
+        Plot the decision boundary on passed meshgrid.
+        """
+        x_idx = 0
+        for x_val in xx:
+            x = x_val[x_idx]
+            y_idx = 0
+            for y_val in yy:
+                y = y_val[y_idx]
+                point = [x, y]
+                flag = self.model(point, k)
+                plt.scatter(x, y, c='g' if flag==True else 'r', alpha=0.2)
+                y_idx += 1
+            x_idx += 1
+
     def simulate(self):
         """
         Calculate the closest neighbors in four cases whereas k is 1, 3, 5 and 7.
@@ -84,25 +116,17 @@ class KNN:
         K = [1, 3, 5, 7]
         i = 1
         print("==> Simulation starting...")
-        xx, yy = self.meshgrid(self.X, self.y, 1, 0.02)
+        xx, yy = self.meshgrid(self.X, self.y, 1, 0.05)
+        colormap = colors.ListedColormap(['red', 'green'])
         for k in K:
             # Setup proper subplot parameters
             plt.subplot(2,2,i), plt.xlabel('x0'), plt.ylabel('x1'), plt.title(f"k == {k}")
+            Y = self.model_clf(np.c_[xx.ravel(), yy.ravel()], k).reshape(xx.shape)
+            plt.contourf(xx, yy, Y, cmap=colormap, alpha=0.35)
             # Plot the decision boundary by classifiying all points in the meshgrid
-            x_idx = 0
-            for x_val in xx:
-                x = x_val[x_idx]
-                y_idx = 0
-                for y_val in yy:
-                    y = y_val[y_idx]
-                    point = [x, y]
-                    flag = self.model(point, k)
-                    plt.scatter(x, y, c='g' if flag==True else 'r', alpha=0.4)
-                    y_idx += 1
-                x_idx += 1
             for x in self.X:
                 # Plot the original data
-                plt.scatter(x[0], x[1], c='g' if x[2] == 1 else 'r', s=13)
+                plt.scatter(x[0], x[1], c='g' if x[2] == 1 else 'r', s=13, edgecolors='k')
             for X in X_test:
                 # Plot the new data
                 flag = self.model(X, k)
