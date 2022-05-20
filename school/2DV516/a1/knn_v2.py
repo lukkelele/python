@@ -78,9 +78,10 @@ class KNN:
 
     def model_clf(self, X, k):
         """
-        Classificaton on an entire set X.
+        Classify each vector provided in the passed parameter 'X'.
+        Possible values are either 0 or 1. 
+        The value of 'k' will determine the amount of neighbors per point.
         """
-        #Y = np.zeros_like(X, dtype=int)
         predicted_y = []
         for vector in X:
             pred_y = 0
@@ -88,11 +89,12 @@ class KNN:
             if flag == True:
                 pred_y = 1
             predicted_y.append(pred_y)
-        Y = np.array(predicted_y)
-        return Y
+        return np.array(predicted_y)
 
     def decision_boundary(self, xx, yy, k):
         """
+        OUTDATED VERSION! ==> model_clf is used instead.
+        -----------------------------------------------
         Plot the decision boundary on passed meshgrid.
         """
         x_idx = 0
@@ -110,23 +112,25 @@ class KNN:
     def simulate(self):
         """
         Calculate the closest neighbors in four cases whereas k is 1, 3, 5 and 7.
+        The results will be plotted in four subplots with decision boundaries provided
+        in each case.
         """
         fig = plt.figure(figsize=(16,12))
         plt.suptitle("Closest neighbors")
         K = [1, 3, 5, 7]
         i = 1
-        print("==> Simulation starting...")
         xx, yy = self.meshgrid(self.X, self.y, 1, 0.05)
-        colormap = colors.ListedColormap(['red', 'green'])
+        colormap = colors.ListedColormap(['red', 'green']) # colormap for values 0 and 1
         for k in K:
             # Setup proper subplot parameters
             plt.subplot(2,2,i), plt.xlabel('x0'), plt.ylabel('x1'), plt.title(f"k == {k}")
+            # Predict y values for each point in meshgrid
             Y = self.model_clf(np.c_[xx.ravel(), yy.ravel()], k).reshape(xx.shape)
+            # Plot the decision boundary
             plt.contourf(xx, yy, Y, cmap=colormap, alpha=0.35)
-            # Plot the decision boundary by classifiying all points in the meshgrid
             for x in self.X:
                 # Plot the original data
-                plt.scatter(x[0], x[1], c='g' if x[2] == 1 else 'r', s=13, edgecolors='k')
+                plt.scatter(x[0], x[1], c='g' if x[2] == 1 else 'r', s=15, edgecolors='k')
             for X in X_test:
                 # Plot the new data
                 flag = self.model(X, k)
