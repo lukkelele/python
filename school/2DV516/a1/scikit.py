@@ -1,98 +1,82 @@
 from sklearn.neighbors import KNeighborsClassifier
 from matplotlib import pyplot as plt
+from matplotlib import colors
+from math import sqrt, floor
+import pandas as pd
 import numpy as np
-import csv
-import math
+
 
 
 
 path = "./A1_datasets/microchips.csv"
 simulation_k = [1, 3, 5, 7]  # k's to be used when simulating
 
-chip1 = [-0.3, 1]
-chip2 = [-0.5, -0.1]
-chip3 = [0.6, 0]
-test_chips = [chip1, chip2, chip3]
+chip_1 = [-0.3, 1]
+chip_2 = [-0.5, -0.1]
+chip_3 = [0.6, 0]
+X_test = [chip_1, chip_2, chip_3]
 
+class KNN_Scikit:
 
-# Open a csv file and read the data in to the list 'values'
-def open_csv_file(path):
-    try:
-        with open(path) as csv_data:
-            r = csv.reader(csv_data)
-            X = []
-            y = []
-            for row in r: # row[0] == x0_val  | row[1] == x1_val  | row[2] == y_val
-                X.append([row[0], row[1]])
-                y.append(row[2])
-            return [np.array(X, dtype=float), np.array(y, dtype=float)]
-    except: print("An error has occured!")
+    def __init__(self, path):
+        data = pd.read_csv(path).values
+        self.X = data[:,[0,1]]
+        self.y = data[:,2]
 
-# y --> y value for corresponding x0, x1 value
-# X --> 2-dimensional array of x0 and x1
-def plot_data(x0, x1, y, n, k):
-    plt.subplot(2, 2, n)
-    plt.legend(["Failed", "OK!"]) 
-    plt.title(f"k == {k}")
-    plt.xlabel("x0")
-    plt.ylabel("x1")
-    idx = 0
-    X = np.array([x0, x1])
-    for x0 in X[0]:
-        y_val = y[idx]
-        if y_val == 0:
-            point_color = "r"
-        else: point_color = "g"
-        x1 = X[1][idx]
-        plt.scatter(x0,x1, color=point_color, s=12, alpha=0.5)
-        idx += 1
+    def meshgrid(self, X, y, h=1, z=0.1):
+        """
+        Create a meshgrid with a minimum of min(X, y)-h and
+        a maximum of max(X, y)+h and a step size of z.
+        """
+        self.x_min, self.x_max, self.y_min, self.y_max = X.min()-(h/4), X.max()+(h/4), y.min()-h, y.max()+(h/4)
+        xx, yy = np.meshgrid(np.arange(self.x_min, self.x_max, z),
+                             np.arange(self.y_min, self.y_max, z))
+        return xx, yy
 
-def plot_boundary(data, k):
-    x = np.arange(-1, 1, 0.05)
-    y = np.arange(-1, 1, 0.05)
-    X, Y = np.meshgrid(x, y)
+    def model(self, v, X, k):
+        """
+        Classification model determining 0 or 1 for a vector 'v'.
+        """
+        n = get_neighbors(v, X, k)
+        n_y = np.sum(n[:,])
 
-def determine_chip_status(chip, chip_sum, k):
-    if chip_sum < k - math.floor(k/2):
-        print(f"{chip} --> Fail")
-        plt.scatter(chip[0], chip[1], color="r", s=60, edgecolors="k")
-    else:
-        print(f"{chip} --> OK!")
-        plt.scatter(chip[0], chip[1], color="g", s=60, edgecolors="k")
+    def get_neighbors(self, v, X, y, k):
+        """
+        Get neighbors closest 'k' neighbors to 'v' from 'X'. 
+        """
+        clf = KNeighborsClassifier(n_neighbors=k)
+        clf = clf.fit(X, y)
+        neighbors = clf.kneighbors(v)[1]  # [1] returns indexes
+        n = []
+        for idx in neighbors:
+            point = X[idx]
+            point = np.append(point, y[idx])
+            n.append(point)
+        return np.array(n)
 
-def run_test(data, k, n):
-    print(f"\n----------\n| k == {k} |\n----------\n")
-    plot_boundary(data, k)
-    X = data[0]
-    y = data[1]
-    x0 = X[:, 0] # select the first column in X
-    x1 = X[:, 1] # select the second column in X
-    plot_data(x0, x1, y, n, k)
-    kn = KNeighborsClassifier(n_neighbors=k)
-    kn.fit(X, y)
-    neighbors = kn.kneighbors(test_chips)
-    indexes = neighbors[1]  # neighbors[0] is the distances
-    i = 0
-    for idx in indexes:
-        y_sum = sum(y[idx])
-        determine_chip_status(test_chips[i], y_sum, k)
-        i += 1
+    def model_clf(self, X, k):
+        """
+        Classify each vector provided in the passed parameter 'X'.
+        Possible values are either 0 or 1. 
+        The value of 'k' will determine the amount of neighbors per point.
+        USED FOR THE DECISION BOUNDARY!
+        """
+        predicted_y = []
+        for vector in X:
+            pred_y = 0
+            flag = self.model(vector, k)
+            if flag == True:
+                pred_y = 1
+            predicted_y.append(pred_y)
+        return np.array(predicted_y)
 
-def simulate(k):
-    data = open_csv_file(path)
-    f = plt.figure(figsize=(12, 9.4))
-    plt.suptitle("Scikit on task 1")
-    n = 1 # number of subplot
-    for i in k: # iterate the list
-        run_test(data, i, n)
-        n += 1
-    plt.subplots_adjust(wspace=0.3, hspace=0.3)
-    plt.show()
-    
-
-
-simulate(simulation_k)
+    def simulate(self, X, y, k):
+        """
+        Train a model with 'k' neighbors and classify the 
+        test chips.  
+        """
 
 
 
-
+k = KNN_Scikit(path)
+k.get_neighbors([[0, 1]], k.X, k.y, 3)
