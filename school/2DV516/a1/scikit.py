@@ -33,12 +33,15 @@ class KNN_Scikit:
                              np.arange(self.y_min, self.y_max, z))
         return xx, yy
 
-    def model(self, v, X, k):
+    def model(self, v, X, y, k):
         """
         Classification model determining 0 or 1 for a vector 'v'.
         """
-        n = get_neighbors(v, X, k)
-        n_y = np.sum(n[:,])
+        n = self.get_neighbors(v, X, y, k)
+        n_y = np.sum(n[:,2])
+        print(f"n_y == {n_y}")
+        if n_y > round(k/2): return True
+        else: return False
 
     def get_neighbors(self, v, X, y, k):
         """
@@ -46,6 +49,7 @@ class KNN_Scikit:
         """
         clf = KNeighborsClassifier(n_neighbors=k)
         clf = clf.fit(X, y)
+        v = np.array(v).reshape(1,-1)
         neighbors = clf.kneighbors(v)[1]  # [1] returns indexes
         n = []
         for idx in range(len(neighbors[0])):
@@ -53,7 +57,6 @@ class KNN_Scikit:
             point = np.append(point, y[idx])
             n.append(point)
         neighbors = np.array(n)
-        print(neighbors)
         return neighbors
 
     def model_clf(self, X, k):
@@ -77,8 +80,16 @@ class KNN_Scikit:
         Train a model with 'k' neighbors and classify the 
         test chips.  
         """
+        for i in range(1,5):
+            plt.subplot(2,2,i)
+            for x_test in X_test:
+                print(f"Chip: {x_test}")
+                flag = self.model(x_test, self.X, self.y, (i*2)-1)
+                plt.scatter(x_test[0], x_test[1], s=20, edgecolors='k', c='g' if flag==True else 'r')
 
 
 
 k = KNN_Scikit(path)
-k.get_neighbors([[0, 1]], k.X, k.y, 3)
+k.simulate(k.X, k.y, 3)
+
+plt.show()
