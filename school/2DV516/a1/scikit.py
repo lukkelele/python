@@ -48,11 +48,13 @@ class KNN_Scikit:
         clf = clf.fit(X, y)
         neighbors = clf.kneighbors(v)[1]  # [1] returns indexes
         n = []
-        for idx in neighbors:
+        for idx in range(len(neighbors[0])):
             point = X[idx]
             point = np.append(point, y[idx])
             n.append(point)
-        return np.array(n)
+        neighbors = np.array(n)
+        print(neighbors)
+        return neighbors
 
     def model_clf(self, X, k):
         """
