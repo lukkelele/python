@@ -39,7 +39,7 @@ class KNN_Scikit:
         """
         n = self.get_neighbors(v, X, y, k)
         n_y = np.sum(n[:,2])
-        print(f"n_y == {n_y}")
+        print(f"n_y == {n_y}\nk == {k}\nk/2 == {k/2}")
         if n_y > round(k/2): return True
         else: return False
 
@@ -84,12 +84,13 @@ class KNN_Scikit:
             plt.subplot(2,2,i)
             for x_test in X_test:
                 print(f"Chip: {x_test}")
-                flag = self.model(x_test, self.X, self.y, (i*2)-1)
+                flag = self.model(x_test, X, y, i*2-1)
+                print(f"Flag == {flag}\n")
                 plt.scatter(x_test[0], x_test[1], s=20, edgecolors='k', c='g' if flag==True else 'r')
-
+                
 
 
 k = KNN_Scikit(path)
 k.simulate(k.X, k.y, 3)
 
-plt.show()
+#plt.show()
