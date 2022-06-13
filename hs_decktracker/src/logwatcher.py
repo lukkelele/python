@@ -12,8 +12,5 @@ def read_log(file):
 
 # Debugging 
 def open_file_msg(path):
-    print(f"{get_logmsg()}  Opening file at {path}")
+    print(f"[{datetime.now()}]  Opening file at {path}")
 
-def get_logmsg():
-    current_time = datetime.now()
-    return f"[{current_time}]" 
