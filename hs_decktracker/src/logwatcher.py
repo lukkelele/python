@@ -1,5 +1,6 @@
 # Used for reading output logs of gameplay
 from datetime import datetime
+import re
 
 
 def open_log(path):
@@ -8,7 +9,11 @@ def open_log(path):
 
 def read_log(file):
     for line in file:
-        print(f"CURRENT LINE: {line}", end="")
+        match = re.search("zone=PLAY", line)
+        if match is not None:
+            print(line, end="\n")
+
+
 
 # Debugging 
 def open_file_msg(path):
