@@ -4,5 +4,5 @@
 
 ## Checklist
 - [x] Basic entity structure
-- [] Callback on log update
-- [] Proper log parsing
+- [ ] Callback on log update
+- [ ] Proper log parsing
