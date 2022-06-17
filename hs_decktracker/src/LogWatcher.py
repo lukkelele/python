@@ -49,12 +49,18 @@ class Logwatcher:
     def handle_event(self, event):
         #match = re.search('zone=(PLAY|HAND|DECK|SECRET)', event)
         match = re.search('TRANSITIONING', event)
-        if match:
-            event_clean = event.split()[7:]
-            print(f"Cleaned line: {event_clean}")
-            s = ' '.join(event_clean)
-            print(f"String created: {s}\n\n")
-
+        if match != None:
+            player_match = re.search('player=', event)
+            player_idx = player_match.end()
+            player = event[player_idx]  # determines if this is player 1 or 2
+            cardId_match = re.search('cardId=', event)
+            cardId_idx = cardId_match.end()
+            cardId = event[cardId_idx:]
+            if cardId != " ":
+                cardId = cardId.split(' ', 1)[0]  # determines the cardId
+            elif cardId == " ":
+                cardId = "UNKNOWN ENTITY"
+            
 
 l = Logwatcher("../test/log_test.txt")
 print(l.linecount)
