@@ -26,38 +26,16 @@ class Logwatcher:
         if lines - self.linecount > 0: # change has occured
             d = lines - self.linecount
             k = 0
-            print(f"d == {d}")
             f = open(self.path)
             file = f.readlines()
+            print(f"New lines added to log: {d}")
             while k < d:
-                print(f"current k ==> {k}")
                 line = file[self.linecount + k]
                 self.handle_event(line)
                 k += 1
             print("Exiting..")
             self.linecount = lines
             f.close()
-
-    # Issues with random spikes in d
-    def poll(self):
-        stamp = os.stat(self.path).st_mtime
-        if stamp != self._cached_stamp:
-            self._cached_stamp = stamp
-            linecount = self.get_linecount(self.path)
-            # File changed, iterate through new lines 
-            k = 0
-            d = linecount - self.linecount   # new - old
-            print(f"Linecount==> {linecount}\nd == {d}")
-            while k < d:
-                logfile = open(self.path)
-                file = logfile.readlines()
-                line = file[self.linecount + k] # Newly added line in logfile
-                #print(f"polled line: {line}")
-                self.handle_event(line)
-                logfile.close()
-                k+=1
-            k=0
-            self.linecount = linecount # Update the linecount
 
     def get_linecount(self, file):
         p = subprocess.Popen(['wc', '-l', file], stdout=subprocess.PIPE,
