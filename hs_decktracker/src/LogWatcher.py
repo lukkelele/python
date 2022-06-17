@@ -11,7 +11,7 @@ class Logwatcher:
     def __init__(self, path):
         self._cached_stamp = 0
         self.path = path
-        self.linecount = self.get_linecount()
+        self.linecount = self.get_linecount(self.path)
         self.setup_attr()
 
     def setup_attr(self):
@@ -21,12 +21,29 @@ class Logwatcher:
             attr = f"len_{attr}"
             setattr(self, attr, len_attr)
 
+    def check_file(self):
+        lines = self.get_linecount(self.path)
+        if lines - self.linecount > 0: # change has occured
+            d = lines - self.linecount
+            k = 0
+            print(f"d == {d}")
+            f = open(self.path)
+            file = f.readlines()
+            while k < d:
+                print(f"current k ==> {k}")
+                line = file[self.linecount + k]
+                self.handle_event(line)
+                k += 1
+            print("Exiting..")
+            self.linecount = lines
+            f.close()
+
     # Issues with random spikes in d
     def poll(self):
         stamp = os.stat(self.path).st_mtime
         if stamp != self._cached_stamp:
             self._cached_stamp = stamp
-            linecount = self.get_linecount()
+            linecount = self.get_linecount(self.path)
             # File changed, iterate through new lines 
             k = 0
             d = linecount - self.linecount   # new - old
@@ -42,8 +59,8 @@ class Logwatcher:
             k=0
             self.linecount = linecount # Update the linecount
 
-    def get_linecount(self):
-        p = subprocess.Popen(['wc', '-l', self.path], stdout=subprocess.PIPE,
+    def get_linecount(self, file):
+        p = subprocess.Popen(['wc', '-l', file], stdout=subprocess.PIPE,
                                                       stderr=subprocess.PIPE)
         result, err = p.communicate()
         if p.returncode != 0:
@@ -64,4 +81,4 @@ class Logwatcher:
 l = Logwatcher("../test/log_test.txt")
 print(l.linecount)
 while True:
-    l.poll()
+    l.check_file()
