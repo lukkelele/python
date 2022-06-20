@@ -1,6 +1,5 @@
 import re
 
-
 class EventHandler:
 
     def __init__(self):
