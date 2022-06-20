@@ -1,5 +1,6 @@
 # Used for reading output logs of gameplay
 from datetime import datetime
+import EventHandler
 import subprocess
 import linecache
 import os
@@ -13,6 +14,7 @@ class Logwatcher:
         self.path = path
         self.linecount = self.get_linecount(self.path)
         self.setup_attr()
+        self.eventHandler = EventHandler.EventHandler()
 
     def setup_attr(self):
         attributes = ["entityName", "id", "zone", "zonePos", "cardId", "player"]
@@ -50,16 +52,7 @@ class Logwatcher:
         #match = re.search('zone=(PLAY|HAND|DECK|SECRET)', event)
         match = re.search('TRANSITIONING', event)
         if match != None:
-            player_match = re.search('player=', event)
-            player_idx = player_match.end()
-            player = event[player_idx]  # determines if this is player 1 or 2
-            cardId_match = re.search('cardId=', event)
-            cardId_idx = cardId_match.end()
-            cardId = event[cardId_idx:]
-            if cardId != " ":
-                cardId = cardId.split(' ', 1)[0]  # determines the cardId
-            elif cardId == " ":
-                cardId = "UNKNOWN ENTITY"
+            player, cardId = self.eventHandler.getEventDetails(event)
             
 
 l = Logwatcher("../test/log_test.txt")
