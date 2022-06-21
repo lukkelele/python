@@ -48,14 +48,18 @@ class Logwatcher:
         return int(result.strip().split()[0])
 
     # Handle a line from the logfile
-    def handle_event(self, event):
+    def handle_event(self, line):
         #match = re.search('zone=(PLAY|HAND|DECK|SECRET)', event)
-        match = re.search('TRANSITIONING', event)
+        match = re.search('TRANSITIONING', line)
         if match != None:
-            player, cardId = self.eventHandler.getEventDetails(event)
-            
+            self.eventHandler.evaluate(line)
+
+
+test_line = 'TRANSITIONING card [entityName=UNKNOWN ENTITY [cardType=INVALID] id=42 zone=HAND zonePos=0 cardId= player=2] to OPPOSING HAND'
 
 l = Logwatcher("../test/log_test.txt")
 print(l.linecount)
-while True:
-    l.check_file()
+l.handle_event(test_line)
+
+#while True:
+#    l.check_file()

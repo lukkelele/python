@@ -9,6 +9,19 @@ class EventHandler:
         self.blacklist = []
         print("EventHandler created")
 
+    def evaluate(self, line):
+        target = line.split(' ')[-2:]
+        print(f"Evaluation: ", end='')
+        if target[0] == 'OPPOSING':
+            print('OPPOSING', end=' ')
+            if target[1] == 'HAND':
+                print('HAND')
+            elif target[1] == 'DECK':
+                print('DECK')
+        elif target[0] == 'FRIENDLY':
+            print('FRIENDLY', end=' ')
+
+
     def card_drawn(self, event):
         print('')
 
@@ -23,7 +36,8 @@ class EventHandler:
     def getEventDetails(self, line):
         cardId = self.getVal("cardId=", line)
         return cardId
-    
+
+
     # Get the start of a game.
     # Might have to blacklist the linecounts after each fetch.
     # Consecutive games will have a log that has multiple gamestarts.
