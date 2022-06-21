@@ -3,7 +3,6 @@ from entities import Player
 import hearthstone_data
 import re
 
-
 class EventHandler:
 
     def __init__(self):
@@ -12,15 +11,17 @@ class EventHandler:
     def card_drawn(self, event):
         print('')
 
-    def getEventDetails(self, event):
-        player_match = re.search('player=', event)
-        player_idx = player_match.end()
-        player = event[player_idx]  # determines if this is player 1 or 2
-        cardId_match = re.search('cardId=', event)
-        cardId_idx = cardId_match.end()
-        cardId = event[cardId_idx:].split(' ', 1)[0]
-        if cardId == " ": cardId = "UNKNOWN ENTITY"
-        return player, cardId
+    def getVal(self, event, line):
+        match = re.search(event, line)
+        idx = match.end()
+        val = line[idx:]
+        print(f"Split line --> {val.split(' ')}")
+        val = val.split(' ', 1)[0]
+        return val
+
+    def getEventDetails(self, line):
+        cardId = self.getVal("cardId=", line)
+        return cardId
     
     def getGameStart(self, logfile):
         linecount = 1
@@ -36,19 +37,8 @@ class EventHandler:
         print('Checking turn')
         turn_complete = True if re.search('m_complete=True', line) != None else False
         if turn_complete:
-            m_id_match = re.search('m_id=', line)
-            m_id_idx = m_id_match.end()
-            m_id = int(line[m_id_idx:].split(' ', 1)[0])
+            m_id = int(self.getVal("m_id=", line))
             if player.coin and m_id % 2 != 0: # if player has coin and m_id is odd
                 return False    # Opponent turn
             else: return True
 
-        
-E = EventHandler()
-log = open('.././test/log_test.txt')
-
-gameStart = E.getGameStart(log)
-print(gameStart) # Functional
-
-h = hearthstone_data.get_carddefs_path()
-print(h)
