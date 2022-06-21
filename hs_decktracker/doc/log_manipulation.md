@@ -23,4 +23,4 @@
 - The mulligan phase begins with the players info. The opponent information only contains *UNKNOWN ENTITY* and only keeps track of the unknown cards *zone* position (index of the placement in hand)
 - The player who starts with coin is assigned a turn ID that is even.  
 PLAYER with *COIN* -> *even* turn IDs
-
+- Game setup and mulligan continues until m\_id == 5.
