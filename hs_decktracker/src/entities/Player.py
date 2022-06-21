@@ -2,11 +2,8 @@
 
 class Player:
 
-    def __init__(cardsHand=None):
+    def __init__(self, cardsHand=None, coin=False):
         self.cardsHand = cardsHand
-        self.coin = False   
+        self.coin = coin
 
-    @property
-    def coin(cls): # TODO: Fix 
-        self.coin = cls
 

@@ -1,5 +1,5 @@
 from hearthstone import cardxml
-from .entities import Player
+from entities import Player
 import hearthstone_data
 import re
 
@@ -38,13 +38,17 @@ class EventHandler:
         if turn_complete:
             m_id_match = re.search('m_id=', line)
             m_id_idx = m_id_match.end()
-            m_id = line[m_id_idx:].split(' ', 1)[0]
+            m_id = int(line[m_id_idx:].split(' ', 1)[0])
             if player.coin and m_id % 2 != 0: # if player has coin and m_id is odd
                 return False    # Opponent turn
             else: return True
 
         
+E = EventHandler()
+log = open('.././test/log_test.txt')
 
+gameStart = E.getGameStart(log)
+print(gameStart) # Functional
 
 h = hearthstone_data.get_carddefs_path()
 print(h)
