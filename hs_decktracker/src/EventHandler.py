@@ -10,16 +10,27 @@ class EventHandler:
         print("EventHandler created")
 
     def evaluate(self, line):
-        target = line.split(' ')[-2:]
+        target = line.split(' ')[-3:]
+        print(f"Entire target split --> {target}")
         print(f"Evaluation: ", end='')
-        if target[0] == 'OPPOSING':
+        playerSide = target[1]
+        playerTarget = target[2]
+        if playerSide == 'OPPOSING':
             print('OPPOSING', end=' ')
-            if target[1] == 'HAND':
+            if playerTarget == 'HAND':
                 print('HAND')
-            elif target[1] == 'DECK':
+            elif playerTarget == 'DECK':
                 print('DECK')
-        elif target[0] == 'FRIENDLY':
+            elif playerTarget == 'SECRET':
+                print('SECRET')
+        else:
             print('FRIENDLY', end=' ')
+            if playerTarget == 'HAND':
+                print('HAND')
+            elif playerTarget == 'DECK':
+                print('DECK')
+            elif playerTarget == 'SECRET':
+                print('SECRET')
 
 
     def card_drawn(self, event):
