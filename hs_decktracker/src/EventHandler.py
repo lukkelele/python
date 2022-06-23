@@ -11,32 +11,28 @@ class EventHandler:
 
     # Consider using 'zone=' instead
     def evaluate(self, line):
-        target = line.split(' ')[-3:]
-        print(f"Entire target split --> {target}")
-        print(f"Evaluation: ", end='')
-        playerSide = target[1]
-        playerTarget = target[2]
-        if playerSide == 'OPPOSING':
-            print('OPPOSING', end=' ')
-            if playerTarget == 'HAND':
-                print('HAND')
-            elif playerTarget == 'DECK':
-                print('DECK')
-            elif playerTarget == 'SECRET':
-                print('SECRET')
-        else:
-            print('FRIENDLY', end=' ')
-            if playerTarget == 'HAND':
-                print('HAND')
-            elif playerTarget == 'DECK':
-                print('DECK')
-            elif playerTarget == 'SECRET':
-                print('SECRET')
+        print(f"Evaluating line: {line}")
+        cardId, zone, player = self.getEventDetails(line)
+        print(f"cardId={cardId}\nzone={zone}\nplayer={player}")
+        if player == 1: # Player TODO: Enums
+            print("PLAYER", end=" ")
+            if zone == "HAND":  # DECK -> HAND
+                print("zone=HAND")
+                # Fetch card name from card id
+            elif zone == "DECK": # HAND -> DECK
+                print("zone=DECK")
+        elif player == 2: # Opponent
+            print("OPPONENT", end=" ")
+            if zone == "HAND": # DECK -> HAND
+                print("zone=HAND")
+            elif zone == "DECK": # HAND -> DECK
+                print("zone=DECK")
 
 
     def card_drawn(self, event):
         print('')
 
+    # Consider function for fetching ALL necessary ids
     def getVal(self, event, line):
         match = re.search(event, line)
         idx = match.end()
@@ -48,7 +44,8 @@ class EventHandler:
     def getEventDetails(self, line):
         cardId = self.getVal('cardId=', line)
         zone = self.getVal('zone=', line)
-        player = self.getVal('player=', line)
+        player = int(self.getVal('player=', line).strip(']'))
+        print(f"Returning event details:\ncardId={cardId}\nzone={zone}\nplayer={player}")
         return cardId, zone, player
 
 
