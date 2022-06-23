@@ -9,6 +9,7 @@ class EventHandler:
         self.blacklist = []
         print("EventHandler created")
 
+    # Consider using 'zone=' instead
     def evaluate(self, line):
         target = line.split(' ')[-3:]
         print(f"Entire target split --> {target}")
@@ -45,8 +46,10 @@ class EventHandler:
         return val
 
     def getEventDetails(self, line):
-        cardId = self.getVal("cardId=", line)
-        return cardId
+        cardId = self.getVal('cardId=', line)
+        zone = self.getVal('zone=', line)
+        player = self.getVal('player=', line)
+        return cardId, zone, player
 
 
     # Get the start of a game.
