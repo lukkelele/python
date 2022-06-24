@@ -20,7 +20,7 @@ def test_gettingEventDetails():
     #assert "" == eventHandler.getEventDetails(eventDetails_test1)
     assert "CORE_GVG_008" == eventHandler.getEventDetails(eventDetails_TRANSITION_test)[0]
     assert "HAND" == eventHandler.getEventDetails(eventDetails_TRANSITION_test)[1]
-    assert "1" == eventHandler.getEventDetails(eventDetails_TRANSITION_test)[2]
+    assert 1 == eventHandler.getEventDetails(eventDetails_TRANSITION_test)[2]
 
 
 eventHandler = EventHandler.EventHandler()
