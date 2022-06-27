@@ -5,13 +5,16 @@ import time
 
 class CardDB:
 
-    enumIDs = {'CARDNAME':185, 'HEALTH':45, 'ATTACK':47, 'COST':48, 'RARITY':203}
+    #enumIDs = {'CARDNAME' : 185, 'HEALTH' : 45, 'ATTACK' : 47, 'COST' : 48, 'RARITY' : 203 }
+    #enumIDs = { 185: 'CARDNAME' , 45:  'HEALTH', 47:  'ATTACK', 48:  'COST', 203: 'RARITY'  }
+
 
     def __init__(self, verbose=False):
         if verbose: print(f"Card database object created\nCarddefs path: {hsdata.get_carddefs_path()}")
         self.carddefs_path = hsdata.get_carddefs_path()
         self.carddefs = open(self.carddefs_path, 'r')
         self.root = self.getRoot()
+        self.enumIDs = { 185: 'CARDNAME' , 45:  'HEALTH', 47:  'ATTACK', 48:  'COST', 203: 'RARITY'  }
         if verbose: print('Root created!')
 
     def getRoot(self):
@@ -33,28 +36,29 @@ class CardDB:
                             print(f"There was an error fetching the cardname with the ID {cardId}")
                             return None
 
-    def getCardStats(self, cardId):
+    def getCardStats(self, cardId, verbose=False):
         if verbose: print(f"Fetching card with id {cardId}")
         for child in self.root:
             if child.attrib['CardID'] == cardId:
                 for tag in child:
-                    if tag.attrib['enumID'] == enumIDs['CARDNAME']:
-                        try: cardName = tag[1].text # [1] for enUS
-                        except: print(f"There was an error fetching the cardname with the ID {cardId}")
-                    # ATTACK
-                    elif tag.attrib['enumID'] == enumIDs['ATTACK']:
-                        try: attack = tag.val
-                        except: print(f"Error fetching attack stat for cardId {cardId}")
-                    # HEALTH
-                    elif tag.attrib['enumID'] == enumIDS['HEALTH']:
-                        try: health = tag.val
-                        except: print(f"Error fetching health stat for cardId {cardId}")
-                    # COST
-                    elif tag.attrib['enumID'] == enumIDS['COST']:
-                        try: health = tag.val
-                        except: print(f"Error fetching cost stat for cardId {cardId}")
-                    # RARITY
-                    elif tag.attrib['enumID'] == enumIDS['RARITY']:
-                        try: health = tag.text
-                        except: print(f"Error fetching health stat for cardId {cardId}")
+                    attack = None
+                    health = None
+                    enumID = int(tag.attrib['enumID'])
+                    currentEnumID = self.enumIDs.get(enumID)
+                    if currentEnumID != None: print(f"Getting {currentEnumID}")
+                    match currentEnumID:
+                        case 'CARDNAME':
+                            cardName = tag[1].text
+                        case 'ATTACK':
+                            attack = int(tag.attrib['value'])
+                        case 'HEALTH':
+                            health = int(tag.attrib['value'])
+                        case 'COST':
+                            cost = int(tag.attrib['value'])
+                            print(f"COST: {cost}")
+                        case 'RARITY':
+                            rarity = tag.text
+                        case _ :
+                            continue
+                print(f"Returning stats for cardId {cardId}:\nATTACK == {attack}\nHEALTH == {health}\nCOST == {cost}\nRARITY == {rarity}")
 
