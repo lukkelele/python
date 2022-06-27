@@ -42,7 +42,7 @@ class CardDB:
         if verbose: print(f"Fetching card with id {cardId}")
         for child in self.root:
             if child.attrib['CardID'] == cardId:
-                spell = True if child.attrib['enumID="202"'] else False
+                spell = True if child.attrib['enumID'] == "202" else False
                 for tag in child:
                     attack = None
                     health = None

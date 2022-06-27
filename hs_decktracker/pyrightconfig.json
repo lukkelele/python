@@ -1,6 +1,7 @@
 {
   "include": [
-    "src"
+    "src",
+    "test"
   ],
   
   "exclude": [
@@ -8,7 +9,7 @@
     "**/__pycache__"
   ],
 
-  "reportMissingImports": true,
+  "reportMissingImports": false,
   "reportMissingTypeStubs": false,
   "reportUnboundVariable": "none",
 
