@@ -7,6 +7,8 @@ class CardDB:
 
     #enumIDs = {'CARDNAME' : 185, 'HEALTH' : 45, 'ATTACK' : 47, 'COST' : 48, 'RARITY' : 203 }
     #enumIDs = { 185: 'CARDNAME' , 45:  'HEALTH', 47:  'ATTACK', 48:  'COST', 203: 'RARITY'  }
+    # Cardtype enumID=202
+    # Minion : 4  | Spell : 5
 
 
     def __init__(self, verbose=False):
@@ -14,7 +16,7 @@ class CardDB:
         self.carddefs_path = hsdata.get_carddefs_path()
         self.carddefs = open(self.carddefs_path, 'r')
         self.root = self.getRoot()
-        self.enumIDs = { 185: 'CARDNAME' , 45:  'HEALTH', 47:  'ATTACK', 48:  'COST', 203: 'RARITY'  }
+        self.enumIDs = { 185: 'CARDNAME' , 45:  'HEALTH', 47:  'ATTACK', 48:  'COST', 203: 'RARITY', 202: 'CARDTYPE'  }
         if verbose: print('Root created!')
 
     def getRoot(self):
@@ -40,11 +42,14 @@ class CardDB:
         if verbose: print(f"Fetching card with id {cardId}")
         for child in self.root:
             if child.attrib['CardID'] == cardId:
+                spell = True if child.attrib['enumID="202"'] else False
                 for tag in child:
                     attack = None
                     health = None
                     enumID = int(tag.attrib['enumID'])
                     currentEnumID = self.enumIDs.get(enumID)
+                    if spell and currentEnumID == 'ATTACK' or currentEnumID == 'HEALTH':
+                        pass
                     if currentEnumID != None: print(f"Getting {currentEnumID}")
                     match currentEnumID:
                         case 'CARDNAME':
