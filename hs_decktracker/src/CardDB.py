@@ -102,17 +102,20 @@ class CardDB:
                 if entity.attrib['CardID'] == cardId:
                     spell = True if len(entity) == 20 else False        # spells contain 20 tags and minions contain 15
                     cardName = entity[0][1].text
+                    cardDescription = entity[1][1].text
                     cardRarity = self.getAttributeVal(entity, Enum.Event.RARITY_SPELL)
                     if spell:
                         cardCost = self.getAttributeVal(entity, Enum.Event.COST_SPELL)
+                        cardAttack = None
+                        cardHealth = None
                         self.printCard(entity, spell)
                     else:
                         cardAttack = self.getAttributeVal(entity, Enum.Event.ATTACK)
                         cardHealth = self.getAttributeVal(entity, Enum.Event.HEALTH)
                         cardCost = self.getAttributeVal(entity, Enum.Event.COST_MINION)
                         self.printCard(entity, spell)
-        except:
-            print(f"ERROR: No card found by id {cardId}")
+            return cardName, cardAttack, cardHealth, cardCost, cardRarity, cardDescription
+        except: print(f"ERROR: No card found by id {cardId}") ; return None
 
 
 db = CardDB(verbose=True)
