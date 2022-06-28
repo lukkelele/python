@@ -69,7 +69,10 @@ class CardDB:
                             continue
                 print(f"Returning stats for cardId {cardId}:\nATTACK == {attack}\nHEALTH == {health}\nCOST == {cost}\nRARITY == {rarity}")
 
-    
+    def getAttributeVal(self, entity, enum):
+        try: return entity[enum.value].attrib['value']
+        except: print("getAttributeVal ERROR") ; return None
+
     def fetchCardName2(self, cardId, verbose=False):
         if verbose: print(f"Fetching card with id {cardId}")
         try:
@@ -82,18 +85,18 @@ class CardDB:
                         print(f"""
                                      === SPELL ====
                                 Name: {entity[0][1].text}
-                                Cost: {entity[Enum.Event.COST_SPELL.value].attrib['value']}
-                                Rarity: {entity[Enum.Event.RARITY_SPELL.value].attrib['value']}
+                                Cost: {self.getAttributeVal(entity, Enum.Event.COST_SPELL)}
+                                Rarity: {self.getAttributeVal(entity, Enum.Event.RARITY_SPELL)}
                                 Description: PRETTY PRINTING !!!!
                                 """)
                     else:
                         print(f"""
                                     === MINION ===
                                 Name: {entity[0][1].text}
-                                Cost: {entity[Enum.Event.COST_MINION.value].attrib['value']}
-                                Attack: {entity[Enum.Event.ATTACK.value].attrib['value']}
-                                Health: {entity[Enum.Event.HEALTH.value].attrib['value']}
-                                Rarity: {entity[Enum.Event.RARITY_MINION.value].attrib['value']}
+                                Cost: {self.getAttributeVal(entity, Enum.Event.COST_MINION)}
+                                Attack: {self.getAttributeVal(entity, Enum.Event.ATTACK)}
+                                Health: {self.getAttributeVal(entity, Enum.Event.HEALTH)}
+                                Rarity: {self.getAttributeVal(entity, Enum.Event.RARITY_MINION)}
                                 Description: {entity[1][1].text}
                                 """)
             #cardID = self.root.find(f"CardID={cardId}")

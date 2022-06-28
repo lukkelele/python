@@ -14,6 +14,11 @@ class Event(Enum):
     DISCOVER = 19
     RARITY_MINION = 12
     RARITY_SPELL = 9
+    ELITE = 8
+    CARD_SET_MINION = 9
+    CARD_SET_SPELL = 5
+    CARDTYPE_SPELL = 6
+    CLASS = 10
 
 
 class Game(Enum):
