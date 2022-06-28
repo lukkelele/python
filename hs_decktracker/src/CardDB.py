@@ -1,6 +1,7 @@
+from xml.dom import minidom
 import hearthstone_data as hsdata
 import xml.etree.ElementTree as ET
-from xml.dom import minidom
+import HearthstoneEnums
 import time
 
 class CardDB:
@@ -10,7 +11,6 @@ class CardDB:
     # Cardtype enumID=202
     # Minion : 4  | Spell : 5
     # Spell cost -7 index
-    EnumTags = {'':''}
 
     def __init__(self, verbose=False):
         if verbose: print(f"Card database object created\nCarddefs path: {hsdata.get_carddefs_path()}")
@@ -18,6 +18,7 @@ class CardDB:
         self.carddefs = open(self.carddefs_path, 'r')
         self.root = self.getRoot()
         self.enumIDs = { 185: 'CARDNAME' , 45:  'HEALTH', 47:  'ATTACK', 48:  'COST', 203: 'RARITY', 202: 'CARDTYPE'  }
+        self.enums = HearthstoneEnums.HearthstoneEnums
         if verbose: print('Root created!')
 
     def getRoot(self):
@@ -77,11 +78,24 @@ class CardDB:
                 if entity.attrib['CardID'] == cardId:
                     print()
                     spell = True if len(entity) == 20 else False        # spells contain 20 tags and minions contain 15
-                    if spell:
+                    if spell: # Rarity 9, 
+                        k = 0
+                        cost = entity
                         print(f"""
-                                === SPELL ====
+                                     === SPELL ====
+                                Name: {entity[0][1].text}
+                                Cost: {entity[12].attrib}
                                 """)
-                    print(f"CARDNAME: {entity[0][1].text}")
+                    else:
+                        k = 0
+                        while k < len(entity):
+                            print(f"INDEX: {k} ----- {entity[k].attrib}")
+                            k+=1
+                        print(f"""
+                                    === MINION ===
+                                Name: {entity[0][1].text}
+                                Cost: {entity[self.enums.COST_MINION]}
+                                """)
             #cardID = self.root.find(f"CardID={cardId}")
         except:
             print(f"ERROR: No card found by id {cardId}")
