@@ -1,4 +1,4 @@
-fom hearthstone import cardxml
+from hearthstone import cardxml
 from entities import Player
 import hearthstone_data
 import re

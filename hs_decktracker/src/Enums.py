@@ -1,8 +1,7 @@
-import enum 
+from enum import Enum
 
 # Enums for indexing the entities from XML file in hearthstone_Data
-class HearthstoneEnums(enum.Enum):
-
+class Event(Enum):
     CARDNAME = 0
     CARDTEXT = 1
     FLAVORTEXT = 2
@@ -15,3 +14,8 @@ class HearthstoneEnums(enum.Enum):
     DISCOVER = 19
     RARITY_MINION = 12
     RARITY_SPELL = 9
+
+
+class Game(Enum):
+    GAME_START = 1
+    GAME_END = 2

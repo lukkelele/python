@@ -1,7 +1,8 @@
 from xml.dom import minidom
 import hearthstone_data as hsdata
 import xml.etree.ElementTree as ET
-import HearthstoneEnums
+import xml.etree as etree
+import Enums as Enum
 import time
 
 class CardDB:
@@ -18,7 +19,6 @@ class CardDB:
         self.carddefs = open(self.carddefs_path, 'r')
         self.root = self.getRoot()
         self.enumIDs = { 185: 'CARDNAME' , 45:  'HEALTH', 47:  'ATTACK', 48:  'COST', 203: 'RARITY', 202: 'CARDTYPE'  }
-        self.enums = HearthstoneEnums.HearthstoneEnums
         if verbose: print('Root created!')
 
     def getRoot(self):
@@ -79,22 +79,22 @@ class CardDB:
                     print()
                     spell = True if len(entity) == 20 else False        # spells contain 20 tags and minions contain 15
                     if spell: # Rarity 9, 
-                        k = 0
-                        cost = entity
                         print(f"""
                                      === SPELL ====
                                 Name: {entity[0][1].text}
-                                Cost: {entity[12].attrib}
+                                Cost: {entity[Enum.Event.COST_SPELL.value].attrib['value']}
+                                Rarity: {entity[Enum.Event.RARITY_SPELL.value].attrib['value']}
+                                Description: PRETTY PRINTING !!!!
                                 """)
                     else:
-                        k = 0
-                        while k < len(entity):
-                            print(f"INDEX: {k} ----- {entity[k].attrib}")
-                            k+=1
                         print(f"""
                                     === MINION ===
                                 Name: {entity[0][1].text}
-                                Cost: {entity[self.enums.COST_MINION]}
+                                Cost: {entity[Enum.Event.COST_MINION.value].attrib['value']}
+                                Attack: {entity[Enum.Event.ATTACK.value].attrib['value']}
+                                Health: {entity[Enum.Event.HEALTH.value].attrib['value']}
+                                Rarity: {entity[Enum.Event.RARITY_MINION.value].attrib['value']}
+                                Description: {entity[1][1].text}
                                 """)
             #cardID = self.root.find(f"CardID={cardId}")
         except:
@@ -103,4 +103,4 @@ class CardDB:
 
 db = CardDB(verbose=True)
 db.fetchCardName2('SW_433') # spell
-db.fetchCardName2('YOP_034') # minion
+db.fetchCardName2('YOP_035') # minion
