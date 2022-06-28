@@ -12,15 +12,16 @@ def test_fetchCardNames():
         cardName = db.fetchCardName(cardId, verbose=True)
         assert cardIds[cardId] == cardName, f"should be {cardIds[cardId]}"
 
+def test_getTagValue(root):
+    for child in root.iter('Tag'):
+        print(child.attrib)
+
 def test_getCardStats():
     for cardId in cardIds:
         db.getCardStats(cardId)
 
 
-c = db.getRoot().findall('Tag')
-for d in c:
-    print(d.text)
-print(f"c == {c}")
+test_getTagValue(db.root)
 test_fetchCardNames()
 test_getCardStats()
 print("Testing successful!")
