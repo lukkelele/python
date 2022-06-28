@@ -9,7 +9,8 @@ class CardDB:
     #enumIDs = { 185: 'CARDNAME' , 45:  'HEALTH', 47:  'ATTACK', 48:  'COST', 203: 'RARITY'  }
     # Cardtype enumID=202
     # Minion : 4  | Spell : 5
-
+    # Spell cost -7 index
+    EnumTags = {'':''}
 
     def __init__(self, verbose=False):
         if verbose: print(f"Card database object created\nCarddefs path: {hsdata.get_carddefs_path()}")
@@ -67,3 +68,25 @@ class CardDB:
                             continue
                 print(f"Returning stats for cardId {cardId}:\nATTACK == {attack}\nHEALTH == {health}\nCOST == {cost}\nRARITY == {rarity}")
 
+    
+    def fetchCardName2(self, cardId, verbose=False):
+        if verbose: print(f"Fetching card with id {cardId}")
+        try:
+            entities = self.root.findall(f"Entity")
+            for entity in entities:
+                if entity.attrib['CardID'] == cardId:
+                    print()
+                    spell = True if len(entity) == 20 else False        # spells contain 20 tags and minions contain 15
+                    if spell:
+                        print(f"""
+                                === SPELL ====
+                                """)
+                    print(f"CARDNAME: {entity[0][1].text}")
+            #cardID = self.root.find(f"CardID={cardId}")
+        except:
+            print(f"ERROR: No card found by id {cardId}")
+
+
+db = CardDB(verbose=True)
+db.fetchCardName2('SW_433') # spell
+db.fetchCardName2('YOP_034') # minion
