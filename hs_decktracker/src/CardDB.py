@@ -7,12 +7,6 @@ import time
 
 class CardDB:
 
-    #enumIDs = {'CARDNAME' : 185, 'HEALTH' : 45, 'ATTACK' : 47, 'COST' : 48, 'RARITY' : 203 }
-    #enumIDs = { 185: 'CARDNAME' , 45:  'HEALTH', 47:  'ATTACK', 48:  'COST', 203: 'RARITY'  }
-    # Cardtype enumID=202
-    # Minion : 4  | Spell : 5
-    # Spell cost -7 index
-
     def __init__(self, verbose=False):
         if verbose: print(f"Card database object created\nCarddefs path: {hsdata.get_carddefs_path()}")
         self.carddefs_path = hsdata.get_carddefs_path()
@@ -73,37 +67,54 @@ class CardDB:
         try: return entity[enum.value].attrib['value']
         except: print("getAttributeVal ERROR") ; return None
 
-    def fetchCardName2(self, cardId, verbose=False):
-        if verbose: print(f"Fetching card with id {cardId}")
+    def printCard(self, entity, spell):
+            cardName = entity[0][1].text
+            cardRarity = self.getAttributeVal(entity, Enum.Event.RARITY_SPELL) if spell else self.getAttributeVal(entity, Enum.Event.RARITY_MINION)
+            cardCost = self.getAttributeVal(entity, Enum.Event.COST_SPELL) if spell else self.getAttributeVal(entity, Enum.Event.COST_MINION)
+            print(f"""
+                    ===| CARD
+                    Name: {cardName}""", end="")
+            if spell:
+                print(f"""
+                    Cost: {cardCost}
+                    Type: Spell
+                    Rarity: {cardRarity}
+                    Description: 
+                        """)
+            else:
+                cardAttack = self.getAttributeVal(entity, Enum.Event.ATTACK)
+                cardHealth = self.getAttributeVal(entity, Enum.Event.HEALTH)
+                print(f"""
+                    Cost: {cardCost}
+                    Type: Minion
+                    Attack: {cardAttack}
+                    Health: {cardHealth}
+                    Rarity: {cardRarity}
+                    Description: {entity[1][1].text}
+                        """)
+
+
+    # TODO: Pretty Printing for card description
+    def fetchCard(self, cardId):
         try:
             entities = self.root.findall(f"Entity")
             for entity in entities:
                 if entity.attrib['CardID'] == cardId:
-                    print()
                     spell = True if len(entity) == 20 else False        # spells contain 20 tags and minions contain 15
-                    if spell: # Rarity 9, 
-                        print(f"""
-                                     === SPELL ====
-                                Name: {entity[0][1].text}
-                                Cost: {self.getAttributeVal(entity, Enum.Event.COST_SPELL)}
-                                Rarity: {self.getAttributeVal(entity, Enum.Event.RARITY_SPELL)}
-                                Description: PRETTY PRINTING !!!!
-                                """)
+                    cardName = entity[0][1].text
+                    cardRarity = self.getAttributeVal(entity, Enum.Event.RARITY_SPELL)
+                    if spell:
+                        cardCost = self.getAttributeVal(entity, Enum.Event.COST_SPELL)
+                        self.printCard(entity, spell)
                     else:
-                        print(f"""
-                                    === MINION ===
-                                Name: {entity[0][1].text}
-                                Cost: {self.getAttributeVal(entity, Enum.Event.COST_MINION)}
-                                Attack: {self.getAttributeVal(entity, Enum.Event.ATTACK)}
-                                Health: {self.getAttributeVal(entity, Enum.Event.HEALTH)}
-                                Rarity: {self.getAttributeVal(entity, Enum.Event.RARITY_MINION)}
-                                Description: {entity[1][1].text}
-                                """)
-            #cardID = self.root.find(f"CardID={cardId}")
+                        cardAttack = self.getAttributeVal(entity, Enum.Event.ATTACK)
+                        cardHealth = self.getAttributeVal(entity, Enum.Event.HEALTH)
+                        cardCost = self.getAttributeVal(entity, Enum.Event.COST_MINION)
+                        self.printCard(entity, spell)
         except:
             print(f"ERROR: No card found by id {cardId}")
 
 
 db = CardDB(verbose=True)
-db.fetchCardName2('SW_433') # spell
-db.fetchCardName2('YOP_035') # minion
+db.fetchCard('SW_433') # spell
+db.fetchCard('YOP_035') # minion
