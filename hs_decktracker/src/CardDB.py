@@ -12,12 +12,12 @@ class CardDB:
         self.carddefs_path = hsdata.get_carddefs_path()
         self.carddefs = open(self.carddefs_path, 'r')
         self.root = self.getRoot()
-        self.enumIDs = { 185: 'CARDNAME' , 45:  'HEALTH', 47:  'ATTACK', 48:  'COST', 203: 'RARITY', 202: 'CARDTYPE'  }
         if verbose: print('Root created!')
 
     def getRoot(self):
         return ET.parse(self.carddefs_path).getroot()
-
+    
+    # DEPRECATED!
     def fetchCardName(self, cardId, verbose=False):
         if verbose: print(f"Fetching card with id {cardId}")
         start = time.time()
@@ -34,39 +34,42 @@ class CardDB:
                             print(f"There was an error fetching the cardname with the ID {cardId}")
                             return None
 
-    def getCardStats(self, cardId, verbose=False):
-        if verbose: print(f"Fetching card with id {cardId}")
-        for child in self.root:
-            if child.attrib['CardID'] == cardId:
-                #spell = True if child.attrib['enumID'] == "202" else False
-                for tag in child:
-                    attack = None
-                    health = None
-                    enumID = int(tag.attrib['enumID'])
-                    currentEnumID = self.enumIDs.get(enumID)
-                #    if spell and currentEnumID == 'ATTACK' or currentEnumID == 'HEALTH':
-                        #pass
-                    if currentEnumID != None: print(f"Getting {currentEnumID}")
-                    match currentEnumID:
-                        case 'CARDNAME':
-                            cardName = tag[1].text
-                        case 'ATTACK':
-                            attack = int(tag.attrib['value'])
-                        case 'HEALTH':
-                            health = int(tag.attrib['value'])
-                        case 'COST':
-                            cost = int(tag.attrib['value'])
-                            print(f"COST: {cost}")
-                        case 'RARITY':
-                            rarity = tag.text
-                        case _ :
-                            continue
-                print(f"Returning stats for cardId {cardId}:\nATTACK == {attack}\nHEALTH == {health}\nCOST == {cost}\nRARITY == {rarity}")
-
+    # Get the value for a specific attribute within an entity.
+    # The passed 'enum' parameter holds the correct index for
+    # the type of card that is getting checked.
     def getAttributeVal(self, entity, enum):
-        try: return entity[enum.value].attrib['value']
-        except: print("getAttributeVal ERROR") ; return None
+        try: return int(entity[enum.value].attrib['value'])
+        except: print("getAttributeVal ERROR")
 
+    # TODO: Pretty Printing for card description
+    # Get a cards stats and information from the XML card database.
+    # cardId: string passed to match a card ID in the database.
+    # Returns the stats if card ID found, else None
+    def fetchCard(self, cardId):
+        try:
+            entities = self.root.findall(f"Entity")
+            for entity in entities:
+                if entity.attrib['CardID'] == cardId:
+                    spell = True if len(entity) == 20 else False        # spells contain 20 tags and minions contain 15
+                    cardType = 'Spell' if spell else 'Minion' # To add for secrets..
+                    cardName = entity[0][1].text
+                    cardDescription = entity[1][1].text
+                    cardRarity = self.getAttributeVal(entity, Enum.Event.RARITY_SPELL) if spell else self.getAttributeVal(entity, Enum.Event.RARITY_MINION)
+                    if spell:
+                        cardCost = self.getAttributeVal(entity, Enum.Event.COST_SPELL)
+                        cardAttack = None
+                        cardHealth = None
+                        self.printCard(entity, spell)
+                    else:
+                        cardAttack = self.getAttributeVal(entity, Enum.Event.ATTACK)
+                        cardHealth = self.getAttributeVal(entity, Enum.Event.HEALTH)
+                        cardCost = self.getAttributeVal(entity, Enum.Event.COST_MINION)
+                        self.printCard(entity, spell)
+            return cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardDescription
+        except: print(f"ERROR: No card found by id {cardId}") ; return None
+
+    # Print the card with its stats.
+    # Only for visual representation.
     def printCard(self, entity, spell):
             cardName = entity[0][1].text
             cardRarity = self.getAttributeVal(entity, Enum.Event.RARITY_SPELL) if spell else self.getAttributeVal(entity, Enum.Event.RARITY_MINION)
@@ -94,30 +97,9 @@ class CardDB:
                         """)
 
 
-    # TODO: Pretty Printing for card description
-    def fetchCard(self, cardId):
-        try:
-            entities = self.root.findall(f"Entity")
-            for entity in entities:
-                if entity.attrib['CardID'] == cardId:
-                    spell = True if len(entity) == 20 else False        # spells contain 20 tags and minions contain 15
-                    cardName = entity[0][1].text
-                    cardDescription = entity[1][1].text
-                    cardRarity = self.getAttributeVal(entity, Enum.Event.RARITY_SPELL)
-                    if spell:
-                        cardCost = self.getAttributeVal(entity, Enum.Event.COST_SPELL)
-                        cardAttack = None
-                        cardHealth = None
-                        self.printCard(entity, spell)
-                    else:
-                        cardAttack = self.getAttributeVal(entity, Enum.Event.ATTACK)
-                        cardHealth = self.getAttributeVal(entity, Enum.Event.HEALTH)
-                        cardCost = self.getAttributeVal(entity, Enum.Event.COST_MINION)
-                        self.printCard(entity, spell)
-            return cardName, cardAttack, cardHealth, cardCost, cardRarity, cardDescription
-        except: print(f"ERROR: No card found by id {cardId}") ; return None
 
-
-db = CardDB(verbose=True)
-db.fetchCard('SW_433') # spell
-db.fetchCard('YOP_035') # minion
+if __name__ != "main":
+    print("RUNNING")
+    db = CardDB(verbose=True)
+    db.fetchCard('SW_433') # spell
+    db.fetchCard('YOP_035') # minion

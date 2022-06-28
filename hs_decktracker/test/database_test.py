@@ -1,16 +1,14 @@
-import sys ; sys.path.append('../src/')
+import subprocess ; path = subprocess.run('pwd', capture_output=True).stdout.decode('utf-8').strip('\n')
+import sys ; sys.path.insert(0, f"{path}/src") ; print(sys.path)
 import CardDB
 
-
-#           cardId   cardName
-cardIds = {'SW_433':'Seek Guidance'}
+#           cardId   cardName           Type Cost Atk Health 
+cardIds = {'SW_433':['Seek Guidance', 'Spell', 1, None, None, 5, None],
+           'YOP_035':['Moonfang', 'Minion', 5, 6, 3, 4, None]
+           }
 
 db = CardDB.CardDB(verbose=True) 
 
-def test_fetchCardNames(): 
-    for cardId in cardIds:
-        cardName = db.fetchCardName(cardId, verbose=True)
-        assert cardIds[cardId] == cardName, f"should be {cardIds[cardId]}"
 
 def test_getTagValue(root):
     for child in root.iter('Tag'):
@@ -18,10 +16,13 @@ def test_getTagValue(root):
 
 def test_getCardStats():
     for cardId in cardIds:
-        db.getCardStats(cardId)
+        name, cardType, cost, attack, health, rarity, description = db.fetchCard(cardId)
+        assert name == cardIds[cardId][0]
+        assert cardType == cardIds[cardId][1] 
+        assert cost == cardIds[cardId][2] 
+        assert attack == cardIds[cardId][3] 
+        assert health == cardIds[cardId][4] 
 
-
-test_getTagValue(db.root)
-test_fetchCardNames()
+#test_getTagValue(db.root)
 test_getCardStats()
 print("Testing successful!")
