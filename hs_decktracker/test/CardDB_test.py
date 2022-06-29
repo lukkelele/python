@@ -36,6 +36,8 @@ def testFetchingCards():
     db.fetchCard('YOP_019t') # 
     db.fetchCard('YOP_034') # 
     db.fetchCard('YOP_013e') # 
+    db.fetchCard('AV_203') # 
+    db.fetchCard('DED_004')
 
 def testDeckImport(deckString: str):
     db.importDeck(deckString1)

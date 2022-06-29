@@ -1,4 +1,3 @@
-from xml.dom import minidom
 from Entities import Deck
 import hearthstone_data as hsdata
 import xml.etree.ElementTree as ET
@@ -7,7 +6,8 @@ import Enums as Enum
 import json
 import time
 
-deckString1 = "AAECAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
+deckString1 = "AAECcAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
+deckThiefRouge = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
 
 class CardDB:
 
@@ -37,31 +37,31 @@ class CardDB:
                         # Find way to find card type faster
                         if tag.attrib['enumID'] == '202':
                             val = int(tag.attrib['value'])
-                            if val == 4: spell = False ; cardType = 'Minion'
+                            if val == 3: spell = False ; cardType = 'Hero'
+                            elif val == 4: spell = False ; cardType = 'Minion'
                             elif val == 5: spell = True ; cardType = 'Spell'
-                            elif val == 6: spell = None ; cardType = None  # HERO POWER --> NOT STANDARD GAMEMODE
+                            elif val == 6: spell = None ; cardType = None  
+                            elif val == 7: spell = None ; cardType = 'Weapon'
                     cardId = entity.attrib['CardID']
-                    cardName = entity[0][1].text
                     cardDBF = entity.attrib['ID']
-                    cardDescription = entity[1][1].text
+                    cardName = entity[0][1].text
+                    cardDescription = 0 #entity[1][1].text
                     cardRarity = self.getAttributeVal(entity, Enum.Event.RARITY_SPELL) if spell else self.getAttributeVal(entity, Enum.Event.RARITY_MINION)
                     if spell:
                         cardCost = self.getAttributeVal(entity, Enum.Event.COST_SPELL)
                         cardAttack = None
                         cardHealth = None
-                        #self.printCard(entity, spell)
                     else:
                         cardAttack = self.getAttributeVal(entity, Enum.Event.ATTACK)
                         cardHealth = self.getAttributeVal(entity, Enum.Event.HEALTH)
                         cardCost = self.getAttributeVal(entity, Enum.Event.COST_MINION)
-                        #self.printCard(entity, spell)
             return cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardDescription
         except: print(f"ERROR: No card found by id {cardId}") ; return None
 
     def saveCard(self, cardId):
-        cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardDescription = self.fetchCard(cardId)
+        cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardDescription = self.fetchCard(cardId)
         card = {
-                "cardId": cardId,
+                "cardId": cardID,
                 "DBF": cardDBF,
                 "name": cardName,
                 "cardType": cardType,
@@ -95,8 +95,11 @@ class CardDB:
             cardDBF = card[0]
             jsonCard = self.saveCard(cardDBF)
             jsonDeck.append(jsonCard)
-        self.saveDeck(jsonDeck)
+        return jsonDeck
 
 db = CardDB()
-db.convertDeck(db.importDeck(deckString1))
+#db.convertDeck(db.importDeck(deckString1))
+convDeck = db.convertDeck(db.importDeck(deckThiefRouge))
+db.saveDeck(convDeck)
+
 
