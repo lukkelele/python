@@ -6,8 +6,6 @@ import Enums as Enum
 import json
 import time
 
-deckString1 = "AAECcAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
-deckThiefRouge = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
 
 class CardDB:
 
@@ -34,16 +32,11 @@ class CardDB:
             entities = self.root.findall(f"Entity")
             for entity in entities:
                 if entity.attrib['CardID'] == cardId or entity.attrib['ID'] == str(cardId):
-                    cardAttack = None
-                    cardHealth = None
-                    cardCost = None
-                    cardType = None
-                    cardRarity = None
+                    cardAttack, cardHealth, cardCost, cardType, cardRarity = None, None, None, None, None
                     cardId = entity.attrib['CardID']
                     cardDBF = entity.attrib['ID']
                     cardName = entity[0][1].text
                     for tag in entity:
-                        # Find way to find card type faster
                         enumID = tag.attrib['enumID']
                         if enumID == Enum.EnumID.CARDTYPE.value:
                             val = int(tag.attrib['value'])
@@ -61,9 +54,7 @@ class CardDB:
                         elif enumID == Enum.EnumID.RARITY.value:
                             cardRarity = int(tag.attrib['value'])
                         elif enumID == Enum.EnumID.CARDTEXT.value:
-                            cardText = tag[1].text
-
-            cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText
+                            cardText = "" #tag[1].text
             return cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText
         except:
             print(f"error fetching card {cardName}")
@@ -87,16 +78,18 @@ class CardDB:
     def saveDeck(self, deck):
         print("Saving deck!")
         with open('./decks.json', 'r') as json_file:
+            print("Reading..")
             try: file = json.load(json_file)
             except: file = []
         file.append(deck)
         with open('./decks.json', 'w') as json_file:
+            print("Opening")
             json.dump(file, json_file, indent=2)
 
     def importDeck(self, deckString):
         print(f"Saving deck by deckstring {deckString}")
         deck = Deck.importDeck(deckString)
-        #for card in deck.cards: print(f"{deck.cards.index(card)+1}. {card}")
+        for card in deck.cards: print(f"{deck.cards.index(card)+1}. {card}")
         return deck.cards
 
     def convertDeck(self, deck: list):
@@ -108,17 +101,19 @@ class CardDB:
             jsonDeck.append(jsonCard)
         return jsonDeck
 
+
+deckString1 = "AAECcAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
+deckThiefRouge = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
+
 db = CardDB()
-cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('DED_500')
-print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
-cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('YOP_034') # 
-print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
-cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('YOP_013') # 
-print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
-cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('AV_203') # 
-print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
-db.fetchCard('DED_004')
-#db.convertDeck(db.importDeck(deckString1))
+#cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('YOP_034') # 
+#print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
+#cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('YOP_013') # 
+#print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
+#cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('AV_203') # 
+#print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
+#db.fetchCard('DED_004')
+db.convertDeck(db.importDeck(deckString1))
 #convDeck = db.convertDeck(db.importDeck(deckThiefRouge))
 #db.saveDeck(convDeck)
 
