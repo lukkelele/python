@@ -18,31 +18,14 @@ class CardDB:
     def getRoot(self):
         return ET.parse(self.carddefs_path).getroot()
     
-    # DEPRECATED!
-    def fetchCardName(self, cardId, verbose=False):
-        if verbose: print(f"Fetching card with id {cardId}")
-        start = time.time()
-        for child in self.root:
-            if child.attrib['CardID'] == cardId:
-                for tag in child:
-                    if tag.attrib['enumID'] == '185': # if enumID equals CARDNAME, 185 is enum val
-                        try:
-                            end = time.time()
-                            cardName = tag[1].text
-                            if verbose: print(f"Cardname ==> {cardName}, found in {end-start} s ==> {1000*(end-start)} ms")
-                            return cardName
-                        except:
-                            print(f"There was an error fetching the cardname with the ID {cardId}")
-                            return None
-
     # Get the value for a specific attribute within an entity.
     # The passed 'enum' parameter holds the correct index for
     # the type of card that is getting checked.
     def getAttributeVal(self, entity, enum):
         try: return int(entity[enum.value].attrib['value'])
-        except: print("getAttributeVal ERROR")
+        except: return None
 
-    # TODO: Pretty Printing for card description
+    # TODO: Pretty Printing for card description. ADD SUPPORT FOR SECONDARY SPELLS, e.g Mana Biscuit
     # Get a cards stats and information from the XML card database.
     # cardId: string passed to match a card ID in the database.
     # Returns the stats if card ID found, else None
@@ -50,9 +33,14 @@ class CardDB:
         try:
             entities = self.root.findall(f"Entity")
             for entity in entities:
-                if entity.attrib['CardID'] == cardId:
-                    spell = True if len(entity) == 20 else False        # spells contain 20 tags and minions contain 15
-                    cardType = 'Spell' if spell else 'Minion' # To add for secrets..
+                if entity.attrib['CardID'] == cardId or entity.attrib['ID'] == cardId:
+                    for tag in entity:
+                        # Find way to find card type faster
+                        if tag.attrib['enumID'] == '202':
+                            val = int(tag.attrib['value'])
+                            if val == 4: spell = False ; cardType = 'Minion'
+                            elif val == 5: spell = True ; cardType = 'Spell'
+                            elif val == 6: spell = None ; cardType = None  # HERO POWER --> NOT STANDARD GAMEMODE
                     cardName = entity[0][1].text
                     cardDBF = entity.attrib['ID']
                     cardDescription = entity[1][1].text
@@ -73,32 +61,17 @@ class CardDB:
     # Print the card with its stats.
     # Only for visual representation.
     def printCard(self, entity, spell):
-            cardName = entity[0][1].text
-            cardDBF = entity.attrib['ID']
-            cardRarity = self.getAttributeVal(entity, Enum.Event.RARITY_SPELL) if spell else self.getAttributeVal(entity, Enum.Event.RARITY_MINION)
-            cardCost = self.getAttributeVal(entity, Enum.Event.COST_SPELL) if spell else self.getAttributeVal(entity, Enum.Event.COST_MINION)
-            print(f"""
-                    ===| CARD
-                    Name: {cardName}
-                    DBF: {cardDBF}""", end="")
-            if spell:
-                print(f"""
-                    Cost: {cardCost}
-                    Type: Spell
-                    Rarity: {cardRarity}
-                    Description: 
-                        """)
-            else:
-                cardAttack = self.getAttributeVal(entity, Enum.Event.ATTACK)
-                cardHealth = self.getAttributeVal(entity, Enum.Event.HEALTH)
-                print(f"""
-                    Cost: {cardCost}
-                    Type: Minion
-                    Attack: {cardAttack}
-                    Health: {cardHealth}
-                    Rarity: {cardRarity}
-                    Description: {entity[1][1].text}
-                        """)
+        cardName = entity[0][1].text
+        cardDBF = entity.attrib['ID']
+        cardRarity = self.getAttributeVal(entity, Enum.Event.RARITY_SPELL) if spell else self.getAttributeVal(entity, Enum.Event.RARITY_MINION)
+        cardCost = self.getAttributeVal(entity, Enum.Event.COST_SPELL) if spell else self.getAttributeVal(entity, Enum.Event.COST_MINION)
+        print(f"\n===| CARD\nName: {cardName}\nDBF: {cardDBF}\n", end="")
+        if spell:
+            print(f"Cost: {cardCost}\nType: Spell\nRarity: {cardRarity}\nDescription: \n")
+        else:
+            cardAttack = self.getAttributeVal(entity, Enum.Event.ATTACK)
+            cardHealth = self.getAttributeVal(entity, Enum.Event.HEALTH)
+            print(f"Cost: {cardCost}\nType: Minion\nAttack: {cardAttack}\nHealth: {cardHealth}\nRarity: {cardRarity}\nDescription: {entity[1][1].text}\n ")
 
 
     def saveCard(self, cardId):
@@ -126,8 +99,14 @@ class CardDB:
 
 deckString1 = "AAECAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
 
-db = CardDB(verbose=True)
+db = CardDB(verbose=False)
 #db.fetchCard('SW_433') # spell
-#db.fetchCard('YOP_035') # minion
-db.saveCard('SW_433')
-db.saveDeck(deckString1)
+db.fetchCard('YOP_035') # minion
+db.fetchCard('YOP_020') # 
+db.fetchCard('YOP_018') # 
+db.fetchCard('YOP_019') # 
+db.fetchCard('YOP_019t') # 
+db.fetchCard('YOP_034') # 
+db.fetchCard('YOP_013e') # 
+#db.saveCard('SW_433')
+#db.saveDeck(deckString1)
