@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="decktracker.AppTest" time="0.02" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="decktracker.AppTest" time="0.023" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="18"/>
     <property name="sun.jnu.encoding" value="ANSI_X3.4-1968"/>
-    <property name="java.class.path" value="/home/lukkelele/Code/python/hs_decktracker/target/test-classes:/home/lukkelele/Code/python/hs_decktracker/target/classes:/home/lukkelele/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/lukkelele/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/lukkelele/.m2/repository/com/google/code/gson/gson/2.8.9/gson-2.8.9.jar:"/>
+    <property name="java.class.path" value="/home/lukkelele/Code/python/hs_decktracker/target/test-classes:/home/lukkelele/Code/python/hs_decktracker/target/classes:/home/lukkelele/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/lukkelele/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/lukkelele/.m2/repository/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar:"/>
     <property name="java.vm.vendor" value="Oracle Corporation"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.vendor.url" value="https://openjdk.java.net/"/>
@@ -12,9 +12,9 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-18-openjdk/lib"/>
-    <property name="sun.java.command" value="/home/lukkelele/Code/python/hs_decktracker/target/surefire/surefirebooter3634125319804321820.jar /home/lukkelele/Code/python/hs_decktracker/target/surefire 2022-06-29T21-29-21_421-jvmRun1 surefire942559972677678765tmp surefire_013750803111278025957tmp"/>
+    <property name="sun.java.command" value="/home/lukkelele/Code/python/hs_decktracker/target/surefire/surefirebooter12675959524548222150.jar /home/lukkelele/Code/python/hs_decktracker/target/surefire 2022-06-29T21-47-02_434-jvmRun1 surefire6074597089137685226tmp surefire_016605673179943201884tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="surefire.test.class.path" value="/home/lukkelele/Code/python/hs_decktracker/target/test-classes:/home/lukkelele/Code/python/hs_decktracker/target/classes:/home/lukkelele/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/lukkelele/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/lukkelele/.m2/repository/com/google/code/gson/gson/2.8.9/gson-2.8.9.jar:"/>
+    <property name="surefire.test.class.path" value="/home/lukkelele/Code/python/hs_decktracker/target/test-classes:/home/lukkelele/Code/python/hs_decktracker/target/classes:/home/lukkelele/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/lukkelele/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/lukkelele/.m2/repository/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="/home/lukkelele"/>
     <property name="user.language" value="en"/>
@@ -27,7 +27,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="/home/lukkelele/Code/python/hs_decktracker/target/surefire/surefirebooter3634125319804321820.jar"/>
+    <property name="surefire.real.class.path" value="/home/lukkelele/Code/python/hs_decktracker/target/surefire/surefirebooter12675959524548222150.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="18.0.1.1+2"/>
     <property name="user.name" value="lukkelele"/>
@@ -51,5 +51,5 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="62.0"/>
   </properties>
-  <testcase name="shouldAnswerWithTrue" classname="decktracker.AppTest" time="0.003"/>
+  <testcase name="shouldAnswerWithTrue" classname="decktracker.AppTest" time="0.002"/>
 </testsuite>

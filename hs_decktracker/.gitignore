@@ -1,0 +1,6 @@
+# IGNORE
+
+**/*.pdf
+**/*.img
+./target
+target/*
