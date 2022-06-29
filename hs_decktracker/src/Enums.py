@@ -21,28 +21,50 @@ class Event(Enum):
     CARDTYPE_SPELL = 6
     CLASS = 10
 
-class Minion17(Enum):
-    CARDNAME = 0
-    CARDTEXT = 1
-    FLAVORTEXT = 2
-    ARTIST = 3
-    HEALTH = 5
-    ATTACK = 6
+class CardType(Enum):
+    HERO = 3
+    MINION = 4
+    SPELL = 5
+    WEAPON = 7
 
-class Minion15(Enum):
-    CARDNAME = 0
-    CARDTEXT = 1
-    FLAVORTEXT = 2
-    ARTIST = 3
-    TRIGGER_VISUAL = 4
-    HEALTH = 5
-    ATTACK = 6
-    COST = 7
-    CARD_SET = 8
-    CLASS = 9
-    CARDRACE = 10
-    CARDTYPE = 11
-    RARITY= 12
+class Weapon(Enum):
+    HEALTH = 4
+    ATK = 5
+    COST = 6
+    CARD_SET = 7
+
+class Minion(Enum):
+    HEALTH = '45'
+    ATK = '47'
+    COST = '48'
+    CARD_SET = '183'
+    CARDTEXT = '184'
+    CARDNAME = '185'
+    CLASS = '199'
+    CARDTYPE = '202'
+    RARITY = '203'
+
+class EnumID(Enum):
+    HEALTH = '45'
+    ATK = '47'
+    COST = '48'
+    ELITE = '114'
+    CARD_SET = '183'
+    CARDTEXT = '184'
+    CARDNAME = '185'
+    DURABILITY = '187'
+    CLASS = '199'
+    CARDTYPE = '202'
+    RARITY = '203'
+    BATTLECRY = '218'
+    COLLECTIBLE = '321'
+    ARTISTNAME = '342'
+    FLAVORTEXT = '351'
+    AURA = '362'
+    TRADEABLE = '1720'
+    TRADE_COST = '1743'
+    MINI_SET = '1824'
+
 
 class CreatedSpell(Enum):
     CARDNAME = 0

@@ -18,6 +18,7 @@ class CardDB:
         self.root = self.getRoot()
         if verbose: print('Root created!')
 
+
     def getRoot(self):
         return ET.parse(self.carddefs_path).getroot()
     
@@ -33,30 +34,40 @@ class CardDB:
             entities = self.root.findall(f"Entity")
             for entity in entities:
                 if entity.attrib['CardID'] == cardId or entity.attrib['ID'] == str(cardId):
-                    for tag in entity:
-                        # Find way to find card type faster
-                        if tag.attrib['enumID'] == '202':
-                            val = int(tag.attrib['value'])
-                            if val == 3: spell = False ; cardType = 'Hero'
-                            elif val == 4: spell = False ; cardType = 'Minion'
-                            elif val == 5: spell = True ; cardType = 'Spell'
-                            elif val == 6: spell = None ; cardType = None  
-                            elif val == 7: spell = None ; cardType = 'Weapon'
+                    cardAttack = None
+                    cardHealth = None
+                    cardCost = None
+                    cardType = None
+                    cardRarity = None
                     cardId = entity.attrib['CardID']
                     cardDBF = entity.attrib['ID']
                     cardName = entity[0][1].text
-                    cardDescription = 0 #entity[1][1].text
-                    cardRarity = self.getAttributeVal(entity, Enum.Event.RARITY_SPELL) if spell else self.getAttributeVal(entity, Enum.Event.RARITY_MINION)
-                    if spell:
-                        cardCost = self.getAttributeVal(entity, Enum.Event.COST_SPELL)
-                        cardAttack = None
-                        cardHealth = None
-                    else:
-                        cardAttack = self.getAttributeVal(entity, Enum.Event.ATTACK)
-                        cardHealth = self.getAttributeVal(entity, Enum.Event.HEALTH)
-                        cardCost = self.getAttributeVal(entity, Enum.Event.COST_MINION)
-            return cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardDescription
-        except: print(f"ERROR: No card found by id {cardId}") ; return None
+                    for tag in entity:
+                        # Find way to find card type faster
+                        enumID = tag.attrib['enumID']
+                        if enumID == Enum.EnumID.CARDTYPE.value:
+                            val = int(tag.attrib['value'])
+                            if val == 3: cardType = Enum.CardType.HERO.value
+                            elif val == 4: cardType = Enum.CardType.MINION.value
+                            elif val == 5: cardType = Enum.CardType.SPELL.value
+                            elif val == 6: cardType = None
+                            elif val == 7: cardType = Enum.CardType.WEAPON.value
+                        elif enumID == Enum.EnumID.COST.value:
+                            cardCost = int(tag.attrib['value'])
+                        elif enumID == Enum.EnumID.ATK.value:
+                            cardAttack = int(tag.attrib['value'])
+                        elif enumID == Enum.EnumID.HEALTH.value:
+                            cardHealth = int(tag.attrib['value'])
+                        elif enumID == Enum.EnumID.RARITY.value:
+                            cardRarity = int(tag.attrib['value'])
+                        elif enumID == Enum.EnumID.CARDTEXT.value:
+                            cardText = tag[1].text
+
+            cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText
+            return cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText
+        except:
+            print(f"error fetching card {cardName}")
+            #print(f"ERROR: name ==> {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}")
 
     def saveCard(self, cardId):
         cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardDescription = self.fetchCard(cardId)
@@ -98,8 +109,17 @@ class CardDB:
         return jsonDeck
 
 db = CardDB()
+cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('DED_500')
+print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
+cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('YOP_034') # 
+print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
+cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('YOP_013') # 
+print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
+cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('AV_203') # 
+print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
+db.fetchCard('DED_004')
 #db.convertDeck(db.importDeck(deckString1))
-convDeck = db.convertDeck(db.importDeck(deckThiefRouge))
-db.saveDeck(convDeck)
+#convDeck = db.convertDeck(db.importDeck(deckThiefRouge))
+#db.saveDeck(convDeck)
 
 
