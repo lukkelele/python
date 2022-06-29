@@ -6,11 +6,12 @@ import CardDB
 
 
 #           cardId   cardName           Type Cost Atk Health 
-cardIds = {'SW_433':['Seek Guidance', 'Spell', 1, None, None, 5, None],
-           'YOP_035':['Moonfang', 'Minion', 5, 6, 3, 4, None]
+cardIds = {'SW_433':['64349', 'Seek Guidance', 'Spell', 1, None, None, 5, None],
+           'YOP_035':['61973','Moonfang', 'Minion', 5, 6, 3, 4, None]
            }
+deckString1 = "AAECAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
 
-db = CardDB.CardDB(verbose=True) 
+db = CardDB.CardDB(verbose=False) 
 
 
 def test_getTagValue(root):
@@ -19,13 +20,33 @@ def test_getTagValue(root):
 
 def test_getCardStats():
     for cardId in cardIds:
-        name, cardType, cost, attack, health, rarity, description = db.fetchCard(cardId)
-        assert name == cardIds[cardId][0]
-        assert cardType == cardIds[cardId][1] 
-        assert cost == cardIds[cardId][2] 
-        assert attack == cardIds[cardId][3] 
-        assert health == cardIds[cardId][4] 
+        cardDBF, name, cardType, cost, attack, health, rarity, description = db.fetchCard(cardId)
+        assert cardDBF == cardIds[cardId][0]
+        assert name == cardIds[cardId][1]
+        assert cardType == cardIds[cardId][2] 
+        assert cost == cardIds[cardId][3] 
+        assert attack == cardIds[cardId][4] 
+        assert health == cardIds[cardId][5] 
 
-#test_getTagValue(db.root)
+def testFetchingCards():
+    db.fetchCard('YOP_035') # minion
+    db.fetchCard('YOP_020') # 
+    db.fetchCard('YOP_018') # 
+    db.fetchCard('YOP_019') # 
+    db.fetchCard('YOP_019t') # 
+    db.fetchCard('YOP_034') # 
+    db.fetchCard('YOP_013e') # 
+
+def testDeckImport(deckString: str):
+    db.importDeck(deckString1)
+
+def testDeckConversion(deck):
+    db.convertDeck(deck)
+
 test_getCardStats()
+testFetchingCards()
+testDeckImport(deckString1)
+#db.fetchCard('SW_433')
+#db.fetchCard('YOP_035')
+
 print("Testing successful!")
