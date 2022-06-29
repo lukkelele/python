@@ -115,16 +115,3 @@ class CardDB:
 
 deckString1 = "AAECAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
 
-db = CardDB(verbose=False)
-#db.fetchCard('SW_433') # spell
-db.fetchCard('YOP_035') # minion
-db.fetchCard('YOP_020') # 
-db.fetchCard('YOP_018') # 
-db.fetchCard('YOP_019') # 
-db.fetchCard('YOP_019t') # 
-db.fetchCard('YOP_034') # 
-db.fetchCard('YOP_013e') # 
-#db.saveCard('SW_433')
-d = db.importDeck(deckString1)
-#db.saveDeck(d)
-db.convertDeck(d)
