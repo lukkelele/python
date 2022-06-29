@@ -1,41 +1,59 @@
 
 
 class Card:
-
-    def __init__(self, cardId=None, cardName=None, attack=None, health=None, cost=None):
+    
+    # TODO: Add enum for cardType
+    def __init__(self, cardId=None, cardName=None, cardType='MINION', cost=None, attack=None, health=None):
         self.cardId = cardId
         self.name = cardName
+        self.cardType = cardType
+        self.cost = cost
         self.attack = attack
         self.health = health
-        self.cost = cost
         self.pos = None
         self.image = None  # implemented later
 
 
-    def getName(self):
+    @property
+    def name(self):
         return self.name
 
-    def setName(self, name):
+    @name.setter
+    def name(self, name):
         self.name = name
 
-    def getHealth(self):
+    @property
+    def health(self):
         return self.health
-
-    def setHealth(self, health):
+    
+    @health.setter
+    def health(self, health):
         self.health = health
 
-    def getCost(self):
+    @property
+    def cardType(self):
+        return self.cardType
+
+    @cardType.setter
+    def cardType(self, cardType):
+        self.cardType = cardType
+
+    @property
+    def cost(self):
         return self.cost
 
-    def setCost(self, cost):
-        self.cost = cost   
+    @cost.setter
+    def cost(self, cost):
+        self.cost = cost
 
-    def getPos(self):
+    @property
+    def pos(self):
         return self.pos
 
-    def setPost(self, pos):
+    @pos.setter
+    def pos(self, pos):
         self.pos = pos
-        
+
 
 
 c = Card()

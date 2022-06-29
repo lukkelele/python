@@ -1,6 +1,9 @@
 import subprocess ; path = subprocess.run('pwd', capture_output=True).stdout.decode('utf-8').strip('\n')
-import sys ; sys.path.insert(0, f"{path}/src") ; print(sys.path)
+try: homedir = subprocess.run('../test/getPath.sh', capture_output=True).stdout.decode('utf-8').strip('\n')
+except: homedir = subprocess.run('test/getPath.sh', capture_output=True).stdout.decode('utf-8').strip('\n')
+import sys ; sys.path.insert(0, f"{homedir}/Code/python/hs_decktracker/src") ; sys.path.insert(0, f"{homedir}/Code/python/hs_decktracker/test") ; print(sys.path)
 import CardDB
+
 
 #           cardId   cardName           Type Cost Atk Health 
 cardIds = {'SW_433':['Seek Guidance', 'Spell', 1, None, None, 5, None],
