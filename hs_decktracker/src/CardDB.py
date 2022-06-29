@@ -1,9 +1,10 @@
 from xml.dom import minidom
+from Entities import Deck
 import hearthstone_data as hsdata
 import xml.etree.ElementTree as ET
 import xml.etree as etree
 import Enums as Enum
-from Entities import Deck
+import json
 import time
 
 class CardDB:
@@ -19,8 +20,6 @@ class CardDB:
         return ET.parse(self.carddefs_path).getroot()
     
     # Get the value for a specific attribute within an entity.
-    # The passed 'enum' parameter holds the correct index for
-    # the type of card that is getting checked.
     def getAttributeVal(self, entity, enum):
         try: return int(entity[enum.value].attrib['value'])
         except: return None
@@ -33,7 +32,7 @@ class CardDB:
         try:
             entities = self.root.findall(f"Entity")
             for entity in entities:
-                if entity.attrib['CardID'] == cardId or entity.attrib['ID'] == cardId:
+                if entity.attrib['CardID'] == cardId or entity.attrib['ID'] == str(cardId):
                     for tag in entity:
                         # Find way to find card type faster
                         if tag.attrib['enumID'] == '202':
@@ -67,7 +66,7 @@ class CardDB:
         cardCost = self.getAttributeVal(entity, Enum.Event.COST_SPELL) if spell else self.getAttributeVal(entity, Enum.Event.COST_MINION)
         print(f"\n===| CARD\nName: {cardName}\nDBF: {cardDBF}\n", end="")
         if spell:
-            print(f"Cost: {cardCost}\nType: Spell\nRarity: {cardRarity}\nDescription: \n")
+            print(f"Cost: {cardCost}\nType: Spell\nRarity: {cardRarity}\nDescription: ")
         else:
             cardAttack = self.getAttributeVal(entity, Enum.Event.ATTACK)
             cardHealth = self.getAttributeVal(entity, Enum.Event.HEALTH)
@@ -88,13 +87,30 @@ class CardDB:
                 "description": 0#cardDescription TODO: REMOVE HASHTAG WHEN PRETTY PRINT IS AVAILABLE
                 }
         print(f"Saved card: \n{card}")
-    
 
-    def saveDeck(self, deckString):
+    def saveDeck(self, deck):
+        print("Saving deck!")
+        with open('./decks.json', 'r') as json_file:
+            try: file = json.load(json_file)
+            except: file = []
+        file.append(deck)
+        with open('./decks.json', 'w') as json_file:
+            json.dump(file, json_file, indent=2)
+
+    def importDeck(self, deckString):
         print(f"Saving deck by deckstring {deckString}")
         deck = Deck.importDeck(deckString)
         for card in deck.cards:
             print(f"{deck.cards.index(card)+1}. {card}")
+        print(type(deck.cards))
+        return deck.cards
+
+    def convertDeck(self, deck: list):
+        print("Converting deck")
+        for card in deck:
+            print(f"{deck.index(card)+1}. Card: {card}")
+            cardInfo = self.fetchCard(card[0])
+
 
 
 deckString1 = "AAECAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
@@ -109,4 +125,6 @@ db.fetchCard('YOP_019t') #
 db.fetchCard('YOP_034') # 
 db.fetchCard('YOP_013e') # 
 #db.saveCard('SW_433')
-#db.saveDeck(deckString1)
+d = db.importDeck(deckString1)
+#db.saveDeck(d)
+db.convertDeck(d)

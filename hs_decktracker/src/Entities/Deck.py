@@ -22,5 +22,8 @@ class Deck:
     def cardDrawn(self, cardId):
         print(f"Card DRAWN ==> {cardId}")
 
+    def addCard(self, cardId):
+        print(f"Adding card with id: {cardId}")
+
 
 outputDeck("AAEBAQcAAAQBAwIDAwMEAw==")

@@ -39,7 +39,7 @@ class Json_handler:
         return conv_json
 
     def write_json(self, data, file_path='./data.json'):
-        with open(output, 'w') as json_file:
+        with open(file_path, 'w') as json_file:
             json.dump(data, json_file, indent=2)
 
 j = Json_handler()
