@@ -49,11 +49,20 @@ class CardDB:
     def fetchCard(self, cardId):
         for card in self.db:
             if cardId == card['dbfId'] or cardId == card['id']:
+                cardAttack, cardHealth = None, None
+                if isinstance(cardId, int) == False: # if CardID and not DBF
+                    cardID = cardId
+                    cardDBF = card['dbfId']
+                else:
+                    cardDBF = cardId
+                    cardID = card['id']
                 cardName = card['name']
-                cardID = card['id']
                 cardType = card['type']
-
-                print(f"CARD INFO\nname: {cardName}\nid: {cardID}\ntype: {cardType}")
+                cardCost = card['cost']
+                cardRarity = card['rarity']
+                cardSet = card['set']
+                cardDescription = card['text']
+        return cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardDescription                
 
 
     def saveCard(self, cardId):
@@ -69,6 +78,7 @@ class CardDB:
                 "rarity": cardRarity,
                 "description": 0 # Description 
                 }
+        print(card)
         return card
 
     def saveDeck(self, deck):
@@ -102,4 +112,6 @@ deckString1 = "AAECcAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPW
 deckThiefRouge = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
 
 db = CardDB()
-db.fetchCard('YOP_035')
+#db.fetchCard('YOP_035')
+db.saveCard('YOP_035')
+db.saveCard(61973)
