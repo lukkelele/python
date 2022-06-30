@@ -2,6 +2,8 @@ from Entities import Deck
 import hearthstone_data as hsdata
 import xml.etree.ElementTree as ET
 import xml.etree as etree
+import urllib.request 
+import requests
 import Enums as Enum
 import json
 import time
@@ -9,13 +11,12 @@ import time
 
 class CardDB:
 
-    def __init__(self, verbose=False):
-        if verbose: print(f"Card database object created\nCarddefs path: {hsdata.get_carddefs_path()}")
+
+    def __init__(self):
         self.carddefs_path = hsdata.get_carddefs_path()
         self.carddefs = open(self.carddefs_path, 'r')
         self.root = self.getRoot()
-        if verbose: print('Root created!')
-
+        self.db = self.getCardData()
 
     def getRoot(self):
         return ET.parse(self.carddefs_path).getroot()
@@ -25,40 +26,35 @@ class CardDB:
         try: return int(entity[enum.value].attrib['value'])
         except: return None
 
-    # TODO: Pretty Printing for card description. ADD SUPPORT FOR SECONDARY SPELLS, e.g Mana Biscuit
-    # Get a cards stats and information from the XML card database.
-    def fetchCard(self, cardId):
+    # TODO: Add automatic updates from the latest patches when they surface on the site.
+    def getCardData(self):
+        url = 'https://api.hearthstonejson.com/v1/121569/enUS/cards.json'
         try:
-            entities = self.root.findall(f"Entity")
-            for entity in entities:
-                if entity.attrib['CardID'] == cardId or entity.attrib['ID'] == str(cardId):
-                    cardAttack, cardHealth, cardCost, cardType, cardRarity = None, None, None, None, None
-                    cardId = entity.attrib['CardID']
-                    cardDBF = entity.attrib['ID']
-                    cardName = entity[0][1].text
-                    for tag in entity:
-                        enumID = tag.attrib['enumID']
-                        if enumID == Enum.EnumID.CARDTYPE.value:
-                            val = int(tag.attrib['value'])
-                            if val == 3: cardType = Enum.CardType.HERO.value
-                            elif val == 4: cardType = Enum.CardType.MINION.value
-                            elif val == 5: cardType = Enum.CardType.SPELL.value
-                            elif val == 6: cardType = None
-                            elif val == 7: cardType = Enum.CardType.WEAPON.value
-                        elif enumID == Enum.EnumID.COST.value:
-                            cardCost = int(tag.attrib['value'])
-                        elif enumID == Enum.EnumID.ATK.value:
-                            cardAttack = int(tag.attrib['value'])
-                        elif enumID == Enum.EnumID.HEALTH.value:
-                            cardHealth = int(tag.attrib['value'])
-                        elif enumID == Enum.EnumID.RARITY.value:
-                            cardRarity = int(tag.attrib['value'])
-                        elif enumID == Enum.EnumID.CARDTEXT.value:
-                            cardText = "" #tag[1].text
-            return cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText
+            print("Local card database found")
+            with open('./cards.json', "r") as file:
+                data = json.loads(file.read())
         except:
-            print(f"error fetching card {cardName}")
-            #print(f"ERROR: name ==> {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}")
+            print("Card database not found! Downloading cards...")
+            jsonFile = requests.get(url)
+            print(type(jsonFile))
+            text = jsonFile.text
+            print(type(text))
+            data = json.loads(text)
+            print(type(data))
+            with open('./cards.json', 'w') as file:
+                json.dump(data, file, indent=2)
+        return data
+        
+
+    def fetchCard(self, cardId):
+        for card in self.db:
+            if cardId == card['dbfId'] or cardId == card['id']:
+                cardName = card['name']
+                cardID = card['id']
+                cardType = card['type']
+
+                print(f"CARD INFO\nname: {cardName}\nid: {cardID}\ntype: {cardType}")
+
 
     def saveCard(self, cardId):
         cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardDescription = self.fetchCard(cardId)
@@ -106,15 +102,4 @@ deckString1 = "AAECcAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPW
 deckThiefRouge = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
 
 db = CardDB()
-#cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('YOP_034') # 
-#print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
-#cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('YOP_013') # 
-#print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
-#cardId, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardText = db.fetchCard('AV_203') # 
-#print(f"name: {cardName} | id : {cardId} | cost : {cardCost} | attack : {cardAttack} | type : {cardType} | rarity: {cardRarity} | text : {cardText} | health: {cardHealth}\n")
-#db.fetchCard('DED_004')
-db.convertDeck(db.importDeck(deckString1))
-#convDeck = db.convertDeck(db.importDeck(deckThiefRouge))
-#db.saveDeck(convDeck)
-
-
+db.fetchCard('YOP_035')
