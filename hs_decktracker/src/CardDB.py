@@ -12,19 +12,45 @@ import time
 # Check out if lost cards exists in XML format
 
 class CardDB:
+    """
+    Class used as a database for storing and obtaining cards
+
+    ...
+
+    Attributes
+    ----------
+    carddefs_path : str
+        a string storing the path of the CardDefs.xml file
+    db : list
+        a list with all the cards
+    
+    Methods
+    -------
+    getCardsData()
+        Returns all the cards from the json file
+    getCard(cardId: str)
+        Get a specific cards information
+    saveCard(cardId: str)
+        Convert a specific card in to a saveable format
+    saveDeck(deck: dict)
+        Save a deck in to a local file
+    importDeck(deck: list)
+        Create a deck from a deckstring
+    convertDeck(deck: list)
+        Convert a deck from one format to another one 
+    """
 
     def __init__(self):
         self.carddefs_path = hsdata.get_carddefs_path()
-        self.carddefs = open(self.carddefs_path, 'r')
-        self.root = self.getRoot()
-        self.db = self.getCardData()
+        self.db = self.getCardsData()
 
-    def getRoot(self):
+    # FIXME: DEPRECATED
+    def getRoot(self) -> ET.Element:
         return ET.parse(self.carddefs_path).getroot()
     
     # TODO: Add automatic updates from the latest patches when they surface on the site.
-    def getCardData(self):
-        """Sets up the json card database at program start.
+    def getCardsData(self) -> list:
+        """Sets up the json card database at program start
 
         If a local json copy of the card database is not found
         then a copy will be downloaded from the web.
@@ -38,17 +64,14 @@ class CardDB:
         except:
             print("Card database not found! Downloading cards...")
             jsonFile = requests.get(url)
-            print(type(jsonFile))
             text = jsonFile.text
-            print(type(text))
             data = json.loads(text)
-            print(type(data))
             with open('./cards.json', 'w') as file:
                 json.dump(data, file, indent=2)
         return data
         
-    def fetchCard(self, cardId):
-        """Function to get a card with all its possible attributes.
+    def getCard(self, cardId: str) -> tuple:
+        """Get a card with all its attributes
 
         There are 8 return values for a card. 
         ID, DBF, name, type, cost, rarity, set and description.
@@ -89,12 +112,13 @@ class CardDB:
         order: ID, DBF, name, type, cost, attack, health, rarity, desc.
         This function takes care of that conversion and formats properly.
         """
+
         cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth,\
         cardRarity, cardDescription = None, None, None, None, None, None, None,\
                                       None, None
         try:
             cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth,\
-            cardRarity, cardDescription = self.fetchCard(cardId)
+            cardRarity, cardDescription = self.getCard(cardId)
         except:
             print(f"Couldn't save card by id {cardId}")
         card = {
@@ -111,13 +135,14 @@ class CardDB:
         return card
 
     def saveDeck(self, deck: dict) -> None:
-        """Saves a deck of 30 cards in to a local json file.
+        """Saves a deck of 30 cards in to a local json file
 
         If no local file named 'decks.json' is found a new file
         is created and stores the passed 'deck' in to it.
         If a file is found then the deck to be saved is appended
         on to the existing file.
         """
+
         print("Saving deck!")
         with open('./decks.json', 'r') as json_file:
             print("Reading..")
