@@ -1,15 +1,14 @@
 from Entities import Deck
-import hearthstone_data as hsdata
 import xml.etree.ElementTree as ET
+import hearthstone_data as hsdata
 import xml.etree as etree
 import urllib.request 
-import requests
 import Enums as Enum
+import requests
 import json
 import time
 
-# SOME ISSUES WITH DBF ids .... 
-# Check out if lost cards exists in XML format
+
 
 class CardDB:
     """
@@ -81,20 +80,22 @@ class CardDB:
         for card in self.db:
             if cardId == card['dbfId'] or cardId == card['id']:
                 try:
-                    cardAttack, cardHealth = None, None
-                    # Check if the passed parameter 'cardId' is a string
-                    # or an integer.
-                    # String -> cardID  &  Integer -> DBF
                     if isinstance(cardId, int) == False: # if CardID and not DBF
                         cardID = cardId
                         cardDBF = card['dbfId']
                     else:
                         cardDBF = cardId
                         cardID = card['id']
+                    try: cardRarity = card['rarity']
+                    except: cardRarity = None
+                    try: cardCost = card['cost']
+                    except: cardCost = None
+                    try: cardAttack = card['attack']
+                    except: cardAttack = None
+                    try: cardHealth = card['health']
+                    except: cardHealth = None
                     cardName = card['name']
                     cardType = card['type']
-                    cardCost = card['cost']
-                    cardRarity = card['rarity']
                     cardSet = card['set']
                     cardDescription = card['text']
                 except:
@@ -158,7 +159,6 @@ class CardDB:
 
         print(f"Saving deck by deckstring {deckString}")
         deck = Deck.importDeck(deckString)
-        #for card in deck.cards: print(f"{deck.cards.index(card)+1}. {card}")
         return deck.cards
 
     def convertDeck(self, deck: list) -> list:
@@ -175,19 +175,5 @@ class CardDB:
             jsonCard = self.saveCard(cardDBF)
             jsonDeck.append(jsonCard)
         return jsonDeck
-
-
-deckString1 = "AAECAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
-deckThiefRouge = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
-
-db = CardDB()
-db.saveCard('YOP_035')
-#db.saveCard(61973)
-#db.saveCard(66939)
-deck1 = db.importDeck(deckString1)
-convertDeck1 = db.convertDeck(deck1)
-#rogueDeck = db.importDeck(deckThiefRouge)
-#convertedRogueDeck = db.convertDeck(rogueDeck)
-print(convertDeck1)
 
 

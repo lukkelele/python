@@ -6,22 +6,24 @@ import CardDB
 
 
 #           cardId   cardName           Type Cost Atk Health 
-cardIds = {'SW_433':['64349', 'Seek Guidance', 'Spell', 1, None, None, 5, None],
-           'YOP_035':['61973','Moonfang', 'Minion', 5, 6, 3, 4, None]
+cardIds = {'SW_433':['64349', 'Seek Guidance', 'SPELL', 1, None, None, None, 5, None],
+           'YOP_035':['61973','Moonfang', 'MINION', 5, 6, 3, None, 4, None]
            }
 deckString1 = "AAECAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
+deckThiefRouge = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
 
-db = CardDB.CardDB(verbose=False) 
+
+db = CardDB.CardDB() 
 
 
 def test_getTagValue(root):
     for child in root.iter('Tag'):
         print(child.attrib)
 
-def test_getCardStats():
+def testGetCardStats():
     for cardId in cardIds:
-        cardDBF, name, cardType, cost, attack, health, rarity, description = db.fetchCard(cardId)
-        assert cardDBF == cardIds[cardId][0]
+        CardID, cardDBF, name, cardType, cost, attack, health, rarity, description = db.getCard(cardId)
+        assert cardDBF == int(cardIds[cardId][0])
         assert name == cardIds[cardId][1]
         assert cardType == cardIds[cardId][2] 
         assert cost == cardIds[cardId][3] 
@@ -29,15 +31,22 @@ def test_getCardStats():
         assert health == cardIds[cardId][5] 
 
 def testFetchingCards():
-    db.fetchCard('YOP_035') # minion
-    db.fetchCard('YOP_020') # 
-    db.fetchCard('YOP_018') # 
-    db.fetchCard('YOP_019') # 
-    db.fetchCard('YOP_019t') # 
-    db.fetchCard('YOP_034') # 
-    db.fetchCard('YOP_013e') # 
-    db.fetchCard('AV_203') # 
-    db.fetchCard('DED_004')
+    db.getCard('YOP_035') # minion
+    db.getCard('YOP_020') # 
+    db.getCard('YOP_018') # 
+    db.getCard('YOP_019') # 
+    db.getCard('YOP_019t') # 
+    db.getCard('YOP_034') # 
+    db.getCard('YOP_013e') # 
+
+def testSavingCards():
+    db.saveCard('VAN_HERO_10bpe')
+    db.saveCard('VAN_HERO_05bp2')
+    db.saveCard('VAN_EX1_tk11')
+    db.saveCard('Story_10_BloodElfAllies')
+    db.saveCard("FB_BuildABrawl003c")
+    db.saveCard('DRG_031')
+    db.saveCard('DRG_031e')
 
 def testDeckImport(deckString: str):
     db.importDeck(deckString1)
@@ -45,10 +54,9 @@ def testDeckImport(deckString: str):
 def testDeckConversion(deck):
     db.convertDeck(deck)
 
-test_getCardStats()
+
+testGetCardStats()
 testFetchingCards()
 testDeckImport(deckString1)
-#db.fetchCard('SW_433')
-#db.fetchCard('YOP_035')
-
+testSavingCards()
 print("Testing successful!")
