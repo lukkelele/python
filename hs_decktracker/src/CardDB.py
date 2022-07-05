@@ -43,10 +43,6 @@ class CardDB:
         self.carddefs_path = hsdata.get_carddefs_path()
         self.db = self.getCardsData()
 
-    # FIXME: DEPRECATED
-    def getRoot(self) -> ET.Element:
-        return ET.parse(self.carddefs_path).getroot()
-    
     # TODO: Add automatic updates from the latest patches when they surface on the site.
     def getCardsData(self) -> list:
         """Sets up the json card database at program start
@@ -57,11 +53,10 @@ class CardDB:
 
         url = 'https://api.hearthstonejson.com/v1/121569/enUS/cards.json'
         try:
-            print("Local card database found")
             with open('./cards.json', "r") as file:
                 data = json.loads(file.read())
         except:
-            print("Card database not found! Downloading cards...")
+            print("Card database not found! Downloading cards from web...")
             jsonFile = requests.get(url)
             text = jsonFile.text
             data = json.loads(text)
@@ -69,7 +64,7 @@ class CardDB:
                 json.dump(data, file, indent=2)
         return data
         
-    def getCard(self, cardId: str) -> tuple:
+    def getCard(self, cardId) -> tuple:
         """Get a card with all its attributes
 
         There are 8 return values for a card. 
@@ -94,18 +89,19 @@ class CardDB:
                     except: cardAttack = None
                     try: cardHealth = card['health']
                     except: cardHealth = None
+                    try: cardText = card['text']
+                    except: cardText = None
                     cardName = card['name']
                     cardType = card['type']
                     cardSet = card['set']
-                    cardDescription = card['text']
                 except:
                     print(f"Couldnt find card by id {cardId}")
-                    return None, None, "NO NAME", None, None,\
+                    return None, None, None, None, None,\
                            None, None, None
         return cardID, cardDBF, cardName, cardType, cardCost, cardAttack,\
-               cardHealth, cardRarity, cardDescription                
+               cardHealth, cardRarity, cardText                
 
-    def saveCard(self, cardId: str) -> dict:
+    def saveCard(self, cardId) -> dict:
         """Gets a cards attributes and return a formatted version
 
         When saving decks locally for each individual player a conversion
@@ -115,13 +111,12 @@ class CardDB:
         """
 
         cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth,\
-        cardRarity, cardDescription = None, None, None, None, None, None, None,\
-                                      None, None
+        cardRarity, cardText = None, None, None, None, None, None, None,\
+                               None, None
         try:
             cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth,\
-            cardRarity, cardDescription = self.getCard(cardId)
-        except:
-            print(f"Couldn't save card by id {cardId}")
+            cardRarity, cardText = self.getCard(cardId)
+        except: print(f"Couldn't save card by id {cardId}")
         card = {
                 "cardId": cardID,
                 "DBF": cardDBF,
@@ -135,7 +130,8 @@ class CardDB:
                 }
         return card
 
-    def saveDeck(self, deck: dict) -> None:
+    # TODO: Add name for each deck in the saved file
+    def saveDeck(self, deck: list):
         """Saves a deck of 30 cards in to a local json file
 
         If no local file named 'decks.json' is found a new file
@@ -144,31 +140,35 @@ class CardDB:
         on to the existing file.
         """
 
-        print("Saving deck!")
-        with open('./decks.json', 'r') as json_file:
-            print("Reading..")
-            try: file = json.load(json_file)
-            except: file = []
-        file.append(deck)
-        with open('./decks.json', 'w') as json_file:
-            print("Opening")
-            json.dump(file, json_file, indent=2)
+        print("Saving deck")
+        try:
+            with open('./decks.json', 'r') as json_file:
+                print("Reading decks.json ...")
+                try: file = json.load(json_file)
+                except: file = []
+            file.append(deck)
+            with open('./decks.json', 'w') as json_file:
+                print("Opening decks.json ...")
+                json.dump(file, json_file, indent=2)
+        except:
+            print("No local decks.json file found, creating one...")
+            with open('./decks.json', 'w') as json_file:
+                print("Opening decks.json ...")
+                json.dump(deck, json_file, indent=2)
 
     def importDeck(self, deckString: str):
         """Imports a deck of cards with the help of a deckstring"""
 
-        print(f"Saving deck by deckstring {deckString}")
         deck = Deck.importDeck(deckString)
         return deck.cards
 
-    def convertDeck(self, deck: list) -> list:
+    def convertDeck(self, deck: list):
         """Converts a deck of cards in to a specific format
 
         Reformats each card in a deck to a specific format used
         to provide a general structure for saving decks locally
         """
-        
-        print("Converting deck")
+
         jsonDeck = []
         for card in deck:
             cardDBF = card[0]

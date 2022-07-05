@@ -1,7 +1,7 @@
 import subprocess ; path = subprocess.run('pwd', capture_output=True).stdout.decode('utf-8').strip('\n')
 try: homedir = subprocess.run('../test/getPath.sh', capture_output=True).stdout.decode('utf-8').strip('\n')
 except: homedir = subprocess.run('test/getPath.sh', capture_output=True).stdout.decode('utf-8').strip('\n')
-import sys ; sys.path.insert(0, f"{homedir}/Code/python/hs_decktracker/src") ; sys.path.insert(0, f"{homedir}/Code/python/hs_decktracker/test") ; print(sys.path)
+import sys ; sys.path.insert(0, f"{homedir}/Code/python/hs_decktracker/src") ; sys.path.insert(0, f"{homedir}/Code/python/hs_decktracker/test")
 import CardDB
 
 
@@ -10,15 +10,27 @@ cardIds = {'SW_433':['64349', 'Seek Guidance', 'SPELL', 1, None, None, None, 5, 
            'YOP_035':['61973','Moonfang', 'MINION', 5, 6, 3, None, 4, None]
            }
 deckString1 = "AAECAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
-deckThiefRouge = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
+deckThiefRogue = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
+deckMechPaladin = "AAEBAZ8FBKCAA5+3A+CLBLCyBA2UD5/1Avb9Atb+Atf+AoeuA/mkBJK1BOG1BN65BNS9BLLBBNrTBAA="
+deckNagaPriest = "AAECAa0GBPvoA4f3A4ujBImyBA2tigSEowSJowTtsQSEsgSIsgSktgSltgSntgSHtwSWtwSywQT10wQA"
 
 
 db = CardDB.CardDB() 
 
 
-def test_getTagValue(root):
-    for child in root.iter('Tag'):
-        print(child.attrib)
+def testImportAndSaveDeck():
+    deck1 = db.convertDeck(db.importDeck(deckString1))
+    deck2 = db.convertDeck(db.importDeck(deckThiefRogue))
+    deck3 = db.convertDeck(db.importDeck(deckMechPaladin))
+    deck4 = db.convertDeck(db.importDeck(deckNagaPriest))
+    print(f"Saving deck1 ...")
+    db.saveDeck(deck1)
+    print(f"Saving deck2 ...")
+    db.saveDeck(deck2)
+    print(f"Saving deck3 ...")
+    db.saveDeck(deck3)
+    print(f"Saving deck4 ...")
+    db.saveDeck(deck4)
 
 def testGetCardStats():
     for cardId in cardIds:
@@ -47,6 +59,10 @@ def testSavingCards():
     db.saveCard("FB_BuildABrawl003c")
     db.saveCard('DRG_031')
     db.saveCard('DRG_031e')
+   # db.saveCard(80121)
+   # db.saveCard(72473)
+    db.saveCard('CORE_LOEA10_3')
+   # db.saveCard(69723)
 
 def testDeckImport(deckString: str):
     db.importDeck(deckString1)
@@ -55,8 +71,9 @@ def testDeckConversion(deck):
     db.convertDeck(deck)
 
 
-testGetCardStats()
-testFetchingCards()
-testDeckImport(deckString1)
-testSavingCards()
+#testGetCardStats()
+#testFetchingCards()
+#testDeckImport(deckString1)
+#testSavingCards()
+testImportAndSaveDeck()
 print("Testing successful!")
