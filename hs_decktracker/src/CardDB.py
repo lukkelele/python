@@ -24,6 +24,12 @@ class CardDB:
     
     # TODO: Add automatic updates from the latest patches when they surface on the site.
     def getCardData(self):
+        """Sets up the json card database at program start.
+
+        If a local json copy of the card database is not found
+        then a copy will be downloaded from the web.
+        """
+
         url = 'https://api.hearthstonejson.com/v1/121569/enUS/cards.json'
         try:
             print("Local card database found")
@@ -42,11 +48,19 @@ class CardDB:
         return data
         
     def fetchCard(self, cardId):
+        """Function to get a card with all its possible attributes.
+
+        There are 8 return values for a card. 
+        ID, DBF, name, type, cost, rarity, set and description.
+        If a value cannot be fetched, a value of None is its replacement.
+        """
+
         for card in self.db:
             if cardId == card['dbfId'] or cardId == card['id']:
                 try:
                     cardAttack, cardHealth = None, None
-                    # Check if the passed parameter 'cardId' is a string or an integer
+                    # Check if the passed parameter 'cardId' is a string
+                    # or an integer.
                     # String -> cardID  &  Integer -> DBF
                     if isinstance(cardId, int) == False: # if CardID and not DBF
                         cardID = cardId
@@ -60,28 +74,50 @@ class CardDB:
                     cardRarity = card['rarity']
                     cardSet = card['set']
                     cardDescription = card['text']
-                except: print(f"Couldnt find card by id {cardId}") ; return None, None, cardName, None, None, None, None, None
-        return cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardDescription                
+                except:
+                    print(f"Couldnt find card by id {cardId}")
+                    return None, None, "NO NAME", None, None,\
+                           None, None, None
+        return cardID, cardDBF, cardName, cardType, cardCost, cardAttack,\
+               cardHealth, cardRarity, cardDescription                
 
+    def saveCard(self, cardId: str) -> dict:
+        """Gets a cards attributes and return a formatted version
 
-    def saveCard(self, cardId):
+        When saving decks locally for each individual player a conversion
+        takes place with a specific json format. This is in a specific
+        order: ID, DBF, name, type, cost, attack, health, rarity, desc.
+        This function takes care of that conversion and formats properly.
+        """
+        cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth,\
+        cardRarity, cardDescription = None, None, None, None, None, None, None,\
+                                      None, None
         try:
-            cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth, cardRarity, cardDescription = self.fetchCard(cardId)
-            card = {
-                    "cardId": cardID,
-                    "DBF": cardDBF,
-                    "name": cardName,
-                    "cardType": cardType,
-                    "cost": cardCost,
-                    "attack": cardAttack,
-                    "health": cardHealth,
-                    "rarity": cardRarity,
-                    "description": 0 # Description 
-                    }
-        except: print(f"Couldn't save card by id {cardId}") ; card = None
+            cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth,\
+            cardRarity, cardDescription = self.fetchCard(cardId)
+        except:
+            print(f"Couldn't save card by id {cardId}")
+        card = {
+                "cardId": cardID,
+                "DBF": cardDBF,
+                "name": cardName,
+                "cardType": cardType,
+                "cost": cardCost,
+                "attack": cardAttack,
+                "health": cardHealth,
+                "rarity": cardRarity,
+                "description": 0 # Description 
+                }
         return card
 
-    def saveDeck(self, deck):
+    def saveDeck(self, deck: dict) -> None:
+        """Saves a deck of 30 cards in to a local json file.
+
+        If no local file named 'decks.json' is found a new file
+        is created and stores the passed 'deck' in to it.
+        If a file is found then the deck to be saved is appended
+        on to the existing file.
+        """
         print("Saving deck!")
         with open('./decks.json', 'r') as json_file:
             print("Reading..")
@@ -92,13 +128,21 @@ class CardDB:
             print("Opening")
             json.dump(file, json_file, indent=2)
 
-    def importDeck(self, deckString):
+    def importDeck(self, deckString: str):
+        """Imports a deck of cards with the help of a deckstring"""
+
         print(f"Saving deck by deckstring {deckString}")
         deck = Deck.importDeck(deckString)
         #for card in deck.cards: print(f"{deck.cards.index(card)+1}. {card}")
         return deck.cards
 
-    def convertDeck(self, deck: list):
+    def convertDeck(self, deck: list) -> list:
+        """Converts a deck of cards in to a specific format
+
+        Reformats each card in a deck to a specific format used
+        to provide a general structure for saving decks locally
+        """
+        
         print("Converting deck")
         jsonDeck = []
         for card in deck:
