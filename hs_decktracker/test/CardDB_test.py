@@ -16,6 +16,15 @@ deckThiefRogue = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQ
 deckMechPaladin = "AAEBAZ8FBKCAA5+3A+CLBLCyBA2UD5/1Avb9Atb+Atf+AoeuA/mkBJK1BOG1BN65BNS9BLLBBNrTBAA="
 deckNagaPriest = "AAECAa0GBPvoA4f3A4ujBImyBA2tigSEowSJowTtsQSEsgSIsgSktgSltgSntgSHtwSWtwSywQT10wQA"
 
+cards = ['YOP_035', 'YOP_020', 'YOP_034', 'DRG_031', 'VAN_EX1_tk11',
+        'DRG_031e', '80121', 'VAN_HERO_05bp2']
+Spell1 = 'TRL_305'
+Minion1 = 'EX1_103'
+Weapon1 = 'VAN_CS2_080'
+Enchantment1 = 'VAN_CS2_103e2'
+Hero1 = 'YOD_009'
+Hero_Power1 = 'YOD_009h'
+cardTypes = [Spell1, Minion1, Weapon1, Enchantment1, Hero1, Hero_Power1]
 
 db = CardDB.CardDB() 
 
@@ -86,11 +95,17 @@ def testXmlParser():
     XmlParser.getCard(DB,'CORE_LOEA10_3')
     XmlParser.getCard(DB,'69723')
 
+def testNewGetCard():
+    types = ['spell', 'minion', 'weapon', 'enchantment', 'hero', 'hero_power']
+    for card in cardTypes:
+        print(types[cardTypes.index(card)]) 
+        db.GetCard(card)
 
 #testGetCardStats()
 #testFetchingCards()
 #testDeckImport(deckString1)
 #testSavingCards()
 #testImportAndSaveDeck()
-testXmlParser()
+#testXmlParser()
+testNewGetCard()
 print("Testing successful!")

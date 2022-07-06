@@ -9,7 +9,13 @@ import requests
 import json
 import time
 
-
+# Types
+# Minion : 4
+# Hero : 3
+# Hero Power : 10
+# Weapon : 7
+# Spell : 5
+# Enchantment : 6
 
 class CardDB:
     """
@@ -41,8 +47,11 @@ class CardDB:
     """
 
     def __init__(self):
-        self.carddefs_path = hsdata.get_carddefs_path()
         self.db = self.getCardsData()
+        self.root = self.getRoot(hsdata.get_carddefs_path())
+
+    def getRoot(self, xmlfile):
+        return ET.parse(xmlfile).getroot()
 
     # TODO: Add automatic updates from the latest patches when they surface on the site.
     def getCardsData(self) -> list:
@@ -64,7 +73,38 @@ class CardDB:
             with open('./cards.json', 'w') as file:
                 json.dump(data, file, indent=2)
         return data
-        
+       
+
+
+    def GetCard(self, cardId):
+        for card in self.root.findall('Entity'):
+            cardID = card.attrib['CardID']
+            cardDBF = card.attrib['ID']
+            if cardId == cardID or cardId == cardDBF:
+                cardAttack, cardHealth, cardCost, cardRarity, cardText = None, None, None, None, None
+                for tag in card:
+                    nameTag = tag.attrib['name']
+                    if nameTag == 'CARDNAME':
+                        cardName = tag[1].text
+                    elif nameTag == 'CARDTEXT': # text
+                        cardText = tag[1].text
+                    elif nameTag == 'COST':
+                        cardCost = tag.attrib['value']
+                    elif nameTag == 'HEALTH':
+                        cardHealth = tag.attrib['value']
+                    elif nameTag == 'ATK':
+                        cardAttack = tag.attrib['value']
+                    elif nameTag == 'RARITY':
+                        cardRarity = tag.attrib['value']
+                    elif nameTag == 'CARDTYPE':
+                        cardType = tag.attrib['value']
+
+                print(f"Name: {cardName}\nCost: {cardCost}\nAttack: {cardAttack}\nHealth: {cardHealth}\nType: {cardType}\n")
+                return cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth,\
+                cardRarity, cardText
+
+
+
     def getCard(self, cardId) -> tuple:
         """Get a card with all its attributes
 
