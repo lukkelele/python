@@ -76,7 +76,14 @@ class CardDB:
        
 
 
-    def GetCard(self, cardId):
+    def getCard(self, cardId):
+        """Get a card with all its attributes
+
+        There are 8 return values for a card. 
+        ID, DBF, name, type, cost, rarity, set and description.
+        If a value cannot be fetched, a value of None is its replacement.
+        """
+
         for card in self.root.findall('Entity'):
             cardID = card.attrib['CardID']
             cardDBF = card.attrib['ID']
@@ -205,45 +212,8 @@ class CardDB:
         elif val == '1':
             return 'COMMON'
 
-    def getCard(self, cardId) -> tuple:
-        """Get a card with all its attributes
-
-        There are 8 return values for a card. 
-        ID, DBF, name, type, cost, rarity, set and description.
-        If a value cannot be fetched, a value of None is its replacement.
-        """
-
-        for card in self.db:
-            if cardId == card['dbfId'] or cardId == card['id']:
-                try:
-                    if isinstance(cardId, int) == False: # if CardID and not DBF
-                        cardID = cardId
-                        cardDBF = card['dbfId']
-                    else:
-                        cardDBF = cardId
-                        cardID = card['id']
-                    try: cardRarity = card['rarity']
-                    except: cardRarity = None
-                    try: cardCost = card['cost']
-                    except: cardCost = None
-                    try: cardAttack = card['attack']
-                    except: cardAttack = None
-                    try: cardHealth = card['health']
-                    except: cardHealth = None
-                    try: cardText = card['text']
-                    except: cardText = None
-                    cardName = card['name']
-                    cardType = card['type']
-                    cardSet = card['set']
-                except:
-                    print(f"Couldnt find card by id {cardId}")
-                    return None, None, None, None, None,\
-                           None, None, None
-        return cardID, cardDBF, cardName, cardType, cardCost, cardAttack,\
-               cardHealth, cardRarity, cardText                
-
     def saveMinion(self, cardId):
-        card = self.GetCard(cardId)
+        card = self.getCard(cardId)
         cardID, cardDBF, cardType, cardName, cardCost, cardAttack,\
                 cardHealth, cardRarity, cardText = card[0], card[1],\
                 card[2], card[3], card[4], card[5], card[6], card[7],\
@@ -263,7 +233,7 @@ class CardDB:
         return card
 
     def saveSpell(self, cardId):
-        card = self.GetCard(cardId)
+        card = self.getCard(cardId)
         cardID, cardDBF, cardType, cardName, cardCost,\
                 cardRarity, cardText = card[0], card[1], card[2], card[3],\
                                        card[4], card[5], card[6]
@@ -279,6 +249,44 @@ class CardDB:
         print(card)
         return card
 
+    def saveWeapon(self, cardId):
+        card = self.getCard(cardId)
+        cardID, cardDBF, cardType, cardName, cardCost, cardAttack,\
+                cardRarity, cardText = card[0], card[1], card[2], card[3],\
+                                       card[4], card[5], card[6], card[7]
+        card = {
+                "cardId": cardID,
+                "DBF": cardDBF,
+                "name": cardName,
+                "cardType": cardType,
+                "cost": cardCost,
+                "attack": cardAttack,
+                "rarity": cardRarity,
+                "description": cardText
+                }
+        print(card)
+        return card
+
+    def saveHero(self, cardId):
+        card = self.getCard(cardId)
+        cardID, cardDBF, cardType, cardName, cardCost, cardHealth, cardRarity, cardText = \
+                         card[0], card[1], card[2], card[3], card[4], card[5],\
+                                                             card[6], card[7]
+        card = {
+                "cardId": cardID,
+                "DBF": cardDBF,
+                "name": cardName,
+                "cardType": cardType,
+                "cost": cardCost,
+                "health": cardHealth,
+                "rarity": cardRarity,
+                "description": cardText
+                }
+        print(card)
+        return card
+        
+
+
     def saveCard(self, cardId) -> dict:
         """Gets a cards attributes and return a formatted version
 
@@ -287,25 +295,13 @@ class CardDB:
         order: ID, DBF, name, type, cost, attack, health, rarity, desc.
         This function takes care of that conversion and formats properly.
         """
+        
+        cardType = self.getCard(cardId)[2]
+        if cardType == 'MINION':
+            card = self.saveMinion(cardId)
+        elif cardType == 'SPELL':
+            card = self.saveSpell(cardId)
 
-        cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth,\
-        cardRarity, cardText = None, None, None, None, None, None, None,\
-                               None, None
-        try:
-            cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth,\
-            cardRarity, cardText = self.getCard(cardId)
-        except: print(f"Couldn't save card by id {cardId}")
-        card = {
-                "cardId": cardID,
-                "DBF": cardDBF,
-                "name": cardName,
-                "cardType": cardType,
-                "cost": cardCost,
-                "attack": cardAttack,
-                "health": cardHealth,
-                "rarity": cardRarity,
-                "description": 0 # Description 
-                }
         return card
 
     # TODO: Add name for each deck in the saved file
