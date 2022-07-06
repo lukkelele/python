@@ -4,6 +4,7 @@ import hearthstone_data as hsdata
 import xml.etree as etree
 import urllib.request 
 import Enums as Enum
+import XmlParser
 import requests
 import json
 import time

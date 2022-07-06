@@ -2,6 +2,8 @@ import subprocess ; path = subprocess.run('pwd', capture_output=True).stdout.dec
 try: homedir = subprocess.run('../test/getPath.sh', capture_output=True).stdout.decode('utf-8').strip('\n')
 except: homedir = subprocess.run('test/getPath.sh', capture_output=True).stdout.decode('utf-8').strip('\n')
 import sys ; sys.path.insert(0, f"{homedir}/Code/python/hs_decktracker/src") ; sys.path.insert(0, f"{homedir}/Code/python/hs_decktracker/test")
+import hearthstone_data as hsdata
+import XmlParser
 import CardDB
 
 
@@ -70,10 +72,25 @@ def testDeckImport(deckString: str):
 def testDeckConversion(deck):
     db.convertDeck(deck)
 
+def testXmlParser():
+    DB = XmlParser.getRoot(hsdata.get_carddefs_path())
+    XmlParser.getCard(DB,'VAN_HERO_10bpe')
+    XmlParser.getCard(DB,'VAN_HERO_05bp2')
+    XmlParser.getCard(DB,'VAN_EX1_tk11')
+    XmlParser.getCard(DB,'Story_10_BloodElfAllies')
+    XmlParser.getCard(DB,"FB_BuildABrawl003c")
+    XmlParser.getCard(DB,'DRG_031')
+    XmlParser.getCard(DB,'DRG_031e')
+    XmlParser.getCard(DB,'80121')
+    XmlParser.getCard(DB,'72473')
+    XmlParser.getCard(DB,'CORE_LOEA10_3')
+    XmlParser.getCard(DB,'69723')
+
 
 #testGetCardStats()
 #testFetchingCards()
 #testDeckImport(deckString1)
 #testSavingCards()
-testImportAndSaveDeck()
+#testImportAndSaveDeck()
+testXmlParser()
 print("Testing successful!")
