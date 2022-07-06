@@ -88,7 +88,8 @@ class CardDB:
             cardID = card.attrib['CardID']
             cardDBF = card.attrib['ID']
             if cardId == cardID or cardId == cardDBF:
-                cardAttack, cardHealth, cardCost, cardRarity, cardText = None, None, None, None, None
+                cardAttack, cardHealth, cardCost, cardRarity, cardText,\
+                            cardClass = None, None, None, None, None, None
                 CARD = []
                 for tag in card:
                     nameTag = tag.attrib['name']
@@ -108,12 +109,13 @@ class CardDB:
                             CARD = self.getHeroPower(card)
                 CARD.insert(0, cardID)
                 CARD.insert(1, cardDBF)
-                print(f"\nNAME: {CARD[3]}\nID: {CARD[0]}\nDBF: {CARD[1]}\nTYPE: {CARD[2]}\n")
+                print(f"\nNAME: {CARD[4]}\nID: {CARD[0]}\nDBF: {CARD[1]}\nTYPE: {CARD[2]}\n")
                 return CARD
 
 
     def getMinion(self, card):
         cardType = 'MINION'
+        cardCost = None
         for tag in card:
             nameTag = tag.attrib['name']
             if nameTag == 'CARDNAME':
@@ -128,7 +130,9 @@ class CardDB:
                 cardAttack = tag.attrib['value']
             elif nameTag == 'RARITY':
                 cardRarity = self.getRarity(tag.attrib['value'])
-        return [cardType, cardName, cardCost, cardAttack, cardHealth, cardRarity, cardText]
+            elif nameTag == 'CLASS':
+                cardClass = tag.attrib['value']
+        return [cardType, cardClass, cardName, cardCost, cardAttack, cardHealth, cardRarity, cardText]
 
     def getHero(self, card):
         cardType = 'HERO'
@@ -144,7 +148,9 @@ class CardDB:
                 cardHealth = tag.attrib['value']
             elif nameTag == 'RARITY':
                 cardRarity = tag.attrib['value']
-        return [cardType, cardName, cardCost, cardHealth, cardRarity, cardText]
+            elif nameTag == 'CLASS':
+                cardClass = tag.attrib['value']
+        return [cardType, cardClass, cardName, cardCost, cardHealth, cardRarity, cardText]
 
     def getHeroPower(self, card):
         cardType = 'HERO_POWER'
@@ -157,11 +163,13 @@ class CardDB:
                 cardText = tag[1].text
             elif nameTag == 'COST':
                 cardCost = tag.attrib['value']
-        return [cardType, cardName, cardCost, cardText]
+            elif nameTag == 'CLASS':
+                cardClass = tag.attrib['value']
+        return [cardType, cardClass, cardName, cardCost, cardText]
 
     def getSpell(self, card):
         cardType = 'SPELL'
-        cardCost = None
+        cardCost, cardRarity = None, None
         for tag in card:
             nameTag = tag.attrib['name']
             if nameTag == 'CARDNAME':
@@ -172,7 +180,9 @@ class CardDB:
                 cardCost = tag.attrib['value']
             elif nameTag == 'RARITY':
                 cardRarity = self.getRarity(tag.attrib['value'])
-        return [cardType, cardName, cardCost, cardRarity, cardText]
+            elif nameTag == 'CLASS':
+                cardClass = tag.attrib['value']
+        return [cardType, cardClass, cardName, cardCost, cardRarity, cardText]
 
     def getWeapon(self, card):
         cardType = 'WEAPON'
@@ -189,7 +199,9 @@ class CardDB:
                 cardAttack = tag.attrib['value']
             elif nameTag == 'RARITY':
                 cardRarity = tag.attrib['value']
-        return [cardType, cardName, cardCost, cardAttack, cardRarity, cardText]
+            elif nameTag == 'CLASS':
+                cardClass = tag.attrib['value']
+        return [cardType, cardClass, cardName, cardCost, cardAttack, cardRarity, cardText]
 
     def getEnchantment(self, card):
         cardType = 'ENCHANTMENT'
@@ -199,7 +211,9 @@ class CardDB:
                 cardName = tag[1].text
             elif nameTag == 'CARDTEXT': # text
                 cardText = tag[1].text
-        return [cardType, cardName, cardText]
+            elif nameTag == 'CLASS':
+                cardClass = tag.attrib['value']
+        return [cardType, cardClass, cardName, cardText]
 
     def getRarity(self, val):
         if val == '5':
@@ -215,13 +229,14 @@ class CardDB:
 
     def saveMinion(self, cardId):
         card = self.getCard(cardId)
-        cardID, cardDBF, cardType, cardName, cardCost, cardAttack,\
+        cardID, cardDBF, cardType, cardClass, cardName, cardCost, cardAttack,\
                 cardHealth, cardRarity, cardText = card[0], card[1],\
                 card[2], card[3], card[4], card[5], card[6], card[7],\
-                card[8]
+                card[8], card[9]
         card = {
                 "cardId": cardID,
                 "DBF": cardDBF,
+                "class": cardClass,
                 "name": cardName,
                 "cardType": cardType,
                 "cost": cardCost,
@@ -234,12 +249,13 @@ class CardDB:
 
     def saveSpell(self, cardId):
         card = self.getCard(cardId)
-        cardID, cardDBF, cardType, cardName, cardCost,\
+        cardID, cardDBF, cardType, cardClass, cardName, cardCost,\
                 cardRarity, cardText = card[0], card[1], card[2], card[3],\
-                                       card[4], card[5], card[6]
+                                       card[4], card[5], card[6], card[7]
         card = {
                 "cardId": cardID,
                 "DBF": cardDBF,
+                "class": cardClass,
                 "name": cardName,
                 "cardType": cardType,
                 "cost": cardCost,
@@ -267,12 +283,13 @@ class CardDB:
 
     def saveHero(self, cardId):
         card = self.getCard(cardId)
-        cardID, cardDBF, cardType, cardName, cardCost, cardHealth, cardRarity, cardText = \
-                         card[0], card[1], card[2], card[3], card[4], card[5],\
-                                                             card[6], card[7]
+        cardID, cardDBF, cardType, cardClass, cardName, cardCost,\
+                cardHealth, cardRarity, cardText = card[0], card[1],\
+                card[2], card[3], card[4], card[5], card[6], card[7], card[8]
         card = {
                 "cardId": cardID,
                 "DBF": cardDBF,
+                "class": cardClass,
                 "name": cardName,
                 "cardType": cardType,
                 "cost": cardCost,
@@ -280,13 +297,12 @@ class CardDB:
                 "rarity": cardRarity,
                 "description": cardText
                 }
-        print(card)
         return card
         
     def saveEnchantment(self, cardId):
         card = self.getCard(cardId)
-        cardID, cardDBF, cardType, cardName, cardText = card[0], card[1],\
-                                               card[2], card[3], card[4]
+        cardID, cardDBF, cardType, cardClass, cardName, cardText = card[0], card[1],\
+                                      card[2], card[3], card[4], card[5]
         card = {
                 "cardId": cardID,
                 "DBF": cardDBF,
@@ -298,17 +314,18 @@ class CardDB:
 
     def saveHeroPower(self, cardId):
         card = self.getCard(cardId)
-        cardID, cardDBF, cardType, cardName, cardCost, cardText = card[0],\
-                card[1], card[2], card[3], card[4], card[5]
+        cardID, cardDBF, cardType, cardClass, cardName, cardCost,\
+                cardText = card[0], card[1], card[2], card[3], card[4],\
+                           card[5], card[6] 
         card = {
                 "cardId": cardID,
                 "DBF": cardDBF,
+                "class": cardClass,
                 "name": cardName,
                 "cardType": cardType,
                 "cost": cardCost,
                 "description": cardText
                 }
-        print(card)
         return card
 
     def saveCard(self, cardId) -> dict:
@@ -388,6 +405,15 @@ deckNagaPriest = "AAECAa0GBPvoA4f3A4ujBImyBA2tigSEowSJowTtsQSEsgSIsgSktgSltgSntg
 
 db = CardDB()
 importDeck1 = db.importDeck(deckThiefRogue)
+importDeck2 = db.importDeck(deckMechPaladin)
+importDeck3 = db.importDeck(deckNagaPriest)
 db.saveDeck(db.convertDeck(importDeck1))
+db.saveDeck(db.convertDeck(importDeck2))
+db.saveDeck(db.convertDeck(importDeck3))
 
+print('\n\n\n')
+
+#db.saveCard('CORE_KAR_009') # babbling book
+#db.saveCard('77211')
+#db.saveCard('CORE_KAR_069')
 
