@@ -412,7 +412,7 @@ db = CardDB()
 importDeck1 = db.importDeck(deckThiefRogue)
 importDeck2 = db.importDeck(deckMechPaladin)
 importDeck3 = db.importDeck(deckNagaPriest)
-db.saveDeck(db.convertDeck(importDeck1))
+db.saveDeck(db.convertDeck(importDeck1), name='Deck LUKAS')
 db.saveDeck(db.convertDeck(importDeck2))
 db.saveDeck(db.convertDeck(importDeck3))
 
