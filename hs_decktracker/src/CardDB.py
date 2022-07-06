@@ -353,7 +353,7 @@ class CardDB:
         return card
 
     # TODO: Add name for each deck in the saved file
-    def saveDeck(self, deck: list):
+    def saveDeck(self, deck: list, name=""):
         """Saves a deck of 30 cards in to a local json file
 
         If no local file named 'decks.json' is found a new file
@@ -368,6 +368,11 @@ class CardDB:
                 print("Reading decks.json ...")
                 try: file = json.load(json_file)
                 except: file = []
+            if name == "":
+                deckCount = len(file)
+                if deckCount == 0: deckCount = 1
+                name = f"Deck_{round(deckCount/2)+1}"
+            file.append(name)
             file.append(deck)
             with open('./decks.json', 'w') as json_file:
                 print("Opening decks.json ...")
