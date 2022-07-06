@@ -82,28 +82,108 @@ class CardDB:
             cardDBF = card.attrib['ID']
             if cardId == cardID or cardId == cardDBF:
                 cardAttack, cardHealth, cardCost, cardRarity, cardText = None, None, None, None, None
+                CARD = []
                 for tag in card:
                     nameTag = tag.attrib['name']
-                    if nameTag == 'CARDNAME':
-                        cardName = tag[1].text
-                    elif nameTag == 'CARDTEXT': # text
-                        cardText = tag[1].text
-                    elif nameTag == 'COST':
-                        cardCost = tag.attrib['value']
-                    elif nameTag == 'HEALTH':
-                        cardHealth = tag.attrib['value']
-                    elif nameTag == 'ATK':
-                        cardAttack = tag.attrib['value']
-                    elif nameTag == 'RARITY':
-                        cardRarity = tag.attrib['value']
-                    elif nameTag == 'CARDTYPE':
+                    if nameTag == 'CARDTYPE':
                         cardType = tag.attrib['value']
+                        if cardType == '4':   # MINION
+                            CARD = self.getMinion(card)
+                        elif cardType == '5': # SPELL
+                            CARD = self.getSpell(card)
+                        elif cardType == '7': # WEAPON
+                            CARD = self.getWeapon(card)
+                        elif cardType == '3': # HERO
+                            CARD = self.getHero(card)
+                CARD.insert(0, cardID)
+                CARD.insert(1, cardDBF)
+                for k in CARD:
+                    print(k)
+                return CARD
 
-                print(f"Name: {cardName}\nCost: {cardCost}\nAttack: {cardAttack}\nHealth: {cardHealth}\nType: {cardType}\n")
-                return cardID, cardDBF, cardName, cardType, cardCost, cardAttack, cardHealth,\
-                cardRarity, cardText
+    def getRarity(self, val):
+        if val == '5':
+            return 'LEGENDARY'
+        elif val == '4':
+            return 'EPIC'
+        elif val == '3':
+            return 'RARE'
+        elif val == '2':
+            return 'FREE'
+        elif val == '1':
+            return 'COMMON'
 
+    def getMinion(self, card):
+        cardType = 'MINION'
+        for tag in card:
+            nameTag = tag.attrib['name']
+            if nameTag == 'CARDNAME':
+                cardName = tag[1].text
+            elif nameTag == 'CARDTEXT': # text
+                cardText = tag[1].text
+            elif nameTag == 'COST':
+                cardCost = tag.attrib['value']
+            elif nameTag == 'HEALTH':
+                cardHealth = tag.attrib['value']
+            elif nameTag == 'ATK':
+                cardAttack = tag.attrib['value']
+            elif nameTag == 'RARITY':
+                cardRarity = self.getRarity(tag.attrib['value'])
+        return [cardType, cardName, cardCost, cardAttack, cardHealth, cardRarity, cardText]
 
+    def getHero(self, card):
+        cardType = 'HERO'
+        for tag in card:
+            nameTag = tag.attrib['name']
+            if nameTag == 'CARDNAME':
+                cardName = tag[1].text
+            elif nameTag == 'CARDTEXT': # text
+                cardText = tag[1].text
+            elif nameTag == 'COST':
+                cardCost = tag.attrib['value']
+            elif nameTag == 'HEALTH':
+                cardHealth = tag.attrib['value']
+            elif nameTag == 'ATK':
+                cardAttack = tag.attrib['value']
+            elif nameTag == 'RARITY':
+                cardRarity = tag.attrib['value']
+        return [cardType, cardName, cardCost, cardAttack, cardHealth, cardRarity, cardText]
+
+    def getSpell(self, card):
+        cardType = 'SPELL'
+        for tag in card:
+            nameTag = tag.attrib['name']
+            if nameTag == 'CARDNAME':
+                cardName = tag[1].text
+            elif nameTag == 'CARDTEXT': # text
+                cardText = tag[1].text
+            elif nameTag == 'COST':
+                cardCost = tag.attrib['value']
+            #elif nameTag == 'HEALTH':
+            #   cardHealth = tag.attrib['value']
+            #elif nameTag == 'ATK':
+            #    cardAttack = tag.attrib['value']
+            elif nameTag == 'RARITY':
+                cardRarity = self.getRarity(tag.attrib['value'])
+        return [cardType, cardName, cardCost, cardRarity, cardText]
+
+    def getWeapon(self, card):
+        cardType = 'WEAPON'
+        for tag in card:
+            nameTag = tag.attrib['name']
+            if nameTag == 'CARDNAME':
+                cardName = tag[1].text
+            elif nameTag == 'CARDTEXT': # text
+                cardText = tag[1].text
+            elif nameTag == 'COST':
+                cardCost = tag.attrib['value']
+            elif nameTag == 'HEALTH':
+                cardHealth = tag.attrib['value']
+            elif nameTag == 'ATK':
+                cardAttack = tag.attrib['value']
+            elif nameTag == 'RARITY':
+                cardRarity = tag.attrib['value']
+        return [cardType, cardName, cardCost, cardAttack, cardHealth, cardRarity, cardText]
 
     def getCard(self, cardId) -> tuple:
         """Get a card with all its attributes

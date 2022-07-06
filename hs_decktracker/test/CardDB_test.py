@@ -100,6 +100,9 @@ def testNewGetCard():
     for card in cardTypes:
         print(types[cardTypes.index(card)]) 
         db.GetCard(card)
+    db.GetCard('YOD_030')
+    db.GetCard('BCON_001')
+    db.GetCard('BCON_004')
 
 #testGetCardStats()
 #testFetchingCards()
@@ -108,4 +111,6 @@ def testNewGetCard():
 #testImportAndSaveDeck()
 #testXmlParser()
 testNewGetCard()
+#db.GetCard('YOP_035')
+
 print("Testing successful!")
