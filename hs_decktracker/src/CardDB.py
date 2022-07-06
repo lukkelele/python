@@ -161,6 +161,7 @@ class CardDB:
 
     def getSpell(self, card):
         cardType = 'SPELL'
+        cardCost = None
         for tag in card:
             nameTag = tag.attrib['name']
             if nameTag == 'CARDNAME':
@@ -229,7 +230,6 @@ class CardDB:
                 "rarity": cardRarity,
                 "description": cardText
                 }
-        print(card)
         return card
 
     def saveSpell(self, cardId):
@@ -246,7 +246,6 @@ class CardDB:
                 "rarity": cardRarity,
                 "description": cardText # Description 
                 }
-        print(card)
         return card
 
     def saveWeapon(self, cardId):
@@ -264,7 +263,6 @@ class CardDB:
                 "rarity": cardRarity,
                 "description": cardText
                 }
-        print(card)
         return card
 
     def saveHero(self, cardId):
@@ -285,7 +283,33 @@ class CardDB:
         print(card)
         return card
         
+    def saveEnchantment(self, cardId):
+        card = self.getCard(cardId)
+        cardID, cardDBF, cardType, cardName, cardText = card[0], card[1],\
+                                               card[2], card[3], card[4]
+        card = {
+                "cardId": cardID,
+                "DBF": cardDBF,
+                "name": cardName,
+                "cardType": cardType,
+                "description": cardText
+                }
+        return card
 
+    def saveHeroPower(self, cardId):
+        card = self.getCard(cardId)
+        cardID, cardDBF, cardType, cardName, cardCost, cardText = card[0],\
+                card[1], card[2], card[3], card[4], card[5]
+        card = {
+                "cardId": cardID,
+                "DBF": cardDBF,
+                "name": cardName,
+                "cardType": cardType,
+                "cost": cardCost,
+                "description": cardText
+                }
+        print(card)
+        return card
 
     def saveCard(self, cardId) -> dict:
         """Gets a cards attributes and return a formatted version
@@ -301,7 +325,14 @@ class CardDB:
             card = self.saveMinion(cardId)
         elif cardType == 'SPELL':
             card = self.saveSpell(cardId)
-
+        elif cardType == 'WEAPON':
+            card = self.saveWeapon(cardId)
+        elif cardType == 'ENCHANTMENT':
+            card = self.saveEnchantment(cardId)
+        elif cardType == 'HERO':
+            card = self.saveHero(cardId)
+        elif cardType == 'HERO_POWER':
+            card = self.saveHeroPower(cardId)
         return card
 
     # TODO: Add name for each deck in the saved file
@@ -345,9 +376,18 @@ class CardDB:
 
         jsonDeck = []
         for card in deck:
-            cardDBF = card[0]
+            cardDBF = str(card[0])
             jsonCard = self.saveCard(cardDBF)
             jsonDeck.append(jsonCard)
         return jsonDeck
+
+deckString1 = "AAECAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
+deckThiefRogue = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
+deckMechPaladin = "AAEBAZ8FBKCAA5+3A+CLBLCyBA2UD5/1Avb9Atb+Atf+AoeuA/mkBJK1BOG1BN65BNS9BLLBBNrTBAA="
+deckNagaPriest = "AAECAa0GBPvoA4f3A4ujBImyBA2tigSEowSJowTtsQSEsgSIsgSktgSltgSntgSHtwSWtwSywQT10wQA"
+
+db = CardDB()
+importDeck1 = db.importDeck(deckThiefRogue)
+db.saveDeck(db.convertDeck(importDeck1))
 
 
