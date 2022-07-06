@@ -112,5 +112,7 @@ def testNewGetCard():
 #testXmlParser()
 testNewGetCard()
 #db.GetCard('YOP_035')
+db.saveSpell('BCON_004')
+db.saveMinion('YOD_030')
 
 print("Testing successful!")

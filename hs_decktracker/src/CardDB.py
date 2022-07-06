@@ -242,6 +242,43 @@ class CardDB:
         return cardID, cardDBF, cardName, cardType, cardCost, cardAttack,\
                cardHealth, cardRarity, cardText                
 
+    def saveMinion(self, cardId):
+        card = self.GetCard(cardId)
+        cardID, cardDBF, cardType, cardName, cardCost, cardAttack,\
+                cardHealth, cardRarity, cardText = card[0], card[1],\
+                card[2], card[3], card[4], card[5], card[6], card[7],\
+                card[8]
+        card = {
+                "cardId": cardID,
+                "DBF": cardDBF,
+                "name": cardName,
+                "cardType": cardType,
+                "cost": cardCost,
+                "attack": cardAttack,
+                "health": cardHealth,
+                "rarity": cardRarity,
+                "description": cardText
+                }
+        print(card)
+        return card
+
+    def saveSpell(self, cardId):
+        card = self.GetCard(cardId)
+        cardID, cardDBF, cardType, cardName, cardCost,\
+                cardRarity, cardText = card[0], card[1], card[2], card[3],\
+                                       card[4], card[5], card[6]
+        card = {
+                "cardId": cardID,
+                "DBF": cardDBF,
+                "name": cardName,
+                "cardType": cardType,
+                "cost": cardCost,
+                "rarity": cardRarity,
+                "description": cardText # Description 
+                }
+        print(card)
+        return card
+
     def saveCard(self, cardId) -> dict:
         """Gets a cards attributes and return a formatted version
 
