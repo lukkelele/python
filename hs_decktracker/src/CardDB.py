@@ -20,30 +20,6 @@ import time
 class CardDB:
     """
     Class used as a database for storing and obtaining cards
-
-    ...
-
-    Attributes
-    ----------
-    carddefs_path : str
-        a string storing the path of the CardDefs.xml file
-    db : list
-        a list with all the cards
-    
-    Methods
-    -------
-    getCardsData()
-        Returns all the cards from the json file
-    getCard(cardId: str)
-        Get a specific cards information
-    saveCard(cardId: str)
-        Convert a specific card in to a saveable format
-    saveDeck(deck: dict)
-        Save a deck in to a local file
-    importDeck(deck: list)
-        Create a deck from a deckstring
-    convertDeck(deck: list)
-        Convert a deck from one format to another one 
     """
 
     def __init__(self):
@@ -352,7 +328,6 @@ class CardDB:
             card = self.saveHeroPower(cardId)
         return card
 
-    # TODO: Add name for each deck in the saved file
     def saveDeck(self, deck: list, name=""):
         """Saves a deck of 30 cards in to a local json file
 
@@ -390,11 +365,7 @@ class CardDB:
         return deck.cards
 
     def convertDeck(self, deck: list):
-        """Converts a deck of cards in to a specific format
-
-        Reformats each card in a deck to a specific format used
-        to provide a general structure for saving decks locally
-        """
+        """Converts a deck of cards in to a saveable format"""
 
         jsonDeck = []
         for card in deck:
@@ -402,6 +373,12 @@ class CardDB:
             jsonCard = self.saveCard(cardDBF)
             jsonDeck.append(jsonCard)
         return jsonDeck
+
+    # TODO: ?? compare a launched games starting cards vs decks in decks.json 
+    #       or simply have user checkmark their deck of choice before gamestart
+    def loadDeck(self, deckName):
+        print()
+
 
 deckString1 = "AAECAf0GBPXOBJ7UBJfUBMP5Aw38rASEoASPnwThpASk7wPboASRoAS9tgTL+QPWoASywQSd1ASkoAQA"
 deckThiefRogue = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
