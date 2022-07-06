@@ -97,9 +97,9 @@ def testXmlParser():
 
 def testNewGetCard():
     types = ['spell', 'minion', 'weapon', 'enchantment', 'hero', 'hero_power']
-    for card in cardTypes:
-        print(types[cardTypes.index(card)]) 
-        db.GetCard(card)
+    #for card in cardTypes:
+        #print(types[cardTypes.index(card)]) 
+        #db.GetCard(card)
     db.GetCard('YOD_030')
     db.GetCard('BCON_001')
     db.GetCard('BCON_004')

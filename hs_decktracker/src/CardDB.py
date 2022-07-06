@@ -95,23 +95,15 @@ class CardDB:
                             CARD = self.getWeapon(card)
                         elif cardType == '3': # HERO
                             CARD = self.getHero(card)
+                        elif cardType == '6': # ENCHANTMENT
+                            CARD = self.getEnchantment(card)
+                        elif cardType == '10': # HERO POWER
+                            CARD = self.getHeroPower(card)
                 CARD.insert(0, cardID)
                 CARD.insert(1, cardDBF)
-                for k in CARD:
-                    print(k)
+                print(f"\nNAME: {CARD[3]}\nID: {CARD[0]}\nDBF: {CARD[1]}\nTYPE: {CARD[2]}\n")
                 return CARD
 
-    def getRarity(self, val):
-        if val == '5':
-            return 'LEGENDARY'
-        elif val == '4':
-            return 'EPIC'
-        elif val == '3':
-            return 'RARE'
-        elif val == '2':
-            return 'FREE'
-        elif val == '1':
-            return 'COMMON'
 
     def getMinion(self, card):
         cardType = 'MINION'
@@ -143,11 +135,22 @@ class CardDB:
                 cardCost = tag.attrib['value']
             elif nameTag == 'HEALTH':
                 cardHealth = tag.attrib['value']
-            elif nameTag == 'ATK':
-                cardAttack = tag.attrib['value']
             elif nameTag == 'RARITY':
                 cardRarity = tag.attrib['value']
-        return [cardType, cardName, cardCost, cardAttack, cardHealth, cardRarity, cardText]
+        return [cardType, cardName, cardCost, cardHealth, cardRarity, cardText]
+
+    def getHeroPower(self, card):
+        cardType = 'HERO_POWER'
+        cardCost = None
+        for tag in card:
+            nameTag = tag.attrib['name']
+            if nameTag == 'CARDNAME':
+                cardName = tag[1].text
+            elif nameTag == 'CARDTEXT': # text
+                cardText = tag[1].text
+            elif nameTag == 'COST':
+                cardCost = tag.attrib['value']
+        return [cardType, cardName, cardCost, cardText]
 
     def getSpell(self, card):
         cardType = 'SPELL'
@@ -159,10 +162,6 @@ class CardDB:
                 cardText = tag[1].text
             elif nameTag == 'COST':
                 cardCost = tag.attrib['value']
-            #elif nameTag == 'HEALTH':
-            #   cardHealth = tag.attrib['value']
-            #elif nameTag == 'ATK':
-            #    cardAttack = tag.attrib['value']
             elif nameTag == 'RARITY':
                 cardRarity = self.getRarity(tag.attrib['value'])
         return [cardType, cardName, cardCost, cardRarity, cardText]
@@ -170,6 +169,7 @@ class CardDB:
     def getWeapon(self, card):
         cardType = 'WEAPON'
         for tag in card:
+            cardText = None
             nameTag = tag.attrib['name']
             if nameTag == 'CARDNAME':
                 cardName = tag[1].text
@@ -177,13 +177,33 @@ class CardDB:
                 cardText = tag[1].text
             elif nameTag == 'COST':
                 cardCost = tag.attrib['value']
-            elif nameTag == 'HEALTH':
-                cardHealth = tag.attrib['value']
             elif nameTag == 'ATK':
                 cardAttack = tag.attrib['value']
             elif nameTag == 'RARITY':
                 cardRarity = tag.attrib['value']
-        return [cardType, cardName, cardCost, cardAttack, cardHealth, cardRarity, cardText]
+        return [cardType, cardName, cardCost, cardAttack, cardRarity, cardText]
+
+    def getEnchantment(self, card):
+        cardType = 'ENCHANTMENT'
+        for tag in card:
+            nameTag = tag.attrib['name']
+            if nameTag == 'CARDNAME':
+                cardName = tag[1].text
+            elif nameTag == 'CARDTEXT': # text
+                cardText = tag[1].text
+        return [cardType, cardName, cardText]
+
+    def getRarity(self, val):
+        if val == '5':
+            return 'LEGENDARY'
+        elif val == '4':
+            return 'EPIC'
+        elif val == '3':
+            return 'RARE'
+        elif val == '2':
+            return 'FREE'
+        elif val == '1':
+            return 'COMMON'
 
     def getCard(self, cardId) -> tuple:
         """Get a card with all its attributes
