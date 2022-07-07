@@ -1236,3 +1236,5 @@ Parameter name: chars
 2022-06-12 21:48:06.376: [Zone] ZoneChangeList.Finish() - id=8 changes=8 complete=True local=False localTrigger=[]
 2022-06-12 21:48:06.380: [Zone] ZoneChangeList.FireCompleteCallback() - m_id=8 m_taskList=58 m_changes.Count=8 m_complete=True m_completeCallback=(not null)
 2022-06-12 21:48:06.382: [Zone] ZoneMgr.AutoCorrectZonesAfterServerChange()
+22-06-12 21:47:55.938: [Zone] ZoneChangeList.ProcessChanges() - id=7 local=False [entityName=Seek Guidance id=18 zone=SECRET zonePos=0 cardId=SW_433 player=1] pos from 0 -> 0
+

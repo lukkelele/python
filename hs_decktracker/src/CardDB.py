@@ -386,14 +386,15 @@ deckMechPaladin = "AAEBAZ8FBKCAA5+3A+CLBLCyBA2UD5/1Avb9Atb+Atf+AoeuA/mkBJK1BOG1B
 deckNagaPriest = "AAECAa0GBPvoA4f3A4ujBImyBA2tigSEowSJowTtsQSEsgSIsgSktgSltgSntgSHtwSWtwSywQT10wQA"
 
 db = CardDB()
-importDeck1 = db.importDeck(deckThiefRogue)
-importDeck2 = db.importDeck(deckMechPaladin)
-importDeck3 = db.importDeck(deckNagaPriest)
-db.saveDeck(db.convertDeck(importDeck1), name='Deck LUKAS')
-db.saveDeck(db.convertDeck(importDeck2))
-db.saveDeck(db.convertDeck(importDeck3))
+#importDeck1 = db.importDeck(deckThiefRogue)
+#importDeck2 = db.importDeck(deckMechPaladin)
+#importDeck3 = db.importDeck(deckNagaPriest)
+#db.saveDeck(db.convertDeck(importDeck1), name='Deck LUKAS')
+#db.saveDeck(db.convertDeck(importDeck2))
+#db.saveDeck(db.convertDeck(importDeck3))
 
-print('\n\n\n')
+
+#db.getCard('SW_433')
 
 #db.saveCard('CORE_KAR_009') # babbling book
 #db.saveCard('77211')

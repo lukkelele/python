@@ -7,7 +7,7 @@ import os
 import re
 
 
-class Logwatcher:
+class LogWatcher:
 
     def __init__(self, path):
         self._cached_stamp = 0
@@ -23,19 +23,18 @@ class Logwatcher:
             attr = f"len_{attr}"
             setattr(self, attr, len_attr)
 
-    def check_file(self):
-        lines = self.get_linecount(self.path)
+    def check_file(self, path):
+        lines = self.get_linecount(path)
         if lines - self.linecount > 0: # change has occured
-            d = lines - self.linecount
+            diff = lines - self.linecount
             k = 0
-            f = open(self.path)
+            f = open(path)
             file = f.readlines()
-            print(f"New lines added to log: {d}")
-            while k < d:
+            print(f"\nNew lines added to log: {diff}\n")
+            while k < diff:
                 line = file[self.linecount + k]
                 self.handle_event(line)
                 k += 1
-            print("Exiting..")
             self.linecount = lines
             f.close()
 
@@ -49,17 +48,17 @@ class Logwatcher:
 
     # Handle a line from the logfile
     def handle_event(self, line):
-        #match = re.search('zone=(PLAY|HAND|DECK|SECRET)', event)
-        match = re.search('TRANSITIONING', line)
+        match = re.search('zone=(PLAY|HAND|DECK|SECRET)', line)
+        #match = re.search('TRANSITIONING', line)
         if match != None:
             self.eventHandler.evaluate(line)
 
 
-test_line = 'TRANSITIONING card [entityName=UNKNOWN ENTITY [cardType=INVALID] id=42 zone=HAND zonePos=0 cardId= player=2] to OPPOSING HAND'
+#test_line = 'TRANSITIONING card [entityName=UNKNOWN ENTITY [cardType=INVALID] id=42 zone=HAND zonePos=0 cardId= player=2] to OPPOSING HAND'
 
-l = Logwatcher("../test/log_test.txt")
-print(l.linecount)
-l.handle_event(test_line)
+#l = Logwatcher("../test/log_test.txt")
+#print(l.linecount)
+#l.handle_event(test_line)
 
 #while True:
 #    l.check_file()
