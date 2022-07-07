@@ -156,9 +156,13 @@ class CardDB:
 
         jsonDeck = []
         for card in deck:
+            i = 0
             cardDBF = str(card[0])
-            jsonCard = self.saveCard(cardDBF)
-            jsonDeck.append(jsonCard)
+            cardAmount = card[1]
+            while i < cardAmount:
+                jsonCard = self.saveCard(cardDBF)
+                jsonDeck.append(jsonCard)
+                i += 1
         return jsonDeck
 
     # TODO: ?? compare a launched games starting cards vs decks in decks.json 
@@ -169,12 +173,21 @@ class CardDB:
             decks = json.load(f)
             for deck in decks:
                 idx = decks.index(deck)
-                if idx % 2 != 0:
+                if idx % 2 == 0:
                     currentDeckName = deck
                     if currentDeckName == deckName:
+                        print(len(decks[idx+1]))
                         return decks[idx + 1]
         print('No deck found by that name..')
         return None
 
+db = CardDB()
+db.getCard('SW_433')
+print('\n')
 
+deckThiefRogue = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
+i1 = db.importDeck(deckThiefRogue)
+db.saveDeck(db.convertDeck(i1))
+#loadedDeck = db.loadDeck('Deck_1')
+#print(loadedDeck)
 
