@@ -4,7 +4,7 @@ import hearthstone_data
 import CardDB
 import re
 
-class EventHandler:
+class GameHandler:
 
     def __init__(self):
         self.blacklist = []
@@ -36,8 +36,6 @@ class EventHandler:
             elif zone == "SECRET":
                 card = self.db.getCard(cardId)
 
-
-
     def getVal(self, event, line):
         """Get value for a specific event for a specific line"""
 
@@ -55,17 +53,4 @@ class EventHandler:
         player = int(self.getVal('player=', line).strip(']'))
         return cardId, zone, player
 
-
-    def getGameStart(self, logfile):
-        linecount = 1
-        try:
-            with open(logfile) as file:
-                for line in file:
-                    game_start = re.search('Gameplay.Awake()', line)
-                    if game_start != None and linecount not in self.blacklist:
-                        self.blacklist.append(linecount)    # keep track of used linecounts
-                        return linecount 
-                    linecount += 1
-        except: print('Couldnt get gamestart')
-        return None
-
+    

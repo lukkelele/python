@@ -1,6 +1,6 @@
 # Used for reading output logs of gameplay
 from datetime import datetime
-import EventHandler
+import GameHandler
 import subprocess
 import linecache
 import os
@@ -11,10 +11,11 @@ class LogWatcher:
 
     def __init__(self, path):
         self._cached_stamp = 0
+        self.blacklist = []
         self.path = path
-        self.linecount = self.get_linecount(self.path)
         self.setup_attr()
-        self.eventHandler = EventHandler.EventHandler()
+        self.linecount = self.get_linecount(self.path)
+        self.gameHandler = GameHandler.GameHandler()
 
     def setup_attr(self):
         attributes = ["entityName", "id", "zone", "zonePos", "cardId", "player"]
@@ -46,19 +47,21 @@ class LogWatcher:
             raise IOError(err)
         return int(result.strip().split()[0])
 
-    # Handle a line from the logfile
     def handle_event(self, line):
         match = re.search('zone=(PLAY|HAND|DECK|SECRET)', line)
-        #match = re.search('TRANSITIONING', line)
         if match != None:
-            self.eventHandler.evaluate(line)
+            self.gameHandler.evaluate(line)
 
-
-#test_line = 'TRANSITIONING card [entityName=UNKNOWN ENTITY [cardType=INVALID] id=42 zone=HAND zonePos=0 cardId= player=2] to OPPOSING HAND'
-
-#l = Logwatcher("../test/log_test.txt")
-#print(l.linecount)
-#l.handle_event(test_line)
-
-#while True:
-#    l.check_file()
+    def getGameStart(self, logfile):
+        linecount = 1
+        try:
+            with open(logfile) as file:
+                for line in file:
+                    game_start = re.search('Gameplay.Awake()', line)
+                    if game_start != None and linecount not in self.blacklist:
+                        self.blacklist.append(linecount)    # keep track of used linecounts
+                        return linecount 
+                    linecount += 1
+        except: 
+            print('Couldnt get gamestart')
+        return None
