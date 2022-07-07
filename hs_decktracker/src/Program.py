@@ -19,16 +19,14 @@ class Program:
 
     def start(self):
         print('Starting program...\n')
-
         self.gameStart = self.logWatcher.getGameStart(self.path)
         if self.gameStart != None:
             while True:
                 self.logWatcher.check_file(self.path)
-
         print('\nExiting program...')
 
     def selectDeck(self):
-        print("\n=== DECK SELECTION")
+        print("\n===> DECK SELECTION")
         deckCount = self.db.showDecks()
         deckSelection = input('\nSelect a deck: ')
         deck = self.db.selectDeck(deckSelection)
@@ -37,9 +35,6 @@ class Program:
             deckSelection = input('\nSelect a deck: ')
             deck = self.db.selectDeck(deckSelection)
         return deck
-
-
-
 
 
 
