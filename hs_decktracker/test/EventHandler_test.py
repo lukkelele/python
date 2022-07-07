@@ -1,5 +1,5 @@
 import sys ; sys.path.append('../src/')
-import entities.Player as Player
+import Entities.Player as Player
 import re
 import EventHandler
 
@@ -11,12 +11,10 @@ eventDetails_TRANSITION_test = '[entityName=Lightbomb id=23 zone=HAND zonePos=2 
 
 def test_gameStart():
     assert 63 == eventHandler.getGameStart(logfile), "Should be line 63"
-
-def test_playerTurn():
-    assert True == eventHandler.checkPlayerTurn(playerTurnString, player), "Should be true"
+    print('Gamestart correct!\n')
 
 def test_gettingEventDetails():
-    print("Getting event details..")
+    print("\nGetting event details..\n")
     #assert "" == eventHandler.getEventDetails(eventDetails_test1)
     assert "CORE_GVG_008" == eventHandler.getEventDetails(eventDetails_TRANSITION_test)[0]
     assert "HAND" == eventHandler.getEventDetails(eventDetails_TRANSITION_test)[1]
@@ -27,10 +25,11 @@ eventHandler = EventHandler.EventHandler()
 player = Player.Player(coin=True)
 
 if __name__ == "__main__":
-    print("Starting testing...")
+    print("\nStarting testing...\n")
+
     test_gameStart()
-    test_playerTurn()
     test_gettingEventDetails()
+
     print("Testing done!")
 
 

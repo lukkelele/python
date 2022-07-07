@@ -1,5 +1,5 @@
 from hearthstone import cardxml
-from entities import Player
+from Entities.Player import Player
 import hearthstone_data
 import re
 
@@ -7,7 +7,6 @@ class EventHandler:
 
     def __init__(self):
         self.blacklist = []
-        print("EventHandler created")
 
     # Consider using 'zone=' instead
     def evaluate(self, line):
@@ -29,25 +28,24 @@ class EventHandler:
                 print("zone=DECK")
 
 
-    def card_drawn(self, event):
-        print('')
-
-    # Consider function for fetching ALL necessary ids
     def getVal(self, event, line):
+        """Get value for a specific event for a specific line"""
+
         match = re.search(event, line)
-        idx = match.end()
+        idx = match.end()   # pyright: ignore
         val = line[idx:]
         print(f"Split line --> {val.split(' ')}")
         val = val.split(' ', 1)[0]
         return val
 
     def getEventDetails(self, line):
+        """Get details from a specific event"""
+
         cardId = self.getVal('cardId=', line)
         zone = self.getVal('zone=', line)
         player = int(self.getVal('player=', line).strip(']'))
-        print(f"Returning event details:\ncardId={cardId}\nzone={zone}\nplayer={player}")
+        print(f"Returning event details:\ncardId={cardId}\nzone={zone}\nplayer={player}\n")
         return cardId, zone, player
-
 
     # Get the start of a game.
     # Might have to blacklist the linecounts after each fetch.
@@ -62,13 +60,3 @@ class EventHandler:
             linecount += 1
         return None
         
-    # TODO: Change function name and consider its use at all..
-    # Get the m_id. Odd --> Player without coin
-    def checkPlayerTurn(self, line, player: Player):
-        print('Checking turn')
-        turn_complete = True if re.search('m_complete=True', line) != None else False
-        if turn_complete:
-            m_id = int(self.getVal("m_id=", line))
-            if player.coin and m_id % 2 != 0: return False    # Opponent turn
-            else: return True   # Player turn
-
