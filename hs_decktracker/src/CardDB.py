@@ -23,6 +23,7 @@ class CardDB:
     """
 
     def __init__(self):
+        self.deckPath = './lib/decks.json'
         self.db = self.getCardsData()
         self.root = self.getRoot(hsdata.get_carddefs_path())
         self.cm = CardManager.CardManager()
@@ -39,16 +40,15 @@ class CardDB:
         """
 
         url = 'https://api.hearthstonejson.com/v1/121569/enUS/cards.json'
-        path = './lib/cards.json'
         try:
-            with open(path, "r") as file:
+            with open(self.deckPath, "r") as file:
                 data = json.loads(file.read())
         except:
             print("Card database not found! Downloading cards from web...")
             jsonFile = requests.get(url)
             text = jsonFile.text
             data = json.loads(text)
-            with open(path, 'w') as file:
+            with open(self.deckPath, 'w') as file:
                 json.dump(data, file, indent=2)
         return data
        
@@ -126,9 +126,8 @@ class CardDB:
         on to the existing file.
         """
 
-        path = './lib/decks.json'
         try:
-            with open(path, 'r') as json_file:
+            with open(self.deckPath, 'r') as json_file:
                 try: file = json.load(json_file)
                 except: file = []
             if name == "":
@@ -137,11 +136,11 @@ class CardDB:
                 name = f"Deck_{round(deckCount/2)+1}"
             file.append(name)
             file.append(deck)
-            with open(path, 'w') as json_file:
+            with open(self.deckPath, 'w') as json_file:
                 json.dump(file, json_file, indent=2)
         except:
             print("No local decks.json file found, creating one...")
-            with open(path, 'w') as json_file:
+            with open(self.deckPath, 'w') as json_file:
                 json.dump(deck, json_file, indent=2)
             print("New decks.json file created!")
 
@@ -167,9 +166,8 @@ class CardDB:
 
     # TODO: ?? compare a launched games starting cards vs decks in decks.json 
     #       or simply have user checkmark their deck of choice before gamestart
-    def loadDeck(self, deckName):
-        path = './lib/decks.json'
-        with open(path, 'r') as f:
+    def selectDeck(self, deckName):
+        with open(self.deckPath, 'r') as f:
             decks = json.load(f)
             for deck in decks:
                 idx = decks.index(deck)
@@ -181,13 +179,25 @@ class CardDB:
         print('No deck found by that name..')
         return None
 
-db = CardDB()
-db.getCard('SW_433')
-print('\n')
+    def showDecks(self):
+        with open(self.deckPath, 'r') as f:
+            decks = json.load(f)
+            deckCount = 0
+            for deck in decks:
+                idx = decks.index(deck)
+                if idx % 2 == 0:
+                    deckCount += 1
+                    deckName = deck
+                    print(f"{deckCount}. {deckName}")
+        return deckCount 
+        
 
-deckThiefRogue = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
-i1 = db.importDeck(deckThiefRogue)
-db.saveDeck(db.convertDeck(i1))
-#loadedDeck = db.loadDeck('Deck_1')
+#db = CardDB()
+
+#deckThiefRogue = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
+#i1 = db.importDeck(deckThiefRogue)
+#db.saveDeck(db.convertDeck(i1))
+#loadedDeck = db.loadDeck('Deck_0')
 #print(loadedDeck)
+#db.showDecks()
 

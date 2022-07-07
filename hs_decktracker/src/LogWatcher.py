@@ -9,13 +9,13 @@ import re
 
 class LogWatcher:
 
-    def __init__(self, path):
+    def __init__(self, path, gameHandler):
         self._cached_stamp = 0
         self.blacklist = []
         self.path = path
         self.setup_attr()
         self.linecount = self.get_linecount(self.path)
-        self.gameHandler = GameHandler.GameHandler()
+        self.gameHandler = gameHandler
 
     def setup_attr(self):
         attributes = ["entityName", "id", "zone", "zonePos", "cardId", "player"]

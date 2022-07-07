@@ -1,14 +1,13 @@
 from hearthstone import cardxml
 from Entities.Player import Player
 import hearthstone_data
-import CardDB
 import re
 
 class GameHandler:
 
-    def __init__(self):
+    def __init__(self, db):
         self.blacklist = []
-        self.db = CardDB.CardDB()
+        self.db = db
 
     def evaluate(self, line):
         cardId, zone, player = self.getEventDetails(line)
@@ -53,4 +52,5 @@ class GameHandler:
         player = int(self.getVal('player=', line).strip(']'))
         return cardId, zone, player
 
-    
+    def showDecks(self):
+        self.db.showDecks()
