@@ -192,9 +192,8 @@ class CardDB:
         return deckCount 
         
 
-#db = CardDB()
-
 #deckThiefRogue = "AAECAaIHBqH5A/uKBPafBNi2BNu5BIukBQyq6wP+7gOh9AO9gAT3nwS6pAT7pQTspwT5rASZtgTVtgT58QQA"
+#db = CardDB()
 #i1 = db.importDeck(deckThiefRogue)
 #db.saveDeck(db.convertDeck(i1))
 #loadedDeck = db.loadDeck('Deck_0')

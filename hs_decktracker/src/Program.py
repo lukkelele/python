@@ -21,9 +21,13 @@ class Program:
         print('Starting program...\n')
         self.gameStart = self.logWatcher.getGameStart(self.path)
         if self.gameStart != None:
-            while True:
+            gameOn = True
+            while gameOn:
                 self.logWatcher.check_file(self.path)
+<<<<<<< HEAD
         print('\nExiting program...')
+=======
+>>>>>>> 110697e (update)
 
     def selectDeck(self):
         print("\n===> DECK SELECTION")
@@ -43,3 +47,6 @@ P = Program()
 deckSelect = P.selectDeck()
 print(deckSelect)
 P.start()
+
+
+

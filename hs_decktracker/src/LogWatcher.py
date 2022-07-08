@@ -38,6 +38,7 @@ class LogWatcher:
                 k += 1
             self.linecount = lines
             f.close()
+            return True
 
     def get_linecount(self, file):
         p = subprocess.Popen(['wc', '-l', file], stdout=subprocess.PIPE,
