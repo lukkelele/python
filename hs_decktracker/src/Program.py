@@ -24,10 +24,7 @@ class Program:
             gameOn = True
             while gameOn:
                 self.logWatcher.check_file(self.path)
-<<<<<<< HEAD
         print('\nExiting program...')
-=======
->>>>>>> 110697e (update)
 
     def selectDeck(self):
         print("\n===> DECK SELECTION")

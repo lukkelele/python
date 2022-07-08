@@ -52,5 +52,3 @@ class GameHandler:
         player = int(self.getVal('player=', line).strip(']'))
         return cardId, zone, player
 
-    def showDecks(self):
-        self.db.showDecks()
