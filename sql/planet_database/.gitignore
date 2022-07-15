@@ -1,0 +1,7 @@
+# ignore files
+
+
+#**.png
+**.csv#
+*.pdf
+**/__pycache__

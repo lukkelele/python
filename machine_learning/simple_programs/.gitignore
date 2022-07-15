@@ -1,0 +1,8 @@
+
+
+a.py
+b.py
+__pycache__
+*.zip
+*.pdf
+lib/__pycache__
