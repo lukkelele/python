@@ -1,5 +1,4 @@
-# a3
-## library management
+## library management system
 ---
 A library must keep track of books and their current status (if a person has been lent a book or if it is stored in the library). <br />
 ### **Entities**: <br />
