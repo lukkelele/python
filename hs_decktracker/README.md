@@ -31,26 +31,26 @@ The idea of merging a deck tracker with some sort of program to check for big dr
 ---
 # Components
 
-#### LogWatcher.py
+### LogWatcher.py
 Parses the logfile that Hearthstone writes to during games.<br>
 Takes action on certain lines in the logfile and delegates the found event to *GameHandler*.
 
-#### GameHandler.py
+### GameHandler.py
 Reacts to a set of predefined keywords and takes appropriate action depending on the keyword.<br>
 Uses *CardDB* to fetch card information.
 
-#### CardDB.py
+### CardDB.py
 Used to store and retrieve cards and to handle deck data. 
 
-#### CardManager.py
+### CardManager.py
 Library with functions to be used by *CardDB*.
 
-#### Overlay.py
+### Overlay.py
 **NOTE: TO BE IMPLEMENTED!**<br>
 Display deck and gray out played cards. <br>
 The opponents cards are to simply be stacked in an ascending order based on mana cost as they
 are played. 
-
+<br>
 
 ---
 
