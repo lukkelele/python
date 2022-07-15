@@ -1,6 +1,8 @@
 ## Mia
----
+
 #### Voice controlled assistant
+
+---
 
 Pyttsx3 is not fully functional on Linux with the voices not working properly.  
 It is probably an issue with espeak but I've tried with the different espeak packages from AUR (ArchLinux User Repository).  
