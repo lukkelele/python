@@ -55,7 +55,7 @@ are played.
 ---
 
 
-### Logfile events and keywords
+# Logfile events and keywords
 
 
 | Game event  | Keyword             |
