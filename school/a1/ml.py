@@ -47,22 +47,11 @@ def calc_cost(X, beta, y, n):
 # Calculate MSE error
 def calc_MSE(Y, Y_pred):
     """MSE = (1/n) * sum(y - y_pred)**2"""
-    print("===== y \n")
-    print(Y)
-    print("\n===== y pred \n")
-    print(Y_pred)
-    print("\n===== y sum\n")
-    print(np.sum(Y))
-    print("\n===== y pred sum\n")
-    print(np.sum(Y_pred))
     subtract = np.subtract(Y, Y_pred)
     print(f"Sum of subtract: {np.sum(subtract)}")
-    #print(f"Subtract: {subtract}")
     mean = subtract.mean()
     print(f"Mean: {mean}")
-    mse = (np.square(subtract)).mean() 
+    mse = np.mean(np.square(Y-Y_pred))
     return mse
-
-
 
 
