@@ -1,6 +1,37 @@
 from matplotlib import pyplot as plt
 from matplotlib import colors
+from math import sqrt, floor
+import pandas as pd
 import numpy as np
+
+
+def open_csv_file(path):
+    """Open CSV file using pandas"""
+    data = pd.read_csv(path).values  # pyright: ignore
+    return data
+
+def select_column(dataset, col):
+    return dataset[:,[col]]
+
+def meshgrid( X, y, h=1, z=0.1):
+    """
+    Create a meshgrid with a minimum of min(X, y)-h and
+    a maximum of max(X, y)+h and a step size of z.
+    """
+    x_min, x_max, y_min, y_max = X.min()-(h/4), X.max()+(h/4), y.min()-h, y.max()+(h/4)
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, z),
+                         np.arange(y_min, y_max, z))
+    return xx, yy
+
+def euclidean_distance(p1, p2):
+    """
+    Calculate the euclidean distance between two point p1 and p2.
+    Returns the squared distance.
+    """
+    d = 0
+    for i in range(len(p1)):
+        d += (p1[i] - p2[i])**2
+    return sqrt(d)
 
 def normalize_matrix(X, rows, cols):
     Xn = np.zeros((rows, cols))
@@ -48,10 +79,11 @@ def calc_cost(X, beta, y, n):
 def calc_MSE(Y, Y_pred):
     """MSE = (1/n) * sum(y - y_pred)**2"""
     subtract = np.subtract(Y, Y_pred)
-    print(f"Sum of subtract: {np.sum(subtract)}")
     mean = subtract.mean()
-    print(f"Mean: {mean}")
     mse = np.mean(np.square(Y-Y_pred))
     return mse
+
+
+
 
 

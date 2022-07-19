@@ -93,8 +93,7 @@ class KNN:
         """
         fig = plt.figure(figsize=(16,12))
         plt.suptitle("Closest neighbors")
-        #K = [1, 3, 5, 7]
-        K = [1, 5]
+        K = [1, 3, 5, 7]
         i = 1
         print(f"len self.X ==> {len(self.X[:,[0,1,2]])}")
         xx, yy = self.meshgrid(self.X, self.y, 1, 0.05)
@@ -127,6 +126,6 @@ class KNN:
 
 k = KNN(path)
 k.simulate()
-#plt.show()
+plt.show()
 
 
