@@ -31,13 +31,14 @@ def euclidean_distance(p1, p2):
     d = (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2
     return sqrt(d)
 
-def get_neighbors(p, k, X):
+def get_neighbors(p, X, k):
         """
         Get k closest neighbors for a passed point.
         Returns: 2D array with distance on index 0 and point on index 1
         """
         neighbors = []
-        dist = np.zeros_like(X[:,[0,1]], dtype=object)
+        dist = np.zeros((len(X), 2), dtype=object)
+        #dist = np.zeros_like(X[:,[0,1]], dtype=object)
         idx = 0
         for point in X:
             distance = euclidean_distance(p, point)
@@ -50,13 +51,36 @@ def get_neighbors(p, k, X):
             neighbors.append(dist[i])  # Get the k closest points
         return np.array(neighbors)
 
+def get_neighbors_x(p, X, k):
+    neighbors = []
+    dist = np.zeros((len(X), 2), dtype=object)
+    idx = 0
+    for point in X:
+        distance = point[0] - p
+        distance_squared = distance**2
+        dist[idx][0] = distance_squared
+        dist[idx][1] = point
+        idx += 1
+    dist = dist[dist[:,0].argsort()]
+    for i in range(k):
+        neighbors.append(dist[i])
+    return np.array(neighbors)
+
+def knn_regression(p, X, k):
+    neighbors = get_neighbors_x(p, X, k)
+    y_sum = 0
+    for neighbor in neighbors:
+        y_sum += neighbor[1][1]
+    average = y_sum / k
+    return average
+
 def knn_clf(p, k, X):
     """
     Column 0 -> distances
     Column 1 -> points in array
     """
     neighbor_sum = 0
-    p_neighbors = get_neighbors(p, k, X)[:,1]
+    p_neighbors = get_neighbors(p, X, k)[:,1]
     #print(f"\nNeighbors for {p}:\n{p_neighbors}\n")
     for neighbor in p_neighbors:
         neighbor_sum += neighbor[2]
@@ -64,7 +88,6 @@ def knn_clf(p, k, X):
         return 1
     else:
         return 0
-
 
 def normalize_matrix(X, rows, cols):
     Xn = np.zeros((rows, cols))
