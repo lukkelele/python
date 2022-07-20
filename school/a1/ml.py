@@ -13,7 +13,7 @@ def open_csv_file(path):
 def select_column(dataset, col):
     return dataset[:,[col]]
 
-def meshgrid( X, y, h=1, z=0.1):
+def meshgrid( X, y, h=1, z=0.05):
     """
     Create a meshgrid with a minimum of min(X, y)-h and
     a maximum of max(X, y)+h and a step size of z.
@@ -59,7 +59,7 @@ def knn_clf(p, k, X):
     """
     neighbor_sum = 0
     p_neighbors = get_neighbors(p, k, X)[:,1]
-    print(f"\nNeighbors for {p}:\n{p_neighbors}\n")
+    #print(f"\nNeighbors for {p}:\n{p_neighbors}\n")
     for neighbor in p_neighbors:
         neighbor_sum += neighbor[2]
     if neighbor_sum > floor(k/2):
