@@ -13,14 +13,14 @@ def open_csv_file(path):
 def select_column(dataset, col):
     return dataset[:,[col]]
 
-def meshgrid( X, y, h=1, z=0.05):
+def meshgrid( X, y, offset=1, step_size=0.05):
     """
     Create a meshgrid with a minimum of min(X, y)-h and
     a maximum of max(X, y)+h and a step size of z.
     """
-    x_min, x_max, y_min, y_max = X.min()-(h/4), X.max()+(h/4), y.min()-h, y.max()+(h/4)
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, z),
-                         np.arange(y_min, y_max, z))
+    x_min, x_max, y_min, y_max = X.min()-(offset/4), X.max()+(offset/4), y.min()-offset, y.max()+(offset/4)
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, step_size),
+                         np.arange(y_min, y_max, step_size))
     return xx, yy
 
 def euclidean_distance(p1, p2):
@@ -28,9 +28,7 @@ def euclidean_distance(p1, p2):
     Calculate the euclidean distance between two point p1 and p2.
     Returns the squared distance.
     """
-    d = 0
-    for i in range(len(p1)):
-        d += (p1[i] - p2[i])**2
+    d = (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2
     return sqrt(d)
 
 def get_neighbors(p, k, X):
