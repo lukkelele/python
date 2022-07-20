@@ -33,6 +33,41 @@ def euclidean_distance(p1, p2):
         d += (p1[i] - p2[i])**2
     return sqrt(d)
 
+def get_neighbors(p, k, X):
+        """
+        Get k closest neighbors for a passed point.
+        Returns: 2D array with distance on index 0 and point on index 1
+        """
+        neighbors = []
+        dist = np.zeros_like(X[:,[0,1]], dtype=object)
+        idx = 0
+        for point in X:
+            distance = euclidean_distance(p, point)
+            dist[idx][0] = distance
+            dist[idx][1] = point
+            idx+=1
+        dist = dist[dist[:,0].argsort()]
+        #print(f"Dist:\n{dist}")
+        for i in range(k):
+            neighbors.append(dist[i])  # Get the k closest points
+        return np.array(neighbors)
+
+def knn_clf(p, k, X):
+    """
+    Column 0 -> distances
+    Column 1 -> points in array
+    """
+    neighbor_sum = 0
+    p_neighbors = get_neighbors(p, k, X)[:,1]
+    print(f"\nNeighbors for {p}:\n{p_neighbors}\n")
+    for neighbor in p_neighbors:
+        neighbor_sum += neighbor[2]
+    if neighbor_sum > floor(k/2):
+        return 1
+    else:
+        return 0
+
+
 def normalize_matrix(X, rows, cols):
     Xn = np.zeros((rows, cols))
     for i in range(cols):
