@@ -62,6 +62,8 @@ plt.xlabel('x'), plt.ylabel('y'), plt.xlim([0, X_max])
 plt.scatter(X_test, Y_test, s=10, edgecolors='k')
 plot(train_set, Y_train, 3, step_size=0.8)
 
+
+
 plt.show()
 
 
