@@ -36,8 +36,16 @@ def regression(X, y, k, step_size=0.1):
         line.append([p, y_pred])
         p += step_size
     line = np.array(line)
-    plt.plot(line[:,0], line[:,1], c='r')
+    return line
     
+def regression2(X, k):
+    line = []
+    x_vals = X[X[:,0].argsort()][:,0]   # Sort ascending order by x
+    for p in x_vals:    # Pass the sorted x array to get predicted y values
+        y_pred = ml.knn_regression(p, X, k)
+        line.append([p, y_pred])
+    line = np.array(line)
+    return line
 
 
 # Read data and shuffle it
@@ -54,18 +62,21 @@ fig = plt.figure(figsize=(14,12))
 
 # Train plot
 plt.subplot(2,2,1)
+#train_plot_MSE = ml.calc_MSE()
 plt.xlabel('x'), plt.ylabel('y'), plt.xlim([x_min_train-lim_offset, x_max_train+lim_offset])
 plt.scatter(X_train, Y_train, s=15, edgecolors='k')
+
 # Test plot
 plt.subplot(2,2,2)
 plt.xlabel('x'), plt.ylabel('y'), plt.xlim([x_min_test-lim_offset, x_max_test+lim_offset])
 plt.scatter(X_test, Y_test, s=15, edgecolors='k')
+
 # Predicted regression values as well
 plt.subplot(2,2,3)
 plt.xlabel('x'), plt.ylabel('y'), plt.xlim([x_min_test-lim_offset, x_max_test+lim_offset])
 plt.scatter(X_test, Y_test, s=10, edgecolors='k')
-regression(train_set, Y_train, 3, step_size=0.8)
-
+r1 = regression2(train_set, 3)
+plt.plot(r1[:,0], r1[:,1], c='r')
 
 
 plt.show()

@@ -38,7 +38,6 @@ def get_neighbors(p, X, k):
         """
         neighbors = []
         dist = np.zeros((len(X), 2), dtype=object)
-        #dist = np.zeros_like(X[:,[0,1]], dtype=object)
         idx = 0
         for point in X:
             distance = euclidean_distance(p, point)
@@ -46,7 +45,6 @@ def get_neighbors(p, X, k):
             dist[idx][1] = point
             idx+=1
         dist = dist[dist[:,0].argsort()]
-        #print(f"Dist:\n{dist}")
         for i in range(k):
             neighbors.append(dist[i])  # Get the k closest points
         return np.array(neighbors)
@@ -138,8 +136,5 @@ def calc_MSE(Y, Y_pred):
     mean = subtract.mean()
     mse = np.mean(np.square(Y-Y_pred))
     return mse
-
-
-
 
 
