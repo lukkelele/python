@@ -118,6 +118,12 @@ def calc_beta(Xe, y):
     B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
     return B
 
+def calc_beta2(Xe, y):
+    a = Xe.T.dot(Xe)
+    a_inv = np.linalg.inv(a)
+    b = a_inv.dot(Xe.T).dot(y)
+    return b
+
 # Calculate part of cost function
 def calc_j(Xe, y, beta):
     j = np.dot(Xe, beta) - y
