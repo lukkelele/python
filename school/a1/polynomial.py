@@ -8,6 +8,7 @@ import ml
 
 K = [1, 3, 5, 7, 9, 11]
 lim_offset = 4
+plot_fontsize = 16
 np.set_printoptions(threshold=sys.maxsize)
 
 def y_func(x):
@@ -83,6 +84,7 @@ def initial_plots():
 data = ml.open_csv_file('./data/polynomial200.csv')
 np.random.shuffle(data)
 fig = plt.figure(figsize=(14,12))
+plt.suptitle('KNN regression', fontsize=20)
 
 # Divide test set and train set
 train_set, test_set = data[:100], data[100-1:]
