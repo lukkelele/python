@@ -9,6 +9,7 @@ import ml
 # header = -1 to set it to None in ml.py
 data = ml.open_csv_file('./data/housing_price_index.csv', header=-1)
 X, y = data[:,[0,1]], data[:,1]
+plt.figure(figsize=(12,12))
 
 def plot_original_data(X, y):
     plt.title('Housing price index', fontsize=17)
@@ -29,10 +30,22 @@ def plot_poly_variants(X, y, d):
         plt.scatter(X, Y, c='g', s=12)
     plt.show()
 
+def predict(X, y, year,  price, bought=1975, d=1):
+    year = year - bought
+    polynomial = ml.polynomial(X, d)
+    gradients = ml.calc_beta(polynomial, y)
+    p = ml.polynomial(np.array([year]), d)
+    pred_y = p.dot(gradients)[0]
+    print(f">> Predicted price: {round(pred_y*price/100, 2)} kr\n   pred_y = {round(pred_y, 2)}")
 
-plt.figure(figsize=(12,12))
+
+
 
 #poly = ml.polynomial(X[:,1], 3)
 #plot_original_data(X[:,0], y)
-plot_poly_variants(X[:,0], y, 4)
+#plot_poly_variants(X[:,0], y, 4)
+predict(X[:,0], y, 2022, price=2300000, bought=2015, d=1)
+predict(X[:,0], y, 2022, price=2300000, bought=2015, d=2)
+predict(X[:,0], y, 2022, price=2300000, bought=2015, d=3)
+predict(X[:,0], y, 2022, price=2300000, bought=2015, d=4)
 
