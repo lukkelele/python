@@ -14,9 +14,14 @@ chip_3 = [ 0.6,    0]
 X_test = [chip_1, chip_2, chip_3]
 
 def output_result(chip, y_pred: int):
-    print(f">> Chip {chip}", end=" ")
-    if y_pred == 0: print("=> Fail\n")
-    else: print("=> OK!\n")
+    str_len = 14    # To make output consistent for the different cases
+    msg_success, msg_fail = 'OK!', 'Fail'
+    if y_pred == 0:
+        msg_result = msg_success 
+    else:
+        msg_result = msg_fail
+    print(f">> Chip {chip}" + (str_len-len(str(chip)))*" " + "=> " + msg_result)
+
 
 # Read data
 data = ml.open_csv_file('./data/microchips.csv')
@@ -40,10 +45,11 @@ prediction_k2 = clf2.predict(X_test)
 prediction_k3 = clf3.predict(X_test)
 predictions = [prediction_k1, prediction_k2, prediction_k3]
 
+print(f"prediction -> {predictions}")
 print(f">> PREDICTED VALUES")
 for x in X_test:
     idx = X_test.index(x)
-    y_pred = predictions[idx]
+    y_pred = predictions[idx][idx]
     output_result(x, y_pred)
 
 

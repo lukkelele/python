@@ -5,9 +5,10 @@ import pandas as pd
 import numpy as np
 
 
-def open_csv_file(path):
+def open_csv_file(path, header=0):
+    if header == -1: header=None
     """Open CSV file using pandas"""
-    data = pd.read_csv(path).values  # pyright: ignore
+    data = pd.read_csv(path, header=header).values  # pyright: ignore
     return data
 
 def select_column(dataset, col):
@@ -87,14 +88,8 @@ def knn_clf(p, k, X):
     else:
         return 0
 
-def normalize_matrix(X, rows, cols):
-    Xn = np.zeros((rows, cols))
-    for i in range(cols):
-        Xn[:,i] = normalize_column(X, i)
-    return Xn
-
-def normalize_column(X, col):
-    x = X[:,col]
+def normalize_column(X):
+    x = X
     x_std = np.std(x)
     x_mean = np.mean(x)
     x_subt = np.subtract(x, x_mean)
@@ -118,19 +113,14 @@ def calc_beta(Xe, y):
     B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
     return B
 
-def calc_beta2(Xe, y):
-    a = Xe.T.dot(Xe)
-    a_inv = np.linalg.inv(a)
-    b = a_inv.dot(Xe.T).dot(y)
-    return b
-
 # Calculate part of cost function
 def calc_j(Xe, y, beta):
     j = np.dot(Xe, beta) - y
     return j
 
 # Calculate cost
-def calc_cost(X, beta, y, n):
+def calc_cost(X, beta, y):
+    n = len(X[:,0])
     j = np.dot(X, beta) - y
     J = (j.T.dot(j)) / n
     return J
@@ -140,5 +130,55 @@ def calc_MSE(Y, Y_pred):
     """MSE = (1/n) * sum(y - y_pred)**2"""
     mse = round(((Y - Y_pred)**2).mean(), 2)
     return mse
+
+# Normalize a matrix
+def normalize_matrix(X):
+    rows, cols = len(X[:,0]), len(X[0])
+    Xn = np.zeros((rows, cols))
+    for i in range(cols):
+        Xn[:,i] = normalize_column(X[:,i])
+    return Xn
+
+# Gradient descent
+def gradient_descent(X, y, N=10, a=0.001, plot=False, output=False):
+    cols = np.size(X, 1)
+    n = len(X)     # Total rows
+    b = np.zeros((cols,))
+    for i in range(N):
+        gradients = X.T.dot(X.dot(b)-y) / n
+        #grad = -(X.T.dot(y - X.dot(b)) / n)
+        b = b - a*gradients
+        if plot:
+            cost = calc_cost(X, b, y)
+            plt.scatter(i, cost, s=10)
+        if output:
+            print(f"---------\n>> i == {i}")
+            idx = 0 
+            for beta in b:
+                print(f"> b{idx}: {beta}")
+                idx += 1
+    return b
+
+
+def polynomial2(X, d, n):
+    if d == 1:
+        X = np.c_[np.ones((n,1)),X]
+    elif d == 2:
+        X = np.c_[np.ones((n,1)),X,X**2]
+    elif d == 3:
+        X = np.c_[np.ones((n,1)),X,X**2,X**3]
+    elif d == 4:
+        X = np.c_[np.ones((n,1)),X,X**2,X**3,X**4]
+    else: return 0  # if error
+    return X
+
+
+def polynomial(X, d):
+    ones = np.ones((len(X),1))
+    Xi = X
+    for i in range(2, d+1):
+        X = np.c_[X, Xi**i]
+    X = np.c_[ones, X]
+    return X
 
 

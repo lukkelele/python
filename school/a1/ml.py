@@ -130,7 +130,7 @@ def calc_cost(X, beta, y, n):
     return J
 
 # Calculate MSE error
-def calc_MSE(Y, Y_pred):
+def calc_mse(Y, Y_pred):
     """MSE = (1/n) * sum(y - y_pred)**2"""
     mse = round(((Y - Y_pred)**2).mean(), 2)
     return mse

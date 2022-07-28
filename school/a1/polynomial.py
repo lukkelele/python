@@ -55,8 +55,9 @@ def regression_plot(X, k):
     r = regression(X, k)
     plt.plot(r[:,0], r[:,1], c='r')
     Y, Y_pred = X[:,1], r[:,1]
-    MSE = ml.calc_MSE(Y, Y_pred)
-    plt.title(f"k = {k}, MSE = {MSE}")
+    mse = ml.calc_mse(Y, Y_pred)
+    plt.title(f"k = {k}, mse = {mse}")
+    return mse
 
 def initial_plots():
     # Train plot
@@ -75,8 +76,8 @@ def initial_plots():
     plt.scatter(X_test, Y_test, s=10, edgecolors='k')
     r1 = regression(train_set, 3)
     Y_pred = r1[:,1]
-    test_plot_MSE = round(ml.calc_MSE(Y_test, Y_pred), 4)
-    plt.title(f"MSE = {test_plot_MSE}")
+    test_plot_mse = round(ml.calc_mse(Y_test, Y_pred), 4)
+    plt.title(f"mse = {test_plot_mse}")
     plt.plot(r1[:,0], r1[:,1], c='r')
 
 
@@ -84,7 +85,6 @@ def initial_plots():
 data = ml.open_csv_file('./data/polynomial200.csv')
 np.random.shuffle(data)
 fig = plt.figure(figsize=(14,12))
-plt.suptitle('KNN regression', fontsize=20)
 
 # Divide test set and train set
 train_set, test_set = data[:100], data[100-1:]
@@ -94,12 +94,21 @@ x_max_test, x_min_test = np.max(X_test), np.min(X_test)
 
 # Training and test plots
 #initial_plots()
-
+mse_results = []
 i = 1
 for k in K:
     plt.subplot(2,3,i)
-    regression_plot(test_set, k)
+    mse_results.append([regression_plot(test_set, k), k])
     i+=1
 
+lowest_mse = [0, 0]
+for result in mse_results:
+    idx = mse_results.index(result)
+    if idx == 0:
+        lowest_mse = result
+    if result < lowest_mse:
+        lowest_mse = result
+
+plt.suptitle(f'KNN regression, lowest MSE at {lowest_mse[0]} for k = {lowest_mse[1]}', fontsize=20)
 plt.show()
 
