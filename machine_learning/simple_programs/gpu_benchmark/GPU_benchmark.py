@@ -20,6 +20,7 @@ class GPU_benchmark:
 
     def parse_csv_file(self):
         dataset = csv_parser.open_gpu_file(self.path)
+        dataset = ml.open_
         self.X = dataset[:,[0,1,2,3,4,5]]
         self.y = dataset[:,6]
         self.n = len(self.X)

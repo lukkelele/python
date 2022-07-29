@@ -91,10 +91,8 @@ def log_gradient_descent(X, y, N=10, a=0.001, verbose=False, plot=False):
         grad = (1/n) * np.dot(X.T, s)
         b = b - a*grad 
         cost = log_calc_cost(X,y,b)
-        if verbose:
-            print(f"COST: {cost}")
-        if plot:
-            plt.scatter(i, cost, s=3, color="k")
+        if verbose: print(f"COST: {cost}")
+        if plot: plt.scatter(i, cost, s=3, color="k")
     return b
 
 # Compute errors for logaritmic regression

@@ -172,7 +172,6 @@ def polynomial2(X, d, n):
     else: return 0  # if error
     return X
 
-
 def polynomial(X, d):
     ones = np.ones((len(X),1))
     Xi = X
@@ -181,4 +180,23 @@ def polynomial(X, d):
     X = np.c_[ones, X]
     return X
 
+# Sigmoid function
+def sigmoid(X):
+    return 1 / (1 + np.exp(-X))
 
+def log_calc_cost(X, y, b):
+    n = len(X)
+    j = sigmoid(np.dot(X,b))
+    J = -(y.T.dot(np.log(j)) + (1-y).T.dot(np.log(1-j))) / n
+    return J
+
+def log_gradient_descent(X, y, N=10, a=0.001, plot=False):
+    n = len(X)
+    b = np.zeros((len(X[0]),))
+    for i in range(N):
+        s = sigmoid(np.dot(X, b)) - y
+        grad = np.dot(X.T, s) / n
+        b = b - a*grad 
+        cost = log_calc_cost(X, y, b)
+        if plot: plt.scatter(i, cost, s=3, color="k")
+    return b
