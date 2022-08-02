@@ -18,6 +18,7 @@ def plot_original_data(X, y):
     plt.show()
 
 def plot_poly_variants(X, y, d):
+    dotcolor = ['b', 'g', 'm', 'darkblue']
     plt.figure(figsize=(12,12))
     plt.suptitle('Polynomial variants, X**i, i: 1 <-> 4', fontsize=16)
     for i in range(1, d+1):
@@ -27,7 +28,7 @@ def plot_poly_variants(X, y, d):
         gradients = ml.calc_beta(X_p, y)
         Y = X_p.dot(gradients)
         plt.plot(X, y, c='r')
-        plt.scatter(X, Y, c='g', s=12)
+        plt.scatter(X, Y, c=dotcolor[i-1], s=16 )
     plt.show()
 
 def predict(X, y, year,  price, bought=1975, d=1):

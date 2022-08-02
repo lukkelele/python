@@ -51,6 +51,9 @@ def get_neighbors(p, X, k):
         return np.array(neighbors)
 
 def get_neighbors_x(p, X, k):
+    """
+    Get k closest neighbors to the point p in the dataset X
+    """
     neighbors = []
     dist = np.zeros((len(X), 2), dtype=object)
     idx = 0
@@ -66,6 +69,10 @@ def get_neighbors_x(p, X, k):
     return np.array(neighbors)
 
 def knn_regression(p, X, k):
+    """
+    Predict an y value for a point p with k neighbors in
+    dataset X
+    """
     neighbors = get_neighbors_x(p, X, k)
     y_sum = 0
     for neighbor in neighbors:
@@ -89,16 +96,21 @@ def knn_clf(p, k, X):
         return 0
 
 def normalize_column(X):
-    x = X
-    x_std = np.std(x)
-    x_mean = np.mean(x)
-    x_subt = np.subtract(x, x_mean)
-    x_norm = np.divide(x_subt, x_std)
+    """
+    Normalize a column X with a standard deviation centered
+    around 0
+    """
+    x_subt = np.subtract(X, np.mean(X))
+    x_norm = np.divide(x_subt, np.std(X))
     return x_norm
 
 # Normalize a single value
-def normalize_val(X, col, val):
-    column = X[:,col]
+def normalize_val(X, i, val):
+    """
+    Normalize a single value in dataset X with corresponding
+    values coming from the i'th column.
+    """
+    column = X[:,i]
     mean = np.mean(column) 
     std = np.std(column) 
     norm_val = (val-mean)/std
@@ -106,15 +118,24 @@ def normalize_val(X, col, val):
 
 # Extend matrix
 def extend_matrix(X):
+    """
+    Extend the dataset X in the front with a single column containing ones
+    """
     return np.c_[np.ones((len(X), 1)), X]
 
 # Calculate beta
 def calc_beta(Xe, y):
-    B = np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
-    return B
+    """
+    Returns the calculated beta from the normal equation for the 
+    extended matrix Xe with the labeled data y
+    """
+    return np.linalg.inv(Xe.T.dot(Xe)).dot(Xe.T).dot(y)
 
-# Calculate part of cost function
+# TODO: Consider removing
 def calc_j(Xe, y, beta):
+    """
+    Calculate the 'j' of the cost function
+    """
     j = np.dot(Xe, beta) - y
     return j
 
@@ -159,7 +180,7 @@ def gradient_descent(X, y, N=10, a=0.001, plot=False, output=False):
                 idx += 1
     return b
 
-
+# TODO: Remove 
 def polynomial2(X, d, n):
     if d == 1:
         X = np.c_[np.ones((n,1)),X]
@@ -180,23 +201,34 @@ def polynomial(X, d):
     X = np.c_[ones, X]
     return X
 
-# Sigmoid function
 def sigmoid(X):
+    """
+    Returns the dataset X applied with the sigmoid function
+    """
     return 1 / (1 + np.exp(-X))
 
 def log_calc_cost(X, y, b):
+    """
+    Calculate the cost for the dataset X with y and beta 'b'
+    """
     n = len(X)
     j = sigmoid(np.dot(X,b))
     J = -(y.T.dot(np.log(j)) + (1-y).T.dot(np.log(1-j))) / n
     return J
 
-def log_gradient_descent(X, y, N=10, a=0.001, plot=False):
+def log_gradient_descent(X, y, N=10, a=0.01, plot=False):
+    """
+    Logarithmic gradient descent
+    """
     n = len(X)
     b = np.zeros((len(X[0]),))
     for i in range(N):
         s = sigmoid(np.dot(X, b)) - y
-        grad = np.dot(X.T, s) / n
-        b = b - a*grad 
-        cost = log_calc_cost(X, y, b)
-        if plot: plt.scatter(i, cost, s=3, color="k")
+        grad = (a/n) * np.dot(X.T, s)
+        b = b - grad 
+        if plot:
+            cost = log_calc_cost(X, y, b)
+            plt.scatter(i, cost, s=3, color="k")
     return b
+
+
