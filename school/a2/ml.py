@@ -180,18 +180,6 @@ def gradient_descent(X, y, N=10, a=0.001, plot=False, output=False):
                 idx += 1
     return b
 
-# TODO: Remove 
-def polynomial2(X, d, n):
-    if d == 1:
-        X = np.c_[np.ones((n,1)),X]
-    elif d == 2:
-        X = np.c_[np.ones((n,1)),X,X**2]
-    elif d == 3:
-        X = np.c_[np.ones((n,1)),X,X**2,X**3]
-    elif d == 4:
-        X = np.c_[np.ones((n,1)),X,X**2,X**3,X**4]
-    else: return 0  # if error
-    return X
 
 def polynomial(X, d):
     ones = np.ones((len(X),1))
@@ -205,7 +193,7 @@ def sigmoid(X):
     """
     Returns the dataset X applied with the sigmoid function
     """
-    return 1 / (1 + np.exp(-X))
+    return 1.0 / (1 + np.exp(-X))
 
 def log_calc_cost(X, y, b):
     """
@@ -231,4 +219,28 @@ def log_gradient_descent(X, y, N=10, a=0.01, plot=False):
             plt.scatter(i, cost, s=3, color="k")
     return b
 
+# TODO: CLEAN UP
+def log_regression_predict(X):
+    """
+    y_hat = sigmoid(w.X + b)
+    Predict y for X
+    """
+    predictions = sigmoid(X)
+    return predictions
+
+def plot_decision_boundary_logreg(X, b, y):
+    """
+    X: input data, extended matrix [ 1 , x1, x2 ]
+    b: beta , gradients
+    decision boundary --> y = mx + c
+    c --> bias
+    """
+    x1 = [min(X[:,1]), max(X[:,1])]
+    m, c = -b[1:], -b[0]
+    x2 = m*x1 + c
+    plt.plot(X[:,1][y==0], X[:,2][y==0], "r^") # points with y < 0.5
+    plt.plot(X[:,1][y==1], X[:,2][y==1], "gs") # points with y > 0.5
+    plt.xlim([-2.3, 2.3])
+    plt.ylim([-2.3, 2.3])
+    plt.plot(x1, x2, 'b')
 
