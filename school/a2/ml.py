@@ -117,6 +117,18 @@ def normalize_val(X, i, val):
     norm_val = (val-mean)/std
     return norm_val
 
+# Normalize a matrix
+def normalize_matrix(X):
+    """
+    X: input matrix containing all columns
+    returns a normalized version
+    """
+    rows, cols = len(X), len(X[0])
+    Xn = np.zeros((rows, cols))
+    for i in range(cols):
+        Xn[:,i] = normalize_column(X[:,i])
+    return Xn
+
 # Extend matrix
 def extend_matrix(X):
     """
@@ -153,14 +165,6 @@ def calc_MSE(Y, Y_pred):
     mse = round(((Y - Y_pred)**2).mean(), 2)
     return mse
 
-# Normalize a matrix
-def normalize_matrix(X):
-    rows, cols = len(X[:,0]), len(X[0])
-    Xn = np.zeros((rows, cols))
-    for i in range(cols):
-        Xn[:,i] = normalize_column(X[:,i])
-    return Xn
-
 # Gradient descent
 def gradient_descent(X, y, N=10, a=0.001, plot=False, output=False):
     cols = np.size(X, 1)
@@ -191,7 +195,7 @@ def polynomial(X1, X2, d):
             X_new = X1**(i-j)*X2**j
             X_new = X_new.reshape(-1, 1)
             Xe = np.append(Xe, X_new, 1) # 1 --> append column
-            print(f'<?> len Xe == {len(Xe)} |     i = {i} and j = {j}')
+            #print(f'<?> len Xe == {len(Xe)} |     i = {i} and j = {j}')
     return Xe
 
 def sigmoid(X):
@@ -222,15 +226,6 @@ def log_gradient_descent(X, y, N=10, a=0.01, plotCost=False):
         if plotCost: cost = log_calc_cost(X, y, b) ; plt.scatter(i, cost, s=3, color="k")
     return b
 
-# TODO: CLEAN UP
-def log_regression_predict(X):
-    """
-    y_hat = sigmoid(w.X + b)
-    Predict y for X
-    """
-    probalities = sigmoid(X)
-    return probalities
-
 def plot_linear_db(X, y, b):
     """
     X: input data, extended matrix [ 1 , x1, x2 ]
@@ -238,17 +233,17 @@ def plot_linear_db(X, y, b):
     decision boundary --> y = mx + c
     """
     x1 = [min(X[:,1]), max(X[:,1])]
-    print(-b[1])
     x2 = -(b[0] + np.dot(b[1], x1)) / b[2]
     plt.xlim([-2.3, 2.3]), plt.ylim([-2.2, 2.2])
     plt.plot(X[:,1][y==0], X[:,2][y==0], "r^") # points with y < 0.5
     plt.plot(X[:,1][y==1], X[:,2][y==1], "gs") # points with y > 0.5
     plt.plot(x1, x2, 'b')
 
-def plot_nonlinear_db(X1, X2, y, b, h=0.005, lim_step=0.15):
+def plot_nonlinear_db(X1, X2, y, b, d, h=0.005, lim_step=0.15):
     """
     X: input data, extended matrix [ 1 , x1, x2 ]
     b: beta , gradients
+    d: degree of polynomial
     Nonlinear --> polynomial features
     """
     x_min, x_max = X1.min() - lim_step, X1.max() + lim_step
@@ -256,7 +251,7 @@ def plot_nonlinear_db(X1, X2, y, b, h=0.005, lim_step=0.15):
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
                          np.arange(y_min, y_max, h))
     x1, x2 = xx.ravel(), yy.ravel()
-    XXe = polynomial(x1, x2, 2)
+    XXe = polynomial(x1, x2, d)
     p = sigmoid(np.dot(XXe, b))
     classes = p > 0.5
     clz_mesh = classes.reshape(xx.shape)

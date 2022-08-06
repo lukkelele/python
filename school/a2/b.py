@@ -89,9 +89,12 @@ plt.scatter(nx1, nx2, s=50, edgecolors='k', color='y')
 
 
 plt.subplot(212)
-X_2 = ml.polynomial(Xn0, Xn1, 2)
+d = 6
+X_2 = ml.polynomial(Xn0, Xn1, d)
 b = ml.log_gradient_descent(X_2, y, N=N, a=a)
-ml.plot_nonlinear_db(Xn0, Xn1, y, b)
+print('here')
+print(len(b))
+ml.plot_nonlinear_db(Xn0, Xn1, y, b, d)
 
 
 plt.show()
