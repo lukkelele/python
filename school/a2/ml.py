@@ -1,3 +1,4 @@
+from matplotlib.colors import ListedColormap
 from matplotlib import pyplot as plt
 from matplotlib import colors
 from math import sqrt, floor
@@ -180,14 +181,18 @@ def gradient_descent(X, y, N=10, a=0.001, plot=False, output=False):
                 idx += 1
     return b
 
-
-def polynomial(X, d):
-    ones = np.ones((len(X),1))
-    Xi = X
-    for i in range(2, d+1):
-        X = np.c_[X, Xi**i]
-    X = np.c_[ones, X]
-    return X
+def polynomial(X1, X2, d):
+    """
+    Non-linear two feature problems
+    """
+    Xe = np.c_[np.ones([len(X1),1]), X1, X2]
+    for i in range (2, d+1):
+        for j in range(0, i+1):
+            X_new = X1**(i-j)*X2**j
+            X_new = X_new.reshape(-1, 1)
+            Xe = np.append(Xe, X_new, 1) # 1 --> append column
+            print(f'<?> len Xe == {len(Xe)} |     i = {i} and j = {j}')
+    return Xe
 
 def sigmoid(X):
     """
@@ -204,7 +209,7 @@ def log_calc_cost(X, y, b):
     J = -(y.T.dot(np.log(j)) + (1-y).T.dot(np.log(1-j))) / n
     return J
 
-def log_gradient_descent(X, y, N=10, a=0.01, plot=False):
+def log_gradient_descent(X, y, N=10, a=0.01, plotCost=False):
     """
     Logarithmic gradient descent
     """
@@ -214,9 +219,7 @@ def log_gradient_descent(X, y, N=10, a=0.01, plot=False):
         s = sigmoid(np.dot(X, b)) - y
         grad = (a/n) * np.dot(X.T, s)
         b = b - grad 
-        if plot:
-            cost = log_calc_cost(X, y, b)
-            plt.scatter(i, cost, s=3, color="k")
+        if plotCost: cost = log_calc_cost(X, y, b) ; plt.scatter(i, cost, s=3, color="k")
     return b
 
 # TODO: CLEAN UP
@@ -225,22 +228,43 @@ def log_regression_predict(X):
     y_hat = sigmoid(w.X + b)
     Predict y for X
     """
-    predictions = sigmoid(X)
-    return predictions
+    probalities = sigmoid(X)
+    return probalities
 
-def plot_decision_boundary_logreg(X, b, y):
+def plot_linear_db(X, y, b):
     """
     X: input data, extended matrix [ 1 , x1, x2 ]
     b: beta , gradients
     decision boundary --> y = mx + c
-    c --> bias
     """
     x1 = [min(X[:,1]), max(X[:,1])]
-    m, c = -b[1:], -b[0]
-    x2 = m*x1 + c
+    print(-b[1])
+    x2 = -(b[0] + np.dot(b[1], x1)) / b[2]
+    plt.xlim([-2.3, 2.3]), plt.ylim([-2.2, 2.2])
     plt.plot(X[:,1][y==0], X[:,2][y==0], "r^") # points with y < 0.5
     plt.plot(X[:,1][y==1], X[:,2][y==1], "gs") # points with y > 0.5
-    plt.xlim([-2.3, 2.3])
-    plt.ylim([-2.3, 2.3])
     plt.plot(x1, x2, 'b')
+
+def plot_nonlinear_db(X1, X2, y, b, h=0.005, lim_step=0.15):
+    """
+    X: input data, extended matrix [ 1 , x1, x2 ]
+    b: beta , gradients
+    Nonlinear --> polynomial features
+    """
+    x_min, x_max = X1.min() - lim_step, X1.max() + lim_step
+    y_min, y_max = X2.min() - lim_step, X2.max() + lim_step
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
+                         np.arange(y_min, y_max, h))
+    x1, x2 = xx.ravel(), yy.ravel()
+    XXe = polynomial(x1, x2, 2)
+    p = sigmoid(np.dot(XXe, b))
+    classes = p > 0.5
+    clz_mesh = classes.reshape(xx.shape)
+    cmap_light = ListedColormap(['#FFAAAA', '#AAFFAA', '#AAAAFF']) # mesh plot
+    cmap_bold  = ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # colors
+    plt.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
+    plt.scatter(X1, X2, c=y, marker='.', cmap=cmap_bold)
+
+
+
 

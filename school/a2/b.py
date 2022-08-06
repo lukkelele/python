@@ -1,3 +1,4 @@
+from matplotlib.colors import ListedColormap
 from matplotlib import pyplot as plt
 from matplotlib import colors
 from math import sqrt, floor
@@ -59,30 +60,38 @@ B = np.round(B, 3)
 # Increase iterations to find a stabilized beta
 # TODO: Plot linear decision boundary
 N = 1000
-B = ml.log_gradient_descent(Xn_e, y, N=N, a=a, plot=False)
+B = ml.log_gradient_descent(Xn_e, y, N=N, a=a, plotCost=False)
 cost = ml.log_calc_cost(Xn_e, y, B)
 #plt.xlim(2, N)
 print(f">> COST --> {cost}")
 print(f">> Beta after N={N} iterations using logarithmic gradient descent: {B}")
 print(f"   New cost: {round(ml.log_calc_cost(Xn_e, y, B), 4)}")
 
-# y = 1 when w.X + b >= 0
-# y = 0 when w.X + b <  0
-
 B = ml.log_gradient_descent(Xn_e, y, N=N, a=a)
-ml.plot_decision_boundary_logreg(Xn_e, B, y)
+plt.subplot(211)
+# Plot the linear decision boundary
+ml.plot_linear_db(Xn_e, y, B)
 
 test_score = np.array([45, 85])
 nx1 = ml.normalize_val(X, 0, 45)
 nx2 = ml.normalize_val(X, 1, 85)
 print(test_score)
-test_n = np.array([nx1, nx2])
+test_n = np.array([[nx1, nx2],
+                   [1.02,  -.94]])
+test_ne = ml.extend_matrix(test_n)
 #print(test_n)
-test_ne = np.c_[1, test_n[0], test_n[1]]
+#test_ne = np.c_[1, test_n[0], test_n[1]]
 #print(test_ne)
 prob = ml.sigmoid(np.dot(test_ne, B))
 print(f"Adm. prob for scores {test_score[0]}, {test_score[1]} is {prob[0]}")
-#plt.show()
+print(f"\nNormalized 45, 85 --> {nx1} , {nx2}\n")
+plt.scatter(nx1, nx2, s=50, edgecolors='k', color='y')
 
 
-#x_vals = X[X[:,0].argsort()][:,0]   # Sort ascending order by x
+plt.subplot(212)
+X_2 = ml.polynomial(Xn0, Xn1, 2)
+b = ml.log_gradient_descent(X_2, y, N=N, a=a)
+ml.plot_nonlinear_db(Xn0, Xn1, y, b)
+
+
+plt.show()
