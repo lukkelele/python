@@ -226,6 +226,19 @@ def log_gradient_descent(X, y, N=10, a=0.01, plotCost=False):
         if plotCost: cost = log_calc_cost(X, y, b) ; plt.scatter(i, cost, s=3, color="k")
     return b
 
+def logreg_training_errors(Xe, y, beta):
+    """
+    Xe: extended matrix
+    y:  real values
+    beta: gradients
+    """
+    z = Xe.dot(beta).reshape(-1, 1) # (n, 1) matrix
+    p = sigmoid(z)   # probability
+    pp = np.round(p) # prediction -> 0 or 1
+    yy = y.reshape(-1, 1)
+    training_errors = np.sum(yy!=pp)
+    return training_errors
+
 def plot_linear_db(X, y, b):
     """
     X: input data, extended matrix [ 1 , x1, x2 ]
@@ -259,7 +272,4 @@ def plot_nonlinear_db(X1, X2, y, b, d, h=0.005, lim_step=0.15):
     cmap_bold  = ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # colors
     plt.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
     plt.scatter(X1, X2, c=y, marker='.', cmap=cmap_bold)
-
-
-
 

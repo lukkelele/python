@@ -58,7 +58,6 @@ B = np.round(B, 3)
 #print(f"   New cost: {round(ml.log_calc_cost(Xn_e, y, B), 4)}")
 
 # Increase iterations to find a stabilized beta
-# TODO: Plot linear decision boundary
 N = 1000
 B = ml.log_gradient_descent(Xn_e, y, N=N, a=a, plotCost=False)
 cost = ml.log_calc_cost(Xn_e, y, B)
@@ -84,17 +83,17 @@ test_ne = ml.extend_matrix(test_n)
 #print(test_ne)
 prob = ml.sigmoid(np.dot(test_ne, B))
 print(f"Adm. prob for scores {test_score[0]}, {test_score[1]} is {prob[0]}")
-print(f"\nNormalized 45, 85 --> {nx1} , {nx2}\n")
+#print(f"\nNormalized 45, 85 --> {nx1} , {nx2}\n")
 plt.scatter(nx1, nx2, s=50, edgecolors='k', color='y')
-
+print('\n-------------------\n')
 
 plt.subplot(212)
-d = 6
+d = 2
 X_2 = ml.polynomial(Xn0, Xn1, d)
 b = ml.log_gradient_descent(X_2, y, N=N, a=a)
-print('here')
-print(len(b))
 ml.plot_nonlinear_db(Xn0, Xn1, y, b, d)
 
+err = ml.logreg_training_errors(Xn_e, y, B)
+print(f">> Training errors: {err}")
 
-plt.show()
+#plt.show()
