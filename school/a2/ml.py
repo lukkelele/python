@@ -226,7 +226,7 @@ def log_gradient_descent(X, y, N=10, a=0.01, plotCost=False):
         if plotCost: cost = log_calc_cost(X, y, b) ; plt.scatter(i, cost, s=3, color="k")
     return b
 
-def logreg_training_errors(Xe, y, beta):
+def logreg_estimate_errors(Xe, y, beta):
     """
     Xe: extended matrix
     y:  real values
@@ -236,8 +236,8 @@ def logreg_training_errors(Xe, y, beta):
     p = sigmoid(z)   # probability
     pp = np.round(p) # prediction -> 0 or 1
     yy = y.reshape(-1, 1)
-    training_errors = np.sum(yy!=pp)
-    return training_errors
+    errors = np.sum(yy!=pp)
+    return errors
 
 def plot_linear_db(X, y, b):
     """
