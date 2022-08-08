@@ -7,11 +7,13 @@ import numpy as np
 import sys
 import ml
 
-#np.set_printoptions(threshold=sys.maxsize)
+np.set_printoptions(threshold=sys.maxsize)
 
 """
 Quadratic model, polynomial degree 2
 """
+print('Running...')
+
 # Read the already normalized data
 data = ml.open_csv_file('./data/microchips.csv')
 X, y = data[:,[0, 1]], data[:,2]
@@ -22,12 +24,12 @@ iterations = 10000
 learning_rate = 0.1
 poly_degree = 2
 X_p = ml.polynomial(X1, X2, poly_degree)
-beta, betas = ml.log_gradient_descent(X_p, y, N=iterations, a=learning_rate)
+beta, betas = ml.log_gradient_descent(X_p, y, iterations=iterations, learning_rate=learning_rate)
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12,10))
 fig.suptitle('Microship dataset')
 
 # Training errors
-errors = ml.logreg_estimate_errors(X_p, y, beta)
+errors = ml.log_estimate_errors(X_p, y, beta)
 
 ax2.scatter(X1[y==1], X2[y==1], c='g', cmap='flag', s=35, marker='v', edgecolors='k', label='correct')
 ax2.scatter(X1[y==0], X2[y==0], c='r', cmap='flag', s=35, marker='x', label='wrong')
@@ -52,16 +54,20 @@ ax1.set_title(f'Cost function J(B)\na == {learning_rate}\nN == {iterations}\nSta
 
 # Polynomial of degree 5
 X_p5 = ml.polynomial(X1, X2, 5)
-beta_p5, betas_p5 = ml.log_gradient_descent(X_p5, y, N=iterations, a=learning_rate)
-errors_p5 = ml.logreg_estimate_errors(X_p5, y, beta_p5)
-print(f"Errors poly degree 5: {errors_p5}")
+beta_p5, betas_p5 = ml.log_gradient_descent(X_p5, y, iterations=iterations, learning_rate=learning_rate)
+errors_p5 = ml.log_estimate_errors(X_p5, y, beta_p5)
+#print(f"Errors poly degree 5: {errors_p5}")
+
+lr = np.arange(0.1, 1.0, 0.001)
+degrees = 30
+iters = 1000
+
+opt_d, opt_lr, cost = ml.log_tune_polynomial_model(X1, X2, y, degree_range=degrees, iterations=iters, learning_rate_range=lr)
+
+print(f" Optimal degree: {opt_d}\n Optimal learning rate: {opt_lr}\n Cost: {cost}")
 
 
-for i in range(2, 10):
-    X_p = ml.polynomial(X1, X2, i)
-    beta_p = ml.log_gradient_descent(X_p, y, N=iterations, a=learning_rate)[0]
-    errors_p = ml.logreg_estimate_errors(X_p, y, beta_p)
-    print(f">> Degree: {i+2} ==> errors: {errors_p}")
 
 
-plt.show()
+
+#plt.show()

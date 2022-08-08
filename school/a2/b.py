@@ -58,14 +58,14 @@ a = 0.5
 
 # Increase iterations to find a stabilized beta
 N = 1000
-B = ml.log_gradient_descent(Xn_e, y, N=N, a=a)[0]
+B = ml.log_gradient_descent(Xn_e, y, iterations=N, learning_rate=a)[0]
 cost = ml.log_calc_cost(Xn_e, y, B)
 #plt.xlim(2, N)
 print(f">> COST --> {cost}")
 print(f">> Beta after N={N} iterations using logarithmic gradient descent: {B}")
 print(f"   New cost: {round(ml.log_calc_cost(Xn_e, y, B), 4)}")
 
-B = ml.log_gradient_descent(Xn_e, y, N=N, a=a)[0] # Index 0 for last beta, [1] --> all betas
+B = ml.log_gradient_descent(Xn_e, y, iterations=N, learning_rate=a)[0] # Index 0 for last beta, [1] --> all betas
 plt.subplot(211)
 # Plot the linear decision boundary
 ml.plot_linear_db(Xn_e, y, B)
@@ -89,7 +89,7 @@ print('\n-------------------\n')
 plt.subplot(212)
 d = 2
 X_2 = ml.polynomial(Xn0, Xn1, d)
-b = ml.log_gradient_descent(X_2, y, N=N, a=a)[0]
+b = ml.log_gradient_descent(X_2, y, iterations=N, learning_rate=a)[0]
 ml.plot_nonlinear_db(Xn0, Xn1, y, b, d)
 
 err = ml.logreg_estimate_errors(Xn_e, y, B)

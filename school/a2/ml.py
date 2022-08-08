@@ -4,6 +4,9 @@ from matplotlib import colors
 from math import sqrt, floor
 import pandas as pd
 import numpy as np
+import warnings
+
+warnings.simplefilter("ignore")
 
 
 def open_csv_file(path, header=0):
@@ -213,21 +216,21 @@ def log_calc_cost(X, y, b):
     J = -(y.T.dot(np.log(j)) + (1-y).T.dot(np.log(1-j))) / n
     return J
 
-def log_gradient_descent(X, y, N, a):
+def log_gradient_descent(X, y, iterations, learning_rate):
     """
     Logarithmic gradient descent
     """
     betas = []
     n = len(X) # instances
     b = np.zeros((len(X[0]),))
-    for i in range(N):
+    for i in range(iterations):
         s = sigmoid(np.dot(X, b)) - y
-        grad = (2/n) * np.dot(X.T, s)
-        b = b - a*grad 
+        grad = (1/n) * np.dot(X.T, s)
+        b = b - learning_rate * grad 
         betas.append(b)
     return b, betas
 
-def logreg_estimate_errors(Xe, y, beta):
+def log_estimate_errors(Xe, y, beta):
     """
     Xe: extended matrix
     y:  real values
@@ -281,3 +284,65 @@ def plot_nonlinear_db(X1, X2, y, b, d, h=0.005, lim_step=0.15, ax=None):
         #ax.scatter(X1, X2, c=y, marker='.', cmap=cmap_bold)
         ax.scatter(X1[y==0], X2[y==0], c='r', marker=marker_0, cmap=cmap_bold, edgecolors='k')
         ax.scatter(X1[y==1], X2[y==1], c='g', marker=marker_1, cmap=cmap_bold, edgecolors='k')
+
+
+def log_find_best_polynomial_model(X1, X2, y, degree_range, iterations, learning_rate):
+    """
+    X1: first feature
+    X2: second feature
+    degree_range: maximum amount of degrees to test
+    """
+    results = []
+    for d in range(1, degree_range+1):
+        Xp = polynomial(X1, X2, d)
+        beta = log_gradient_descent(Xp, y, iterations=iterations, learning_rate=learning_rate)[0]
+        cost = log_calc_cost(Xp, y, beta)
+        results.append(cost)
+    results = np.array(results).reshape(-1, 1)
+    best_result = np.min(results[:,0])
+    idx = np.where(results == np.min(results[:,0]))[0][0]
+    best_polynomial_degree = idx + 1
+    return best_polynomial_degree
+
+def log_find_best_learning_rate(Xe, y, iterations, learning_rate_range=np.arange(0, 1, 0.05)):
+    """
+    Xe: extended matrix
+    iterations: gradient descent iterations
+    learning_rate_range: array of learning rates to apply and test
+    """
+    costs = []
+    for learning_rate in learning_rate_range:
+        beta = log_gradient_descent(Xe, y, iterations, learning_rate)[0]
+        cost = log_calc_cost(Xe, y, beta)
+        costs.append(cost)
+    results = np.array(costs) 
+    best_result = np.where(results == np.min(results))
+    idx = best_result[0]
+    return learning_rate_range[idx]
+
+def log_tune_polynomial_model(X1, X2, y, degree_range, iterations=10, learning_rate_range=np.arange(0, 1, 0.05)):
+    """
+    Tune the learning rate and the polynomial degree
+    """
+    results = []
+    for learning_rate in learning_rate_range:
+        for d in range(1, degree_range+1):
+            Xp = polynomial(X1, X2, d)
+            beta = log_gradient_descent(Xp, y, iterations=iterations, learning_rate=learning_rate)[0]
+            cost = log_calc_cost(Xp, y, beta)
+            results.append([cost, d, learning_rate])
+    r = np.array(results)
+    r = r[~np.isnan(r[:,0])]    # remove instances where cost == nan
+    idx = np.where(r[:,0] == np.min(r[:,0]))[0]
+    optimal_spec = r[idx]
+    optimal_degree = optimal_spec[0][1]
+    optimal_learn_rate = optimal_spec[0][2] 
+    final_cost = optimal_spec[0][0]
+    #print(r[r[:,0].argsort()][::-1])
+    return optimal_degree, optimal_learn_rate, final_cost
+
+
+
+
+
+
