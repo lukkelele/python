@@ -253,13 +253,14 @@ def plot_linear_db(X, y, b):
     plt.plot(X[:,1][y==1], X[:,2][y==1], "gs") # points with y > 0.5
     plt.plot(x1, x2, 'b')
 
-def plot_nonlinear_db(X1, X2, y, b, d, h=0.005, lim_step=0.15):
+def plot_nonlinear_db(X1, X2, y, b, d, h=0.005, lim_step=0.15, ax=None):
     """
     X: input data, extended matrix [ 1 , x1, x2 ]
     b: beta , gradients
     d: degree of polynomial
     Nonlinear --> polynomial features
     """
+    marker_0, marker_1 = 'X', 'o'
     x_min, x_max = X1.min() - lim_step, X1.max() + lim_step
     y_min, y_max = X2.min() - lim_step, X2.max() + lim_step
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
@@ -271,6 +272,12 @@ def plot_nonlinear_db(X1, X2, y, b, d, h=0.005, lim_step=0.15):
     clz_mesh = classes.reshape(xx.shape)
     cmap_light = ListedColormap(['#FFAAAA', '#AAFFAA', '#AAAAFF']) # mesh plot
     cmap_bold  = ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # colors
-    plt.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
-    plt.scatter(X1, X2, c=y, marker='.', cmap=cmap_bold)
-
+    if ax == None:
+        plt.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
+        plt.scatter(X1[y==0], X2[y==0], c='r', marker=marker_0, cmap=cmap_bold, edgecolors='k')
+        plt.scatter(X1[y==1], X2[y==1], c='g', marker=marker_1, cmap=cmap_bold, edgecolors='k')
+    else:
+        ax.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
+        #ax.scatter(X1, X2, c=y, marker='.', cmap=cmap_bold)
+        ax.scatter(X1[y==0], X2[y==0], c='r', marker=marker_0, cmap=cmap_bold, edgecolors='k')
+        ax.scatter(X1[y==1], X2[y==1], c='g', marker=marker_1, cmap=cmap_bold, edgecolors='k')
