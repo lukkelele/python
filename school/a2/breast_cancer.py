@@ -15,7 +15,7 @@ Total of 9 features and the 10th column contains binary labels of either 2 (0) o
 """
 data = ml.open_csv_file('./data/breast_cancer.csv')
 
-def run(data, N, a, i, train_p=0.80, output=False):
+def run(data, N, a, i, train_p, output=False):
     X, y = data[:,[0,1,2,3,4,5,6,7,8]], data[:,9]
     # Replace y values of 2 and 4 to 0 and 1 respectively
     y = np.where(y == 2, 0, 1) 
@@ -29,7 +29,7 @@ def run(data, N, a, i, train_p=0.80, output=False):
     X_train, X_test = Xne[:train_size], Xne[train_size:]
     y_train, y_test = y[:train_size], y[train_size:]
     # Train a linear logistic regression model
-    beta = ml.log_gradient_descent(X_train, y_train, N=N, a=a, plotCost=True)
+    beta = ml.log_gradient_descent(X_train, y_train, N=N, a=a)[0]
     # Training errors and accuracy in the training data set
     training_errors = ml.logreg_estimate_errors(X_train, y_train, beta)
     correct_train = train_size - training_errors
@@ -38,15 +38,11 @@ def run(data, N, a, i, train_p=0.80, output=False):
     test_errors = ml.logreg_estimate_errors(X_test, y_test, beta)
     correct_test = test_size - test_errors 
     test_accuracy = round(100 * (correct_test/test_size), 3)
-    if output:
-        print(f"""[ROUND] {i}
-    >> TRAINING
-       Errors:   {training_errors}
-       Accuracy: {training_accuracy}%
-    >> TEST
-       Errors:   {test_errors}
-       Accuracy: {test_accuracy}%
---------------------------------------""")
+    if output: print(f"""[ROUND] {i}
+    >> TRAINING         |       TEST
+       Errors:   {training_errors}          Errors:   {test_errors}
+       Accuracy: {training_accuracy}%     Accuracy: {test_accuracy}% 
+------------------------------------------------------------------------""")
     return training_errors, test_errors, training_accuracy, test_accuracy
 
 # Divide data to training and testing sets
@@ -62,8 +58,8 @@ avg_train_err, avg_test_err, avg_train_acc, avg_test_acc = 0, 0, 0, 0
 results = []
 
 K = 10
-N = 10
-a = 5
+N = 25
+a = 0.010
 output=True
 
 for i in range(K):
@@ -87,13 +83,10 @@ avg_train_acc = round(avg_train_acc / K, 3)
 avg_test_acc = round(avg_test_acc / K, 3)
 
 print(f"""   \nAVERAGE RESULTS {K} rounds
->> TRAINING
-   Errors:   {avg_train_err}
-   Accuracy: {avg_train_acc}%
->> TEST
-   Errors:   {avg_test_err}
-   Accuracy: {avg_test_acc}%
---------------------------------------""")
+    >> TRAINING          |     TEST
+       Errors:   {avg_train_err}          Errors:   {avg_test_err}
+       Accuracy: {avg_train_acc}%     Accuracy: {avg_test_acc}% 
+------------------------------------------------------------------------""")
 
 
 

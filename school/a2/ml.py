@@ -213,18 +213,19 @@ def log_calc_cost(X, y, b):
     J = -(y.T.dot(np.log(j)) + (1-y).T.dot(np.log(1-j))) / n
     return J
 
-def log_gradient_descent(X, y, N=10, a=0.01, plotCost=False):
+def log_gradient_descent(X, y, N, a):
     """
     Logarithmic gradient descent
     """
-    n = len(X)
+    betas = []
+    n = len(X) # instances
     b = np.zeros((len(X[0]),))
     for i in range(N):
         s = sigmoid(np.dot(X, b)) - y
-        grad = (a/n) * np.dot(X.T, s)
-        b = b - grad 
-        if plotCost: cost = log_calc_cost(X, y, b) ; plt.scatter(i, cost, s=3, color="k")
-    return b
+        grad = (2/n) * np.dot(X.T, s)
+        b = b - a*grad 
+        betas.append(b)
+    return b, betas
 
 def logreg_estimate_errors(Xe, y, beta):
     """
@@ -235,7 +236,7 @@ def logreg_estimate_errors(Xe, y, beta):
     z = Xe.dot(beta).reshape(-1, 1) # (n, 1) matrix
     p = sigmoid(z)   # probability
     pp = np.round(p) # prediction -> 0 or 1
-    yy = y.reshape(-1, 1)
+    yy = y.reshape(-1, 1) # (n, ) -> (n, 1)
     errors = np.sum(yy!=pp)
     return errors
 
