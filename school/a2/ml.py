@@ -380,7 +380,7 @@ def log_plot_cost_db(X1, X2, y, polynomial_degree, iterations, learning_rate):
     plt.subplot(122)
     log_plot_twofeature(X1, X2, y, errors)
     plot_nonlinear_db(X1, X2, y, b=b, d=polynomial_degree)
-    plt.title(f"Iterations: {iterations}\nLearning rate: {learning_rate}")
+    plt.title(f"Polynomial degree: {polynomial_degree}\nIterations: {iterations}\nLearning rate: {learning_rate}")
 
 
 
