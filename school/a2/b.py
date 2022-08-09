@@ -92,7 +92,7 @@ X_2 = ml.polynomial(Xn0, Xn1, d)
 b = ml.log_gradient_descent(X_2, y, iterations=N, learning_rate=a)[0]
 ml.plot_nonlinear_db(Xn0, Xn1, y, b, d)
 
-err = ml.logreg_estimate_errors(Xn_e, y, B)
+err = ml.log_estimate_errors(Xn_e, y, B)
 print(f">> Training errors: {err}")
 
 #plt.show()

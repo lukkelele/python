@@ -256,14 +256,14 @@ def plot_linear_db(X, y, b):
     plt.plot(X[:,1][y==1], X[:,2][y==1], "gs") # points with y > 0.5
     plt.plot(x1, x2, 'b')
 
-def plot_nonlinear_db(X1, X2, y, b, d, h=0.005, lim_step=0.15, ax=None):
+def plot_nonlinear_db(X1, X2, y, b, d, h=0.005, lim_step=0.15):
     """
     X: input data, extended matrix [ 1 , x1, x2 ]
     b: beta , gradients
     d: degree of polynomial
     Nonlinear --> polynomial features
     """
-    marker_0, marker_1 = 'X', 'o'
+    marker_0, marker_1 = 'X', 'v'
     x_min, x_max = X1.min() - lim_step, X1.max() + lim_step
     y_min, y_max = X2.min() - lim_step, X2.max() + lim_step
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
@@ -275,15 +275,9 @@ def plot_nonlinear_db(X1, X2, y, b, d, h=0.005, lim_step=0.15, ax=None):
     clz_mesh = classes.reshape(xx.shape)
     cmap_light = ListedColormap(['#FFAAAA', '#AAFFAA', '#AAAAFF']) # mesh plot
     cmap_bold  = ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # colors
-    if ax == None:
-        plt.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
-        plt.scatter(X1[y==0], X2[y==0], c='r', marker=marker_0, cmap=cmap_bold, edgecolors='k')
-        plt.scatter(X1[y==1], X2[y==1], c='g', marker=marker_1, cmap=cmap_bold, edgecolors='k')
-    else:
-        ax.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
-        #ax.scatter(X1, X2, c=y, marker='.', cmap=cmap_bold)
-        ax.scatter(X1[y==0], X2[y==0], c='r', marker=marker_0, cmap=cmap_bold, edgecolors='k')
-        ax.scatter(X1[y==1], X2[y==1], c='g', marker=marker_1, cmap=cmap_bold, edgecolors='k')
+    plt.pcolormesh(xx, yy, clz_mesh, cmap=cmap_light)
+    plt.scatter(X1[y==0], X2[y==0], c='r', marker=marker_0, cmap=cmap_bold, edgecolors='k')
+    plt.scatter(X1[y==1], X2[y==1], c='g', marker=marker_1, cmap=cmap_bold, edgecolors='k')
 
 
 def log_find_best_polynomial_model(X1, X2, y, degree_range, iterations, learning_rate):
@@ -341,8 +335,52 @@ def log_tune_polynomial_model(X1, X2, y, degree_range, iterations=10, learning_r
     #print(r[r[:,0].argsort()][::-1])
     return optimal_degree, optimal_learn_rate, final_cost
 
+def log_plot_twofeature(X1, X2, y, errors, title=True):
+    """
+    X1: first feature
+    X2: second feature
+    y:  labels
+    """
+    plt.xlabel('X1'), plt.ylabel('X2')
+    plt.scatter(X1[y==1], X2[y==1], c='g', cmap='flag', s=35, marker='v', edgecolors='k', label='correct')
+    plt.scatter(X1[y==0], X2[y==0], c='r', cmap='flag', s=35, marker='x', label='wrong')
+    if title: plt.title(f"Training errors: {errors}")
+    plt.legend()
+
+def log_plot_cost(X, y, B):
+    """
+    X: feature matrix
+    y: labels
+    B: collection of betas
+    NOTE: Call subplot BEFORE calling this function
+    """
+    s, c = 1, 'k'
+    costs = []
+    iterations = len(B)
+    for i in range(iterations):
+        cost = log_calc_cost(X, y, B[i])
+        costs.append(cost)
+    stabilized_cost = round((costs[-1:][0]), 6)
+    x_axis = np.arange(0, iterations, 1)
+    plt.scatter(x_axis, costs, s=s, c=c)
+    plt.xlabel('Iterations'), plt.ylabel('Cost')
+    return stabilized_cost
 
 
+def log_plot_cost_db(X1, X2, y, polynomial_degree, iterations, learning_rate):
+    plt.figure()
+    Xp = polynomial(X1, X2, polynomial_degree)
+    b, betas = log_gradient_descent(Xp, y, iterations, learning_rate)
+    errors = log_estimate_errors(Xp, y, b)
+    # Plot the cost 
+    plt.subplot(121)
+    stabilized_cost = log_plot_cost(Xp, y, betas)
+    plt.title(f"Training errors: {errors}\nCost stabilizes at {stabilized_cost}")
+    # Plot X1 and X2 with the decision boundary
+    plt.subplot(122)
+    log_plot_twofeature(X1, X2, y, errors)
+    plot_nonlinear_db(X1, X2, y, b=b, d=polynomial_degree)
+    plt.title(f"Iterations: {iterations}\nLearning rate: {learning_rate}")
 
 
 
