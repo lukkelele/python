@@ -373,14 +373,15 @@ def log_plot_cost_db(X1, X2, y, polynomial_degree, iterations, learning_rate):
     b, betas = log_gradient_descent(Xp, y, iterations, learning_rate)
     errors = log_estimate_errors(Xp, y, b)
     # Plot the cost 
+    plt.suptitle(f'Polynomial degree: {polynomial_degree}\nIterations: {iterations}\nLearning rate: {learning_rate}')
     plt.subplot(121)
     stabilized_cost = log_plot_cost(Xp, y, betas)
-    plt.title(f"Training errors: {errors}\nCost stabilizes at {stabilized_cost}")
+    plt.title(f"Cost stabilizes at {stabilized_cost}")
     # Plot X1 and X2 with the decision boundary
     plt.subplot(122)
     log_plot_twofeature(X1, X2, y, errors)
     plot_nonlinear_db(X1, X2, y, b=b, d=polynomial_degree)
-    plt.title(f"Polynomial degree: {polynomial_degree}\nIterations: {iterations}\nLearning rate: {learning_rate}")
+    plt.title(f"Training errors: {errors}")
 
 
 
