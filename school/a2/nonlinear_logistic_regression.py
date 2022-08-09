@@ -18,9 +18,10 @@ data = ml.open_csv_file('./data/microchips.csv')
 X, y = data[:,[0, 1]], data[:,2]
 X1, X2 = X[:, 0], X[:, 1]
 
-iterations = 100000
+iterations = 10000
 learning_rate = 0.135
 
+# Plot the different polynomials 
 # Polynomial of degree 2
 ml.log_plot_cost_db(X1, X2, y, 2, iterations=iterations, learning_rate=learning_rate)
 # Polynomial of degree 5

@@ -188,11 +188,12 @@ def gradient_descent(X, y, N=10, a=0.001, plot=False, output=False):
                 idx += 1
     return b
 
-def polynomial(X1, X2, d):
+def polynomial(X1, X2, d, ones=True):
     """
     Non-linear two feature problems
     """
-    Xe = np.c_[np.ones([len(X1),1]), X1, X2]
+    if ones: Xe = np.c_[np.ones([len(X1),1]), X1, X2]
+    else: Xe = np.c_[X1, X2]
     for i in range (2, d+1):
         for j in range(0, i+1):
             X_new = X1**(i-j)*X2**j
@@ -279,7 +280,6 @@ def plot_nonlinear_db(X1, X2, y, b, d, h=0.005, lim_step=0.15):
     plt.scatter(X1[y==0], X2[y==0], c='r', marker=marker_0, cmap=cmap_bold, edgecolors='k')
     plt.scatter(X1[y==1], X2[y==1], c='g', marker=marker_1, cmap=cmap_bold, edgecolors='k')
 
-
 def log_find_best_polynomial_model(X1, X2, y, degree_range, iterations, learning_rate):
     """
     X1: first feature
@@ -343,7 +343,7 @@ def log_plot_twofeature(X1, X2, y, errors, title=True):
     """
     plt.xlabel('X1'), plt.ylabel('X2')
     plt.scatter(X1[y==1], X2[y==1], c='g', cmap='flag', s=35, marker='v', edgecolors='k', label='correct')
-    plt.scatter(X1[y==0], X2[y==0], c='r', cmap='flag', s=35, marker='x', label='wrong')
+    plt.scatter(X1[y==0], X2[y==0], c='r', cmap='flag', s=35, marker='X', edgecolors='k', label='wrong')
     if title: plt.title(f"Training errors: {errors}")
     plt.legend()
 
@@ -366,7 +366,6 @@ def log_plot_cost(X, y, B):
     plt.xlabel('Iterations'), plt.ylabel('Cost')
     return stabilized_cost
 
-
 def log_plot_cost_db(X1, X2, y, polynomial_degree, iterations, learning_rate):
     plt.figure()
     Xp = polynomial(X1, X2, polynomial_degree)
@@ -382,6 +381,4 @@ def log_plot_cost_db(X1, X2, y, polynomial_degree, iterations, learning_rate):
     log_plot_twofeature(X1, X2, y, errors)
     plot_nonlinear_db(X1, X2, y, b=b, d=polynomial_degree)
     plt.title(f"Training errors: {errors}")
-
-
 
