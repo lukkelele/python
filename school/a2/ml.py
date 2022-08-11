@@ -382,3 +382,45 @@ def log_plot_cost_db(X1, X2, y, polynomial_degree, iterations, learning_rate):
     plot_nonlinear_db(X1, X2, y, b=b, d=polynomial_degree)
     plt.title(f"Training errors: {errors}")
 
+
+def combination(arr, n):
+    """
+    arr: array with values
+    n: subset size
+    """
+    if n == 0: return [[]]
+    l = []
+    for i in range(0, len(arr)):
+        m = arr[i]
+        rem = arr[i+1:]
+        remCombo = combination(rem, n-1)
+        for p in remCombo:
+            l.append([m, *p])
+    return l
+
+def forward_selection(X, y):
+    """
+    Forward selection algorithm
+    X: features
+    y: results
+    """
+    Xn_e = extend_matrix(normalize_matrix(X))
+    b = calc_beta(Xn_e, y)
+    p = np.size(X[0]) + 1   # p features
+    models = []
+    mseTotal = []
+    for i in range(0, p+1):
+        combo = combination(b, i)
+        for c in combo:
+            "c: combination of beta values"
+            print(c)
+            models.append(c)
+    print(f"Combinations: {len(models)}")
+    return models
+
+
+
+
+
+
+
