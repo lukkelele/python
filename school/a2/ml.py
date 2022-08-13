@@ -23,7 +23,7 @@ def meshgrid( X, y, offset=1, step_size=0.05):
     Create a meshgrid with a minimum of min(X, y)-h and
     a maximum of max(X, y)+h and a step size of z.
     """
-    x_min, x_max, y_min, y_max = X.min()-(offset/4), X.max()+(offset/4), y.min()-offset, y.max()+(offset/4)
+    x_min, x_max, y_min, y_max = X.min()-(offset/4), X.max()+(offset/4), y.min()-(offset/4), y.max()+(offset/4)
     xx, yy = np.meshgrid(np.arange(x_min, x_max, step_size),
                          np.arange(y_min, y_max, step_size))
     return xx, yy
@@ -200,6 +200,15 @@ def polynomial(X1, X2, d, ones=True):
             X_new = X_new.reshape(-1, 1)
             Xe = np.append(Xe, X_new, 1) # 1 --> append column
             #print(f'<?> len Xe == {len(Xe)} |     i = {i} and j = {j}')
+    return Xe
+
+def polynomial_single(X1, d, ones=True):
+    if ones: Xe = np.c_[np.ones([len(X1),1]), X1]
+    else: Xe = np.copy(X1).reshape(-1, 1)
+    if d == 1: return Xe
+    for i in range (2, d+1):
+        X_new = (X1**i).reshape(-1, 1)
+        Xe = np.append(Xe, X_new, 1)
     return Xe
 
 def sigmoid(X):
@@ -419,8 +428,24 @@ def forward_selection(X, y):
     return models
 
 
+def plot_twofeature(X1, X2, y, cmap=None,s=12, markers=['o', 'o'], colors=['g', 'r'], edgecolors=[None, None]):
+    """
+    X1: first feature
+    X2: second feature
+    y:  labels
+    """
+    plt.xlabel('X1'), plt.ylabel('X2')
+    plt.scatter(X1[y==1], X2[y==1], c=colors[0], cmap=cmap, s=s, marker=markers[0], edgecolors=edgecolors[0])
+    plt.scatter(X1[y==0], X2[y==0], c=colors[1], cmap=cmap, s=s, marker=markers[1], edgecolors=edgecolors[1])
 
-
+def plot_decision_boundary(clf, xx, yy, alpha=0.80, colors='k', linewidths=2.0, levels=[1.0]):
+    """
+    clf: trained classifier
+    xx, yy: meshgrid
+    """
+    plt.contour(xx, yy, clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape), 
+                colors=colors, alpha=alpha, linewidths=linewidths, levels=levels
+                )
 
 
 
