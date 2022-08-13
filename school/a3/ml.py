@@ -5,6 +5,7 @@ from math import sqrt, floor
 import pandas as pd
 import numpy as np
 import warnings
+import time
 
 warnings.simplefilter("ignore")
 
@@ -18,7 +19,7 @@ def open_csv_file(path, header=0):
 def select_column(dataset, col):
     return dataset[:,[col]]
 
-def meshgrid( X, y, offset=1, step_size=0.05):
+def meshgrid(X, y, offset=1, step_size=0.05):
     """
     Create a meshgrid with a minimum of min(X, y)-h and
     a maximum of max(X, y)+h and a step size of z.
@@ -437,6 +438,26 @@ def plot_decision_boundary(clf, xx, yy, alpha=0.80, colors='k', linewidths=2.0, 
     plt.contour(xx, yy, clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape), 
                 colors=colors, alpha=alpha, linewidths=linewidths, levels=levels
                 )
+
+def plot_decision_boundary_shade(clf, xx, yy, alpha=0.80, cmap='plasma'):
+    """
+    clf: trained classifier
+    xx, yy: meshgrid
+    """
+    plt.contour(xx, yy, clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape), 
+                alpha=alpha, cmap=cmap
+                )
+
+def stopwatch(start=None):
+    """Measure time taken"""
+    if start == None:
+        t_ms = time.time()
+        return t_ms
+    else:
+        t_diff = round(time.time() - start, 5)
+        print(f"[TIME] Time spent: {t_diff} s")
+
+
 
 
 
