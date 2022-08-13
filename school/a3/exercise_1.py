@@ -1,5 +1,5 @@
 from sklearn.model_selection import cross_val_score, GridSearchCV, train_test_split
-from sklearn.model_selection import 
+from sklearn.metrics import accuracy_score
 from sklearn.datasets import fetch_openml
 from sklearn.svm import SVC
 from matplotlib.colors import ListedColormap
@@ -87,6 +87,7 @@ clf_poly = SVC(kernel='poly', C=C_poly, gamma=gamma_poly, degree=degree_poly).fi
 clfs = [clf_lin, clf_rbf, clf_poly]
 xx, yy = ml.meshgrid(X_train[:,0], X_train[:,1], offset=3)
 
+clfs_names = ['linear', 'rbf', 'poly']
 clf_scores = []
 # Produce plots
 for i in range(3):
@@ -97,8 +98,19 @@ for i in range(3):
     plt.contourf(xx, yy, y_mesh, cmap='hot', alpha=0.35)
     #plt.scatter(X_train[:,0], X_train[:,1], s=12, c=y_train, edgecolors='k')   # training set
     plt.scatter(X_test[:,0], X_test[:,1], s=17, c=y_test, edgecolors='k')      # TEST DATA !!
-    current_clf.sco 
+    y_pred = current_clf.predict(X_test)
+    score = current_clf.score(X_test, y_test)
+    clf_scores.append(score)
 
+print(f"""
+-----------------------
+|  SCORES             |
+-----------------------
+   Linear:   {clf_scores[0]}
+   RBF:      {clf_scores[1]}
+   Poly:     {clf_scores[2]}
+-----------------------
+""")
 
 
 print(f"""
