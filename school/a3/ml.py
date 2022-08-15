@@ -455,7 +455,7 @@ def stopwatch(start=None):
         return t_ms
     else:
         t_diff = round(time.time() - start, 5)
-        if t_diff / 60 > 1.0:
+        if t_diff / 60 >= 1.0:
             print(f"[TIME] Time spent: {t_diff/60} min")
         else:
             print(f"[TIME] Time spent: {t_diff} s")

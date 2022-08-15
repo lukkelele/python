@@ -22,7 +22,7 @@ import ml
 #y.to_csv('y_mnist.csv', encoding='utf-8')
 
 tp = 0.25   # % of train set size for test set
-train_size = 10000
+train_size = 600
 test_size = round(tp * train_size)
 test_slice = train_size + test_size
 print('>> Opening MNIST csv files...')
@@ -35,12 +35,13 @@ print('>> Data read\n   Size of training set: %s\n   Size of test set: %s' % (tr
 #C_arr = np.arange(0.1, 1, 0.01)
 #gamma_arr = np.logspace(-10, 3, 12)
 print('>> Creating C and gamma arrays')
-step_C = 0.15
-step_gamma = 0.1
-C_arr = np.arange(0.10, 2, step_C)
+step_C = 0.05
+step_gamma = 0.2
+C_arr = np.arange(0.10, 1, step_C)
 gamma_arr = np.arange(0.10, 1, step_gamma)
 max_C, min_C = round(max(C_arr), 4), round(min(C_arr), 4)
 max_gamma, min_gamma = round(max(gamma_arr), 4), round(min(gamma_arr), 4)
+
 param_grid_rbf = {
          'C': C_arr,
          'gamma': gamma_arr,
@@ -48,7 +49,7 @@ param_grid_rbf = {
          }
 
 print('   Done!\n>> Creating SVC...')
-clf = SVC()
+clf = SVC(kernel='rbf')
 print(f""">> Starting grid search
    Tuning parameters:
                       C:  {min_C} <-> {max_C}, step: {step_C}
@@ -58,8 +59,12 @@ start = ml.stopwatch()
 grid = GridSearchCV(clf, param_grid_rbf)
 print('>> Refitting training set...')
 grid.fit(X_train, y_train)
+clf_score = cross_val_score(grid, X_test, y_test, scoring='accuracy', cv=3)
 print('>> Calculating score for classifier')
-acc = grid.score(X_test, y_test)
+train_acc = grid.score(X_train, y_train)
+test_acc = grid.score(X_test, y_test)
 #print("Accuracy: %f", acc)
-print(f"Accuracy: {acc}")
-print(f"\nBest params: {grid.best_params_}\nBest score: {grid.best_score_}\n   Time spent: {ml.stopwatch(start)}")
+print(f"Training accuracy: {train_acc}\nTest accuracy: {test_acc}\nValidation score: {clf_score}")
+print(f"Best params: {grid.best_params_}\nBest score: {grid.best_score_}\n   Time spent: {ml.stopwatch(start)}")
+
+
