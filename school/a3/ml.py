@@ -1,3 +1,4 @@
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeClassifier
 from matplotlib.colors import ListedColormap
 from matplotlib import pyplot as plt
 from matplotlib import colors
@@ -435,6 +436,7 @@ def plot_decision_boundary(clf, xx, yy, alpha=0.80, colors='k', linewidths=2.0, 
     clf: trained classifier
     xx, yy: meshgrid
     """
+    #print(clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape).shape)
     plt.contour(xx, yy, clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape), 
                 colors=colors, alpha=alpha, linewidths=linewidths, levels=levels
                 )
@@ -459,6 +461,53 @@ def stopwatch(start=None):
             print(f"[TIME] Time spent: {t_diff/60} min")
         else:
             print(f"[TIME] Time spent: {t_diff} s")
+
+
+def bootstrap_data(X, t=100):
+    """
+    Boostrap data
+    X: data
+    n: number of samples in each subset
+    t: number of subsets
+    """
+    n = len(X) 
+    rng = np.random.default_rng()
+    r = np.zeros([n, t], dtype=int)
+    XX = np.zeros([n, X.shape[1], t]) # X.shape[1] -> number of features 
+    for i in range(t):
+        r[:,i] = rng.choice(n, size=n, replace=True)
+        XX[:,:,i] = X[r[:,i], :]
+    return XX
+
+def decision_tree_ensemble(X, y, n, X_test, y_test):
+    """
+    Decision tree ensemble
+    X, y: training data
+    n: number of trees
+    X_test, y_test: testing data
+
+    Returns:
+        Y_pred: predicted y values for n decision trees in a list
+        mesh_pred: n predicted mesh grids for each tree classifier
+        tree_scores: performance for each decision tree
+    """
+    xx, yy = meshgrid(X[:,0], X[:,1], offset=1, step_size=0.10)
+    Y_pred = []
+    mesh_pred = []
+    tree_scores = []
+    for i in range(n):
+        clf = DecisionTreeClassifier()
+        clf.fit(X, y)
+        y_pred = clf.predict(X_test)
+        acc = clf.score(X_test, y_test)
+        Y_pred.append(y_pred)
+        errors = np.sum(y_pred != y_test)
+        tree_scores.append([acc, errors])
+        y_pred_mesh = clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
+        mesh_pred.append(y_pred_mesh)
+    return Y_pred, mesh_pred, tree_scores
+
+
 
 
 
