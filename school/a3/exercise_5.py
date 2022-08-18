@@ -15,27 +15,25 @@ import ml
 
 # Fashion MNIST
 # Image classification
-np.random.seed(12)
+np.random.seed(5)
 
 train_data, test_data = ml.open_csv_file('./data/fashion-mnist_train.csv'), \
                         ml.open_csv_file('./data/fashion-mnist_test.csv')
-features = train_data.shape[1]
-f_idx = features - 1
+# Number of features used to slice data
+f_idx = train_data.shape[1]
 train_size = 0.12
 test_size = train_size * 0.20
 train_samples, test_samples = len(train_data), len(test_data)
 new_train_size, new_test_size = round(train_size * train_samples), \
                                 round(test_size * test_samples)
-# Split the data
-train_data, test_data = train_data[ :new_train_size], test_data[ :new_test_size]
-X_train, X_test, y_train, y_test = train_data[:, :f_idx], test_data[:, :f_idx],\
-                                   train_data[:, f_idx],  test_data[:, f_idx]
+# Split the data, label on column 0
+train_data, test_data = train_data[:new_train_size], test_data[:new_test_size]
+X_train, X_test, y_train, y_test = train_data[:, 1:f_idx], test_data[:, 1:f_idx],\
+                                   train_data[:,0],  test_data[:,0]
 print(">> Dataset sizes\n   Training set: %d samples, %d%% of entire training set" \
                                               % (new_train_size, 100*train_size))
 print("   Test set: %d samples, %d%% of entire test set" \
                         % (new_test_size, 100*test_size))
-print(X_train.shape)
-print(y_train.shape)
 # Train classifier
 clf = MLPClassifier()
 clf.fit(X_train, y_train)
@@ -46,16 +44,20 @@ print(validation_score_mean)
 random_samples = np.random.random_integers(0, new_train_size, size=(16,))
 #print(f">> Random sample idx: \n{random_samples}")
 
+print(y_train[5])
 # Plot 16 random samples from the training set
+errors = 0
 for i in range(16):
     plt.subplot(4,4,i+1)
-    plt.title(f"Sample {i+1}")
     idx = random_samples[i]
-    sample = X_train[idx].reshape(1,-1) # outputs (1,784)
+    sample = X_train[idx].reshape(1, -1)
+    y_pred = clf.predict(sample)[0]
+    if y_pred != y_train[idx]:
+        errors += 1
+        plt.title(f"{i+1}. WRONG")
+    else:
+        plt.title(f"{i+1}. CORRECT")
+    plt.imshow(sample.reshape(28,28), cmap='gray')
 
 
-
-
-
-
-
+plt.show()
