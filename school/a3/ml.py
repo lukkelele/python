@@ -507,6 +507,10 @@ def decision_tree_ensemble(X, y, n, X_test, y_test):
         mesh_pred.append(y_pred_mesh)
     return Y_pred, mesh_pred, tree_scores
 
+def tune_mlp(clf):
+    """
+    Tune multiperceptron classifier
+    """
 
 
 
