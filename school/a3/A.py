@@ -31,7 +31,7 @@ X_test, y_test = X[n_s:, :], y[n_s:]
 print(len(X_train))
 print(len(X))
 
-C, gamma = 20, 0.5
+C, gamma = 20, 'auto'
 SVM = SVC(C=C, gamma=gamma)
 rbf_clf = SVM.fit(X_train, y_train)
 support_vecs_idxs = rbf_clf.support_
@@ -42,7 +42,7 @@ errors = np.sum(y_pred_train != y_train)
 print(errors)
 print(f"training error: {errors/n_s}")
 
-pred_grid = rbf_clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape)
+pred_grid = rbf_clf.predict(np.c_[xx.ravel(), yy.ravel()]).reshape(xx.shape) # remove
 plt.subplot(121)
 plt.title('Input data with decision boundary')
 ml.plot_decision_boundary(rbf_clf, xx, yy)

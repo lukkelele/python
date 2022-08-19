@@ -8,21 +8,27 @@ from matplotlib import colors
 from math import sqrt, floor
 from sklearn.svm import SVC
 import numpy as np
+import warnings
+import time
 import sys
 import ml
+import os
 
 #np.set_printoptions(threshold=sys.maxsize)
+if not sys.warnoptions:
+    warnings.simplefilter("ignore")
+    os.environ["PYTHONWARNINGS"] = "ignore" # Also affect subprocesses
+
 
 # Fashion MNIST
 # Image classification
-np.random.seed(5)
 
 train_data, test_data = ml.open_csv_file('./data/fashion-mnist_train.csv'), \
                         ml.open_csv_file('./data/fashion-mnist_test.csv')
 # Number of features used to slice data
 f_idx = train_data.shape[1]
-train_size = 0.10
-test_size = 0.20
+train_size = 0.80
+test_size = 1.00
 train_samples, test_samples = len(train_data), len(test_data)
 new_train_size, new_test_size = round(train_size * train_samples), \
                                 round(test_size * test_samples)
@@ -34,33 +40,34 @@ print(">> Dataset sizes\n   Training set: %d samples, %d%% of entire training se
                                               % (new_train_size, 100*train_size))
 print("   Test set: %d samples, %d%% of entire test set" \
                         % (new_test_size, 100*test_size))
+start_time = time.time()
 # Train classifier
-clf = MLPClassifier(alpha=0.00001, activation='relu', hidden_layer_sizes=(100,100,20), learning_rate='constant', solver='adam')
+mlp_clf = MLPClassifier(max_iter=210)
+print('>> Setting up gridsearch parameters')
+params = {
+    'hidden_layer_sizes': [(50,50,50,50,50), (100,100,100), (100,100), (100,50,100), (50,100), (100,)],
+    'activation': ['relu'],
+    'solver': ['adam'],
+    'alpha': np.logspace(-5, -20, 16),
+    'learning_rate': ['constant', 'adaptive'],
+}
+# n_jobs=-1 --> utilize CPU max, cv=2 --> 2 folds
+print('>> Beginning grid search...')
+clf = GridSearchCV(mlp_clf, params, n_jobs=4, cv=2) 
+print('>> Training model...')
 clf.fit(X_train, y_train)
 
-# Performance metrics
-y_pred = clf.predict(X_test)
-acc = clf.score(X_test, y_test)
-errors = np.sum(y_pred != y_test)
-print(f""">> Performance
-        Accuracy: {acc}
-        Errors: {errors}
-""")
+mean_test_score = clf.cv_results_['mean_test_score']
+stds = clf.cv_results_['std_test_score']
+print('>> Calculating results')
+for mean, std, params in zip(mean_test_score, stds, clf.cv_results_['params']):
+    # std * 2 -> standard deviation that include 95% of the data under normal distribution
+    print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
 
-# Generate 16 random numbers to be used as indexes for random sampling
-random_samples = np.random.random_integers(0, new_train_size, size=(16,))
-#print(f">> Random sample idx: \n{random_samples}")
+print(f"\n>> Best parameters: {clf.best_params_}\n   Best estimator: {clf.best_estimator_}")
+print(f"  Best test score: {np.max(mean_test_score)}")
+end_time = time.time()
+print(f">> Time spent testing hyperparameters: {end_time - start_time}")
 
-# Plot 16 random samples from the training set
-for i in range(16):
-    plt.subplot(4,4,i+1)
-    idx = random_samples[i]
-    sample = X_train[idx].reshape(1, -1)
-    y_pred = clf.predict(sample)[0]
-    if y_pred != y_train[idx]:
-        plt.title(f"{i+1}. WRONG")
-    else:
-        plt.title(f"{i+1}. CORRECT")
-    plt.imshow(sample.reshape(28,28), cmap='gray')
 
-#plt.show()
+
