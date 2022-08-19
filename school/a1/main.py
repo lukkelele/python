@@ -1,0 +1,7 @@
+print('\n>> Running knn.py')
+exec(open('knn.py').read())
+print('\n>> Running polynomial.py')
+exec(open('polynomial.py').read())
+print('\n>> Running scikit_knn.py')
+exec(open('scikit_knn.py').read())
+print('\nDone!')
