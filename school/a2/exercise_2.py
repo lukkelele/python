@@ -49,5 +49,6 @@ flag = True
 for k in range(1, 5):
     predict(X, y, 2022, price=house_price, bought=2015, d=k)
 
-
+print('>> Is the answer realistic?\n   I\'d say it is realistic because the graph slope is increasing for each year and the two last',\
+        'polynomial models estimated a price that was higher than the initial one')
 plt.show()

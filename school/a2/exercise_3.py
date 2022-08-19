@@ -4,7 +4,6 @@ from matplotlib import colors
 from math import sqrt, floor
 import pandas as pd
 import numpy as np
-import mllib
 import sys
 import ml
 
@@ -29,13 +28,20 @@ def run(data, N, a, i, train_p, output=False):
     X_train, X_test = Xne[:train_size], Xne[train_size:]
     y_train, y_test = y[:train_size], y[train_size:]
     # Train a linear logistic regression model
-    beta = ml.log_gradient_descent(X_train, y_train, N=N, a=a)[0]
+    beta, betas = ml.log_gradient_descent(X_train, y_train, iterations=N, learning_rate=a)
+    # Plot cost function
+    if i == 0:
+        print('>> Plotting single cost function')
+        plt.subplot(111)
+        plt.title('Cost function\nLearning rate: %f\nIterations: %d' % (a, N))
+        plt.xlim([0, N])
+        ml.log_plot_cost(X_train, y_train, betas)
     # Training errors and accuracy in the training data set
-    training_errors = ml.logreg_estimate_errors(X_train, y_train, beta)
+    training_errors = ml.log_estimate_errors(X_train, y_train, beta)
     correct_train = train_size - training_errors
     training_accuracy = round(100*(correct_train/train_size), 3)
     # Test errors and accuracy in the test data set
-    test_errors = ml.logreg_estimate_errors(X_test, y_test, beta)
+    test_errors = ml.log_estimate_errors(X_test, y_test, beta)
     correct_test = test_size - test_errors 
     test_accuracy = round(100 * (correct_test/test_size), 3)
     if output: print(f"""[ROUND] {i}
@@ -58,7 +64,7 @@ avg_train_err, avg_test_err, avg_train_acc, avg_test_acc = 0, 0, 0, 0
 results = []
 
 K = 10
-N = 25
+N = 5000
 a = 0.010
 output=True
 
@@ -73,21 +79,20 @@ for result in results:
     avg_train_acc += train_acc
     avg_test_err += test_err
     avg_test_acc += test_acc
-    #print(f"> TRAIN ERR : {train_err}")
-    #print(f"> TEST  ERR : {test_err}")
-    #print(f"> AVG TEST ERR : {avg_test_err}")
 
-avg_train_err = round(avg_train_err / K)
-avg_test_err = round(avg_test_err / K)
-avg_train_acc = round(avg_train_acc / K, 3)
-avg_test_acc = round(avg_test_acc / K, 3)
+avg_train_err = round(avg_train_err / K, 7)
+avg_test_err = round(avg_test_err / K, 7)
+avg_train_acc = round(avg_train_acc / K, 7)
+avg_test_acc = round(avg_test_acc / K, 7)
 
 print(f"""   \nAVERAGE RESULTS {K} rounds
     >> TRAINING          |     TEST
        Errors:   {avg_train_err}          Errors:   {avg_test_err}
        Accuracy: {avg_train_acc}%     Accuracy: {avg_test_acc}% 
 ------------------------------------------------------------------------""")
-
-
-
-#plt.show()
+print('>> The results are very similar during the repeated runs.')
+print('   The difference is to be expected. On average the test results is expected to be a bit lower than the test results.')
+print('   A low training set can get good scores on the training data but fail to classify the test data.')
+print('   But using all the data for training the model does not make the testing viable because there just isn\'t enough data to test.')
+print('   Therefore using 80/20 for splitting the data for the training and test sets is a good choice.')
+plt.show()
