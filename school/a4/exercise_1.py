@@ -1,20 +1,19 @@
-from sklearn.model_selection import cross_val_score, GridSearchCV, train_test_split
-from sklearn.neural_network import MLPClassifier
-from matplotlib.ticker import MultipleLocator
-from matplotlib.colors import ListedColormap
+from sklearn.model_selection import cross_val_score, GridSearchCV
 from sklearn.metrics import accuracy_score
 from matplotlib import pyplot as plt
-from matplotlib import colors
 from math import sqrt, floor
 from sklearn.svm import SVC
 import numpy as np
 import sys
 import ml
 
+np.set_printoptions(threshold=sys.maxsize)
+
 # Clustering
 # Implement 'Bisecting k-Means'
 data = ml.open_csv_file('./data/microchips.csv')
 X, y = data[:,:2], data[:,2]
+fig = plt.figure(figsize=(12,12))
 
 def convert_points(points):
     """
@@ -66,40 +65,51 @@ def k_means(points, k):
 
     # Distances: [ distance, point_index, cluster_index ] 
     distances = []
+    pidx = 0
     for centroid in centroids:
         centroid_idx = np.where(centroids == centroid)[0][0]
         for point in points:
             point_idx = np.where(points == point)[0][0]
             dist = ml.euclidean_distance(point, centroid)
-            distances.append([dist, point_idx, centroid_idx])
+            distances.append([dist, pidx, centroid_idx])
+            pidx += 1
 
     # Sort the distances array by the point indexes
     distances = np.array(distances)
     distances = distances[distances[:,1].argsort()]
-    for dist in distances:
-        print(f"dist: {dist}")
+    print(distances.shape)
+    #for dist in distances: print(f"dist: {dist}")
 
-    print()
     # Determine the shortest distance for each entry with same point index
     cpoints = []
     entries = int(len(distances) / 2)
+    # Distances: [ distance, point_index, cluster_index ] 
+    p_idx = 0
     for i in range(entries):
-        points = np.where(distances[:,1] == i)[0]
-        p1_idx, p2_idx = points[0], points[1]
-        p1, p2 = distances[p1_idx], distances[p2_idx]
+        p1, p2 = distances[p_idx], distances[p_idx]
         # if p1 distance is less than p2
-        if p1[0] < p2[0]: cpoints.append(p1)
-        else: cpoints.append(p2)
+        if p1[0] < p2[0]:
+            cpoints.append(p1)
+        else:
+            cpoints.append(p2)
+        p_idx += 1
 
     # cpoints now hold point indexes with their assigned cluster and distance
+    # Color each point according to its cluster index
+    cpoints = np.array(cpoints)
+    cpoints = cpoints[cpoints[:,1].argsort()]
+    idx = 0
 
-    for val in cpoints:
-        print(val)
+    # Plot the centroids
+    centroids_ = np.arange(0, len(centroids), 1)
+    plt.scatter(centroids[:,0], centroids[:,1], s=280, cmap='summer',
+                c=centroids_, edgecolors='k', alpha=0.55)
+    # Plot the points with their assigned cluster labels 
+    print(entries)
+    plt.scatter(points[:,0], points[:,1], c=cpoints[:,2], s=80, cmap='Set3_r', edgecolors='k')
 
+# NORMALIZED DATA
+lst = [ [0.45, 0.6], [0.4, 0.3] , [0.1, -0.32] , [-0.24, 0.42]]
+k_means(X, 3)
 
-lst = [ [3,10], [6,2] , [29, 0.4] ]
-k_means(lst, 2)
-
-ml.plot_twofeature(X[:,0], X[:,1], y, edgecolors=['k','k'], s=20)
-
-#plt.show()
+plt.show()
