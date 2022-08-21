@@ -1,4 +1,5 @@
 from sklearn.model_selection import cross_val_score, GridSearchCV
+from matplotlib.colors import ListedColormap
 from sklearn.metrics import accuracy_score
 from matplotlib import pyplot as plt
 from math import sqrt, floor
@@ -63,50 +64,31 @@ def k_means(points, k):
         centroids.append(centroid)
     centroids = np.array(centroids) 
 
-    # Distances: [ distance, point_index, cluster_index ] 
-    distances = []
-    pidx = 0
-    for centroid in centroids:
-        centroid_idx = np.where(centroids == centroid)[0][0]
-        for point in points:
-            point_idx = np.where(points == point)[0][0]
-            dist = ml.euclidean_distance(point, centroid)
-            distances.append([dist, pidx, centroid_idx])
-            pidx += 1
-
-    # Sort the distances array by the point indexes
-    distances = np.array(distances)
-    distances = distances[distances[:,1].argsort()]
-    print(distances.shape)
-    #for dist in distances: print(f"dist: {dist}")
-
-    # Determine the shortest distance for each entry with same point index
-    cpoints = []
-    entries = int(len(distances) / 2)
-    # Distances: [ distance, point_index, cluster_index ] 
-    p_idx = 0
-    for i in range(entries):
-        p1, p2 = distances[p_idx], distances[p_idx]
-        # if p1 distance is less than p2
-        if p1[0] < p2[0]:
-            cpoints.append(p1)
-        else:
-            cpoints.append(p2)
-        p_idx += 1
-
-    # cpoints now hold point indexes with their assigned cluster and distance
-    # Color each point according to its cluster index
-    cpoints = np.array(cpoints)
-    cpoints = cpoints[cpoints[:,1].argsort()]
-    idx = 0
-
+    cmap = ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # colors
     # Plot the centroids
+    print(centroids)
     centroids_ = np.arange(0, len(centroids), 1)
-    plt.scatter(centroids[:,0], centroids[:,1], s=280, cmap='summer',
-                c=centroids_, edgecolors='k', alpha=0.55)
-    # Plot the points with their assigned cluster labels 
-    print(entries)
-    plt.scatter(points[:,0], points[:,1], c=cpoints[:,2], s=80, cmap='Set3_r', edgecolors='k')
+    plt.scatter(centroids[:,0], centroids[:,1], s=280, cmap=cmap, c=[0,1,2],
+                edgecolors='k', alpha=0.55)
+
+    # Calculate points distance to each cluster
+    point_clusters = []
+    for point in points:
+        distances = []
+        for centroid in centroids:
+            dist = ml.euclidean_distance(point, centroid)
+            distances.append(dist)
+        distances = np.array(distances)
+        closest_idx = np.where(distances == max(distances))[0][0]
+        point_clusters.append(closest_idx)
+
+    #point_clusters = np.array(point_clusters)
+    plt.scatter(points[:,0], points[:,1], c=point_clusters, s=45, edgecolors='k', cmap=cmap)
+
+
+
+
+
 
 # NORMALIZED DATA
 lst = [ [0.45, 0.6], [0.4, 0.3] , [0.1, -0.32] , [-0.24, 0.42]]
