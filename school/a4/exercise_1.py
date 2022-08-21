@@ -55,43 +55,44 @@ def k_means(points, k):
     calculate labels, replace centroid --> repeat
     """
     points = typecheck(points) 
-    print(f"Points shape: {points.shape}")
     assert len(points) >= 2, "error: k must be larger or equal to 2"
     
-    centroids = []
-    for i in range(k):
-        centroid = np.random.random(size=(1,2))[0]
-        centroids.append(centroid)
-    centroids = np.array(centroids) 
-
-    cmap = ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # colors
-    # Plot the centroids
-    print(centroids)
-    centroids_ = np.arange(0, len(centroids), 1)
-    plt.scatter(centroids[:,0], centroids[:,1], s=280, cmap=cmap, c=[0,1,2],
-                edgecolors='k', alpha=0.55)
+    np.random.shuffle(points)
+    centroids = points[0:k, :]
+    print(f">> Intiial centroids \n{centroids}")
 
     # Calculate points distance to each cluster
     point_clusters = []
+    clusters = k * [None]
     for point in points:
         distances = []
         for centroid in centroids:
-            dist = ml.euclidean_distance(point, centroid)
+            dist = ml.euclidean_distance(centroid, point)
             distances.append(dist)
         distances = np.array(distances)
-        closest_idx = np.where(distances == max(distances))[0][0]
+        closest_idx = np.where(distances == min(distances))[0][0]
         point_clusters.append(closest_idx)
+        if clusters[closest_idx] is None:
+            clusters[closest_idx] = np.expand_dims(point, 0)
+        else:
+            clusters[closest_idx] = np.vstack((clusters[closest_idx], point))
 
-    #point_clusters = np.array(point_clusters)
+    #centroids = [np.mean(c, 0) for c in clusters]
+    centroids = np.array([np.mean(c, 0) for c in clusters])
+    point_clusters = np.array(point_clusters)
+    
+    #cmap = ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # colors
+    cmap = 'rainbow'
+    # Plot the centroids
+    print(f"Centroids len : {len(centroids)}")
+    centroids_ = np.arange(0, len(centroids), 1)
+    plt.scatter(centroids[:,0], centroids[:,1], s=280, cmap=cmap, c=centroids_, edgecolors='k', alpha=0.55)
     plt.scatter(points[:,0], points[:,1], c=point_clusters, s=45, edgecolors='k', cmap=cmap)
-
-
-
 
 
 
 # NORMALIZED DATA
 lst = [ [0.45, 0.6], [0.4, 0.3] , [0.1, -0.32] , [-0.24, 0.42]]
-k_means(X, 3)
+k_means(X, 5)
 
 plt.show()
