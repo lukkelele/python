@@ -47,7 +47,7 @@ def calculate_sse(points):
     return sum_errors 
 
 
-def k_means(points, k):
+def k_means(points, k, n=5):
     """
     Cluster points into k clusters, k >= 2
     k clusters means k centroids
@@ -57,42 +57,45 @@ def k_means(points, k):
     points = typecheck(points) 
     assert len(points) >= 2, "error: k must be larger or equal to 2"
     
+    np.random.seed(4)
     np.random.shuffle(points)
     centroids = points[0:k, :]
-    print(f">> Intiial centroids \n{centroids}")
+    print(f">> Intiial centroids \n{centroids}\n\n")
 
     # Calculate points distance to each cluster
-    point_clusters = []
     clusters = k * [None]
-    for point in points:
-        distances = []
-        for centroid in centroids:
-            dist = ml.euclidean_distance(centroid, point)
-            distances.append(dist)
-        distances = np.array(distances)
-        closest_idx = np.where(distances == min(distances))[0][0]
-        point_clusters.append(closest_idx)
-        if clusters[closest_idx] is None:
-            clusters[closest_idx] = np.expand_dims(point, 0)
-        else:
-            clusters[closest_idx] = np.vstack((clusters[closest_idx], point))
+    for i in range(n):
+        clusters = k * [None]
+        for point in points:
+            distances = []
+            for centroid in centroids:
+                dist = ml.euclidean_distance(centroid, point)
+                #dist = ml.euclidean_distance(point, centroid)
+                distances.append(dist)
+            distances = np.array(distances)
+            c_idx = np.where(distances == min(distances))[0][0] # cluster index
+            if clusters[c_idx] is None:     # can't use '==' here because of numpy implementation
+                clusters[c_idx] = point.reshape(1,2)
+            else:
+                clusters[c_idx] = np.vstack((clusters[c_idx], point))
 
-    #centroids = [np.mean(c, 0) for c in clusters]
-    centroids = np.array([np.mean(c, 0) for c in clusters])
-    point_clusters = np.array(point_clusters)
+        # Calculate the mean of the centroids in the clusters
+        # Set this new mean to be the value for the centroids and recalculate distances
+        centroids = np.array([np.mean(c, 0) for c in clusters])
     
-    #cmap = ListedColormap(['#FF0000', '#00FF00', '#0000FF']) # colors
+    # Plot the data
     cmap = 'rainbow'
-    # Plot the centroids
-    print(f"Centroids len : {len(centroids)}")
     centroids_ = np.arange(0, len(centroids), 1)
-    plt.scatter(centroids[:,0], centroids[:,1], s=280, cmap=cmap, c=centroids_, edgecolors='k', alpha=0.55)
-    plt.scatter(points[:,0], points[:,1], c=point_clusters, s=45, edgecolors='k', cmap=cmap)
 
+    for cluster in clusters:
+        idx = clusters.index(cluster)
+        plt.scatter(centroids[idx][0], centroids[idx][1], s=300, edgecolors='k', alpha=0.89)
+        plt.plot(cluster[:,0], cluster[:,1], 'o')
+    
 
 
 # NORMALIZED DATA
 lst = [ [0.45, 0.6], [0.4, 0.3] , [0.1, -0.32] , [-0.24, 0.42]]
-k_means(X, 5)
+k_means(X, 3)
 
 plt.show()
