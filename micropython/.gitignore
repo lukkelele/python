@@ -1,6 +1,6 @@
 # Ignore
 
-./freeRTOS_pico
-./tasks
-./superloop.py
-./todo.md
+freeRTOS_pico*
+tasks/
+superloop.py
+todo.md
