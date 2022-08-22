@@ -21,8 +21,8 @@ train_data, test_data = ml.open_csv_file('./data/fashion-mnist_train.csv'), \
                         ml.open_csv_file('./data/fashion-mnist_test.csv')
 # Number of features used to slice data
 f_idx = train_data.shape[1]
-train_size = 0.10
-test_size = 0.20
+train_size = 1.00
+test_size = 1.00
 train_samples, test_samples = len(train_data), len(test_data)
 new_train_size, new_test_size = round(train_size * train_samples), \
                                 round(test_size * test_samples)
@@ -35,7 +35,8 @@ print(">> Dataset sizes\n   Training set: %d samples, %d%% of entire training se
 print("   Test set: %d samples, %d%% of entire test set" \
                         % (new_test_size, 100*test_size))
 # Train classifier
-clf = MLPClassifier(alpha=0.00001, activation='relu', hidden_layer_sizes=(100,100,20), learning_rate='constant', solver='adam')
+#clf = MLPClassifier(alpha=0.00001, activation='relu', hidden_layer_sizes=(100,100,20), learning_rate='constant', solver='adam')
+clf = MLPClassifier()
 clf.fit(X_train, y_train)
 
 # Performance metrics

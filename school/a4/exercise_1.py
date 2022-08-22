@@ -62,4 +62,5 @@ clusters = bkmeans(X, 5)
 cmap = 'plasma'
 for cluster in clusters:
     plt.scatter(cluster[:,0], cluster[:,1], cmap=cmap, edgecolors='k', s=125)
+
 plt.show()

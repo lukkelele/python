@@ -126,7 +126,9 @@ def normalize_matrix(X):
     X: input matrix containing all columns
     returns a normalized version
     """
-    rows, cols = len(X), len(X[0])
+    if len(X.shape) == 1:
+        X = X.reshape(-1,1)
+    rows, cols = X.shape[0], X.shape[1]
     Xn = np.zeros((rows, cols))
     for i in range(cols):
         Xn[:,i] = normalize_column(X[:,i])

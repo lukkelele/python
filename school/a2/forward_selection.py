@@ -1,7 +1,6 @@
-from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
-from matplotlib.colors import ListedColormap
-from matplotlib.ticker import MultipleLocator
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import KFold
 from matplotlib import pyplot as plt
 from matplotlib import colors
 from math import sqrt, floor
@@ -9,64 +8,41 @@ import numpy as np
 import sys
 import ml
 
-np.set_printoptions(threshold=sys.maxsize)
-
-
 data = ml.open_csv_file('./data/GPUbenchmark.csv')
 X, y = data[:, :6], data[:, 6]
 
+def forward_selection(X, y, d):
+    # Normalize and extend X
+    Xne = ml.extend_matrix(ml.normalize_matrix(X))
+    y = ml.normalize_matrix(y)
+    beta = ml.calc_beta(Xne, y)
+    mse_tot, scores = [], []
+    cv = KFold(n_splits=3, random_state=2, shuffle=True)
+    print('>> testing models...')
+    for i in range(d+1):
+        x = X[:,:i]
+        xne = ml.extend_matrix(ml.normalize_matrix(x))
+        clf = LinearRegression().fit(xne, y)
+        beta = ml.calc_beta(xne, y)
+        y_pred = xne.dot(beta)
+        mse = ml.calc_MSE(y, y_pred)
+        mse_tot.append(mse)
+        cv_sum = 0
+        cross_val = cross_val_score(clf, xne, y, cv=cv)
+        scores.append(cross_val)
+        print(f">> features: {i}     mse : {mse}    cross_val_score: {cross_val}")
+    mse_tot = np.array(mse_tot) 
+    idx = np.where(mse_tot == min(mse_tot))[0]
+    if len(idx) > 1: idx = idx[0]   # incase mse stabilizes
+    print(f">> Best model(s) (according to MSE): {idx}    MSE: {mse_tot[idx]}")
+    scores = np.array(scores)
+    best_idx = np.where(scores == np.max(scores))[0]
+    print(f">> Cross validation:\n   Best model: {best_idx}")
+    count = 0
+    for result in scores:
+        cv_score_avg = result.mean()
+        print(f">> Model {count} : {cv_score_avg}")
+        count += 1
+    
 
-def combination(arr, n, start_arr):
-    if n == 0: return [[]]
-    l = []
-    lst = [0, 0, 0, 0]
-    for i in range(0, len(arr)):
-        m = arr[i]
-        m_last_idx = len(start_arr) - start_arr.index(m) 
-        #print(f"mlast_idx = {m_last_idx}")
-        rem = arr[i+1:]
-        remCombo = combination(rem, n-1, start_arr)
-        for p in remCombo:
-            l.append([m, *p])
-            if p != []:
-                for k in p:
-                    lst[start_arr.index(k)] = k
-            print(f"lst => {lst}")
-        #print(f"l: {l}")
-        print()
-    return l
-
-def forward_selection(X, y):
-    """
-    Forward selection algorithm
-    X: features
-    y: results
-    """
-    Xn_e = ml.extend_matrix(ml.normalize_matrix(X))
-    b = ml.calc_beta(Xn_e, y)
-    p = np.size(X[0]) + 1   # p features
-    models = []
-    mseTotal = []
-    for i in range(0, p+1):
-        combo = combination(b, i, b)
-        for c in combo:
-            "c: combination of beta values"
-            print(c)
-            models.append(c)
-    print(f"Combinations: {len(models)}")
-    return models
-
-
-
-a = [1, 2, 4, 8]
-A = combination(a, 3, a)
-print(f"\n\n{A}")
-
-#M = ml.forward_selection(X, y)
-
-
-
-
-
-
-
+forward_selection(X, y, 8)
