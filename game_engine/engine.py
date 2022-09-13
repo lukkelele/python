@@ -1,3 +1,4 @@
+from mesh import Mesh, Triangle
 from pygame.locals import *
 import pygame, sys, os
 import window
@@ -16,36 +17,34 @@ class Engine:
 
         self.window.update()
 
-
-    def render_timeSymbol(self):
-        self.window.clear()
-        scale = 3
-        p1, p2, p3, p4 = (50*scale,50*scale), (100*scale,50*scale), (50*scale,100*scale), (100*scale,100*scale)
-        pygame.draw.line(self.window.screen, (255,255,0), p1, p2, 3)
-        pygame.draw.line(self.window.screen, (0,255,0), p2, p3, 3)
-        pygame.draw.line(self.window.screen, (255,0,0), p3, p4, 3)
-        pygame.draw.line(self.window.screen, (255,0,255), p4, p1, 3)
-        self.window.update()
-
-    def render_triangle(self):
-        self.window.clear()
-        s = 50  # scaler
-        d = 100
-        p1, p2, p3 = (0+d,0+d), (0+d, 1*s + d), (1*s + d,1*s + d)
-        pygame.draw.line(self.window.screen, (255,255,0), p1, p2, 3)
-        pygame.draw.line(self.window.screen, (0,255,0), p2, p3, 3)
-        pygame.draw.line(self.window.screen, (255,0,0), p3, p1, 3)
-        self.window.update()
+    def meshCube(self):
+        vertices = [ 
+                # South
+                [(0,0,0), (0,1,0), (1,1,0)],
+                [(0,0,0), (1,1,0), (1,0,0)],
+                # East
+                [(1,0,0), (1,1,0), (1,1,1)],
+                [(1,0,0), (1,1,1), (1,0,1)],
+                # North
+                [(1,0,1), (1,1,1), (0,1,1)],
+                [(1,0,1), (0,1,1), (0,0,1)],
+                # West
+                [(0,0,1), (0,1,1), (0,1,0)],
+                [(0,0,1), (0,1,0), (0,0,0)],
+                # Top
+                [(0,1,0), (0,1,1), (1,1,1)],
+                [(0,1,0), (1,1,1), (1,1,0)],
+                # Bottom
+                [(1,0,1), (0,0,1), (0,0,0)],
+                [(1,0,1), (0,0,0), (1,0,0)],
+            ]
+        return vertices
 
 
 
 e = Engine()
-rect = pygame.Rect(50, 100, 100, 50)
 while True:
 
-    pygame.draw.rect(e.window.screen, (255,255,0), rect)
-    e.window.update()
-    #e.render_triangle()
     e.fpsClock.tick(30)
 
 
