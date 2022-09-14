@@ -5,6 +5,7 @@ import pygame, sys, os
 import numpy as np
 import window
 import time
+import mesh as _mesh
 
 WIDTH, HEIGHT = 500, 500
 
@@ -20,36 +21,11 @@ class Engine:
             [1,0,0],
             [0,1,0]
         ])
-
-    def render(self):
-        self.clearScreen()
+        self.mesh = _mesh.Mesh()
 
     def clearScreen(self):
         self.window.clear()
         self.window.update()
-
-    def meshCube(self):
-        vertices = [ 
-                # South
-                [(0,0,0), (0,1,0), (1,1,0)],
-                [(0,0,0), (1,1,0), (1,0,0)],
-                # East
-                [(1,0,0), (1,1,0), (1,1,1)],
-                [(1,0,0), (1,1,1), (1,0,1)],
-                # North
-                [(1,0,1), (1,1,1), (0,1,1)],
-                [(1,0,1), (0,1,1), (0,0,1)],
-                # West
-                [(0,0,1), (0,1,1), (0,1,0)],
-                [(0,0,1), (0,1,0), (0,0,0)],
-                # Top
-                [(0,1,0), (0,1,1), (1,1,1)],
-                [(0,1,0), (1,1,1), (1,1,0)],
-                # Bottom
-                [(1,0,1), (0,0,1), (0,0,0)],
-                [(1,0,1), (0,0,0), (1,0,0)],
-            ]
-        return vertices
 
     def quit(self):
         pygame.quit()
@@ -59,9 +35,8 @@ class Engine:
 e = Engine()
 e.window.screen.fill((0,0,0)) # blackscreen
 background = pygame.Surface((WIDTH, HEIGHT))
-cube = e.meshCube()
+cube = e.mesh.createCube()
 e.clearScreen()
-e.window.update()
 projected_points = [
         [n,n] for n in range(len(cube))
     ]
@@ -85,23 +60,6 @@ while True:
         #angle -= 0.1
         z_angle -= 0.1
 
-    rotation_z = np.matrix([
-        [cos(angle), -sin(angle), 0],
-        [sin(angle), cos(angle), 0],
-        [0, 0, 1],
-    ])
-
-    rotation_y = np.matrix([
-        [cos(z_angle), 0, sin(z_angle)],
-        [0, 1, 0],
-        [-sin(z_angle), 0, cos(z_angle)],
-    ])
-
-    rotation_x = np.matrix([
-        [1, 0, 0],
-        [0, cos(angle), -sin(angle)],
-        [0, sin(angle), cos(angle)],
-    ])
     projected_points = []
     for tri in cube:
         proj_points = [] 
@@ -115,18 +73,17 @@ while True:
         #print(f"Norm vals:\n{norm_x}\n{norm_y}\n{norm_z}\n")
         for vert in tri:
             vert = np.array(vert)   # FIXME
-            rotation2d_z = np.dot(rotation_z, vert.reshape(3,1))
-            rotation2d_y  = np.dot(rotation_y, rotation2d_z)
-            rotation2d_x = np.dot(rotation_x, rotation2d_y)
+            rotation2d_z = np.dot(e.mesh.rotation_z(angle), vert.reshape(3,1))
+            rotation2d_y  = np.dot(e.mesh.rotation_y(z_angle), rotation2d_z)
+            rotation2d_x = np.dot(e.mesh.rotation_x(angle), rotation2d_y)
             projection2d = np.dot(e.proj_mat, rotation2d_x)
             x = int(projection2d[0][0] * scale + circle_pos[0]) # circle_pos -> OFFSET
             y = int(projection2d[1][0] * scale + circle_pos[1]) #               offset
-            print(rotation2d_x)
-            print()
+            #print(rotation2d_x);print()
             if norm_x * rotation2d_x[0] + norm_y * rotation2d_x[1] + norm_z * rotation2d_x[2] > 0:
                 pygame.draw.circle(e.window.screen, (255,0,100), (x,y), 3)
             proj_points.append([x,y])
-        print(proj_points)
+        #print(proj_points)
         l1 = np.array(proj_points[2]) - np.array(proj_points[0])
         l2 = np.array(proj_points[1]) - np.array(proj_points[0])
         norm_d = np.cross(l1, l2)
