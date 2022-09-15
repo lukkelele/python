@@ -57,6 +57,15 @@ class Engine:
         scene = pywavefront.Wavefront(path_to_object, collect_faces=True)
         return scene
 
+    def pointAt(self, pos, target, up):
+        # Forward direction
+        forward = np.subtract(target, pos)
+        # Up direction
+        u = np.multiply(forward, (np.dot(up, forward)))
+        up = np.subtract(up, u)
+        # Right direction
+        right = np.cross(up, forward)
+
 e = Engine()
 e.window.screen.fill((0,0,0)) # blackscreen
 background = pygame.Surface((WIDTH, HEIGHT))
@@ -66,7 +75,6 @@ axis = e.importObject('./axis.obj')
 e.clearScreen()
 convModel = []
 meshModel = axis
-
 for m in meshModel.mesh_list:
     triangle = []
     faces = m.faces
@@ -82,6 +90,7 @@ projected_points = [ [n,n] for n in range(len(objmodel))    ]
 angle=0
 x_angle, y_angle, z_angle = 0, 0, 0
 scale = 10
+pos = np.array([-1,1,-1])
 circle_pos = [WIDTH/2, HEIGHT/2]
 
 while True:
