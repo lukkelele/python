@@ -18,7 +18,6 @@ RED = (255,0,0)
 
 class Engine:
 
-
     def __init__(self, width=500, height=500, title=""):
         self.pg = pygame.init()
         self.fpsClock = pygame.time.Clock()
@@ -63,35 +62,28 @@ e.window.screen.fill((0,0,0)) # blackscreen
 background = pygame.Surface((WIDTH, HEIGHT))
 cube = e.mesh.createCube()
 ship = e.importObject('./ship.obj')
-shipFaces = ship.vertices
-meshList = ship.mesh_list
-meshes = ship.meshes
+axis = e.importObject('./axis.obj')
 e.clearScreen()
-newShip = []
-shipTri = []
+convModel = []
+meshModel = axis
 
-for m in meshList:
+for m in meshModel.mesh_list:
     triangle = []
-    idx = meshList.index(m)
     faces = m.faces
     for face in faces:
         for vidx in face:
-            vert = ship.vertices[vidx]
+            vert = meshModel.vertices[vidx]
             triangle.append(vert)
-        newShip.append(triangle.copy())
+        convModel.append(triangle.copy())
         triangle.clear()
 
-idx = 0
-objmodel = newShip
-#print(f"\n\n{newShip}\n\n")
-projected_points = [
-        [n,n] for n in range(len(objmodel))
-    ]
-#for tri in cube: for vertex in tri: pygame.draw.line()
+objmodel = convModel
+projected_points = [ [n,n] for n in range(len(objmodel))    ]
 angle=0
 x_angle, y_angle, z_angle = 0, 0, 0
-scale = 30
+scale = 10
 circle_pos = [WIDTH/2, HEIGHT/2]
+
 while True:
     e.window.screen.blit(background, (0,0)) # TODO: fix refresh for screen
     for event in pygame.event.get():
