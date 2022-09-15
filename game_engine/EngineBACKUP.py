@@ -56,41 +56,34 @@ class Engine:
 
     def importObject(self, path_to_object):
         scene = pywavefront.Wavefront(path_to_object, collect_faces=True)
-        return scene
+        return scene.vertices
 
 e = Engine()
 e.window.screen.fill((0,0,0)) # blackscreen
 background = pygame.Surface((WIDTH, HEIGHT))
 cube = e.mesh.createCube()
-ship = e.importObject('./ship.obj')
-shipFaces = ship.vertices
-meshList = ship.mesh_list
-meshes = ship.meshes
+ship = [e.importObject('./ship.obj')][0]
 e.clearScreen()
 newShip = []
 shipTri = []
-
-for m in meshList:
-    triangle = []
-    idx = meshList.index(m)
-    faces = m.faces
-    for face in faces:
-        for vidx in face:
-            vert = ship.vertices[vidx]
-            triangle.append(vert)
-        newShip.append(triangle.copy())
-        triangle.clear()
-
-idx = 0
-objmodel = newShip
-#print(f"\n\n{newShip}\n\n")
+for vert in ship:
+    idx = ship.index(vert)
+    shipTri.append(vert)
+    if idx % 3 == 0:
+        newShip.append(shipTri[:2])
+        shipTri.clear()
+print()
+print(newShip)
+objmodel = cube
 projected_points = [
         [n,n] for n in range(len(objmodel))
     ]
+print()
+print(len(projected_points))
 #for tri in cube: for vertex in tri: pygame.draw.line()
 angle=0
 x_angle, y_angle, z_angle = 0, 0, 0
-scale = 30
+scale = 80
 circle_pos = [WIDTH/2, HEIGHT/2]
 while True:
     e.window.screen.blit(background, (0,0)) # TODO: fix refresh for screen
@@ -119,13 +112,13 @@ while True:
             x = int(projection2d[0][0] * scale + circle_pos[0]) # circle_pos -> OFFSET
             y = int(projection2d[1][0] * scale + circle_pos[1]) #               offset
             proj_points.append([x,y])
-        #print("> PROJ POINTS"); print(proj_points); print()
+        print("> PROJ POINTS")
+        print(proj_points)
         l1 = np.array(proj_points[2]) - np.array(proj_points[0])
         l2 = np.array(proj_points[1]) - np.array(proj_points[0])
         norm_d = np.cross(l1, l2)
-        #if norm_d > 0:
-        #    e.drawTriangle(proj_points, e.window.screen, edges=True)
-        e.drawTriangle(proj_points, e.window.screen, edges=False)
+        if norm_d > 0:
+            e.drawTriangle(proj_points, e.window.screen, edges=True)
 
     
     angle+=0.02
