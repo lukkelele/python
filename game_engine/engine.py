@@ -39,12 +39,20 @@ class Engine:
         pygame.quit()
         exit()
 
-    def drawTriangle(self, vertices, color=WHITE):
+    def drawTriangle(self, vertices, color=WHITE, edges=False):
         "Three vertices"
         vec1, vec2, vec3 = vertices[0], vertices[1], vertices[2]
         pygame.draw.line(self.window.screen, self.WHITE, vec1, vec2)
         pygame.draw.line(self.window.screen, self.WHITE, vec1, vec3)
         pygame.draw.line(self.window.screen, self.WHITE, vec2, vec3)
+        if edges: self.drawEdges(vertices)
+
+    def drawEdges(self, vertices, color=WHITE, rad=4):
+        vec1, vec2, vec3 = vertices[0], vertices[1], vertices[2]
+        pygame.draw.circle(self.window.screen, color, vec1, radius=rad)
+        pygame.draw.circle(self.window.screen, color, vec2, radius=rad)
+        pygame.draw.circle(self.window.screen, color, vec3, radius=rad)
+         
 
 e = Engine()
 e.window.screen.fill((0,0,0)) # blackscreen
@@ -98,7 +106,7 @@ while True:
         l2 = np.array(proj_points[1]) - np.array(proj_points[0])
         norm_d = np.cross(l1, l2)
         if norm_d > 0:
-            e.drawTriangle(proj_points, e.window.screen)
+            e.drawTriangle(proj_points, e.window.screen, edges=True)
             #pygame.draw.line(e.window.screen, (255,255,255), proj_points[0], proj_points[1])
             #pygame.draw.line(e.window.screen, (255,255,255), proj_points[0], proj_points[2])
             #pygame.draw.line(e.window.screen, (255,255,255), proj_points[2], proj_points[1])
