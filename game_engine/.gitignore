@@ -1,6 +1,4 @@
 # Ignore files
 
-_mesh.py
-mesh.py
-pyrightconfig.json
+backup
 __pycache__
