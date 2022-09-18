@@ -26,7 +26,8 @@ T = Translation vector
 
 ### 3D rotation
 Rotating 3D with three vectors. <br>
-*Point-at Matrix* <br>
+<br>
+**Point-at Matrix** <br>
 \[Px Py 1\] \* \[ Ax Ay Az 0 \] <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\[ Bx By Bz 0 \] <br> 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\[ Cx Cy Cz 0 \] <br>
@@ -37,8 +38,8 @@ B = Orthogonal vector
 C = Up vector  
 T = Translation vector  
 <br>
-*Look-at Matrix*<br>
-inverse(Point-at Matrix)
+**Look-at Matrix** <br>
+*inverse*(Point-at Matrix)
 <br>
 To gain camera perspective, take the inverse of the "point-at" matrix.
 
