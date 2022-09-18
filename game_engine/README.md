@@ -46,4 +46,12 @@ To gain camera perspective, take the inverse of the "point-at" matrix.
 ---
 ## Clipping
 
+1. Count inside points
+2. Count outside points
+3. Classify triangle
+  *  if inside == 3 -> do nothing
+  *  if inside == 0 -> reject
+  *  if inside == 2 -> form quad ( 2 triangles )
+  *  if inside == 1 -> form triangle
+
 

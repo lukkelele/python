@@ -8,17 +8,6 @@ FOV = 90.0
 HALF_PI = math.pi * 0.5
 PI = math.pi
 TWO_PI = math.pi * 2.0
-FLOAT_ZERO = np.float32(0.0)
-FLOAT2_ZERO = np.zeros(2, dtype=np.float32)
-FLOAT3_ZERO = np.zeros(3, dtype=np.float32)
-FLOAT4_ZERO = np.zeros(4, dtype=np.float32)
-INT_ZERO = np.int32(0)
-INT2_ZERO = np.zeros(2, dtype=np.int32)
-INT3_ZERO = np.zeros(3, dtype=np.int32)
-INT4_ZERO = np.zeros(4, dtype=np.int32)
-MATRIX3_IDENTITY = np.eye(3, dtype=np.float32)
-MATRIX3x4_IDENTITY = np.eye(3, 4, dtype=np.float32)
-MATRIX4_IDENTITY = np.eye(4, dtype=np.float32)
 
 
 def Float(x=0.0):
@@ -67,6 +56,59 @@ def clamp_radian(rad):
 def radian_to_degree(radian):
     """Convert radians to degrees"""
     return clamp_radian(radian) / TWO_PI * 360.0
+
+def matrix_multiply_vector(m, v):
+    x, y, z, w = v[0], v[1], v[2], v[3]
+    X = x * m[0,0] + y * m[1,0] + z * m[2,0] + w * m[3,0]
+    Y = x * m[0,1] + y * m[1,1] + z * m[2,1] + w * m[3,1]
+    Z = x * m[0,2] + y * m[1,2] + z * m[2,2] + w * m[3,2]
+    W = x * m[0,3] + y * m[1,3] + z * m[2,3] + w * m[3,3]
+    return Float4(X, Y, Z, W)
+
+def matrix_multiply_vector4(m, v):
+    x, y, z, w = v[0], v[1], v[2], v[3]
+    X = x * m[0,0] + y * m[1,0] + z * m[2,0]
+    Y = x * m[0,1] + y * m[1,1] + z * m[2,1] 
+    Z = x * m[0,2] + y * m[1,2] + z * m[2,2]
+    W = x * m[0,3] + y * m[1,3] + z * m[2,3] 
+    return Float3(X, Y, Z)
+
+def vector_add_w(v1, v2):
+    x = float(v1[0] + v2[0])
+    y = float(v1[1] + v2[1])
+    z = float(v1[2] + v2[2])
+    w = float(v1[3] + v2[3])
+    return Float4(x, y, z, w)
+
+def vector_dot(v1, v2):
+    x = v1[0] * v2[0]
+    y = v1[1] * v2[1]
+    z = v1[2] * v2[2]
+    return x + y + z
+
+def vector_mul(v1, a):
+    x = v1[0] * a
+    y = v1[1] * a
+    z = v1[2] * a
+    return Float3(x,y,z)
+
+def vector_add(v1, v2):
+    x = float(v1[0] + v2[0])
+    y = float(v1[1] + v2[1])
+    z = float(v1[2] + v2[2])
+    return Float3(x, y, z)
+
+def vector_sub(v1, v2):
+    x = float(v1[0] - v2[0])
+    y = float(v1[1] - v2[1])
+    z = float(v1[2] - v2[2])
+    return Float3(x, y, z)
+
+def vector_div(v1, k):
+    x = float(v1[0] / k)
+    y = float(v1[1] / k) 
+    z = float(v1[2] / k) 
+    return Float3(x, y, z)
 
 def is_rotation_matrix(R):
     """Check if matrix is a valid rotation matrix"""
@@ -370,56 +412,97 @@ def point_at(pos, target, up):
         ], dtype=np.float32)
     return matrix
 
-def matrix_multiply_vector(m, v):
-    x, y, z, w = v[0], v[1], v[2], v[3]
-    X = x * m[0,0] + y * m[1,0] + z * m[2,0] + w * m[3,0]
-    Y = x * m[0,1] + y * m[1,1] + z * m[2,1] + w * m[3,1]
-    Z = x * m[0,2] + y * m[1,2] + z * m[2,2] + w * m[3,2]
-    W = x * m[0,3] + y * m[1,3] + z * m[2,3] + w * m[3,3]
-    return Float4(X, Y, Z, W)
+def intersection(point, n, startPos, endPos):
+    """
+    point: on the plane
+    n: normal to the plane
+    startPos: start position of line
+    endPos: end position of line
+    """
+    #startPos = startPos[:3]
+    #endPos = endPos[:3]
+    startPos = startPos
+    endPos = endPos
+    n = normalize(n)
+    d = float(-1.0 * np.dot(n, point))
+    #print(d)
+    ad = np.dot(startPos, n)
+    bd = np.dot(endPos, n)
+    #print(f"ad and bd => {ad}, {bd}")
+    t = (-d - ad) / (bd - ad)
+    line = vector_sub(endPos, startPos)
+    intersection = vector_mul(line, t)
+    return np.append(vector_add(startPos, intersection), np.array([0])) #FIXME
 
-def matrix_multiply_vector4(m, v):
-    x, y, z, w = v[0], v[1], v[2], v[3]
-    X = x * m[0,0] + y * m[1,0] + z * m[2,0]
-    Y = x * m[0,1] + y * m[1,1] + z * m[2,1] 
-    Z = x * m[0,2] + y * m[1,2] + z * m[2,2]
-    W = x * m[0,3] + y * m[1,3] + z * m[2,3] 
-    return Float3(X, Y, Z)
+def get_dist(p, n):
+    vn = normalize(p) 
+    nx, ny, nz = n[0], n[1], n[2]
+    x, y, z = vn[0], vn[1], vn[2]
+    dist = float(nx*x + ny*y + nz*z - np.dot(n, p))
+    return dist
 
-def vector_add_w(v1, v2):
-    x = float(v1[0] + v2[0])
-    y = float(v1[1] + v2[1])
-    z = float(v1[2] + v2[2])
-    w = float(v1[3] + v2[3])
-    return Float4(x, y, z, w)
+def triangle_clip(p, n, tri, outTri1, outTri2):
+    inside, outside = [], []
+    p1, p2, p3 = tri[0], tri[1], tri[2]
+    n = normalize(n)
+    nx, ny, nz = n[0], n[1], n[2]
+    # return shortest distance from point -> plane
+    d0, d1, d2 = get_dist(p1,n), get_dist(p2,n), get_dist(p3,n)
+    if d0 >= 0: inside.append(p1)
+    else: outside.append(p1)
+    if d1 >= 0: inside.append(p2)
+    else: outside.append(p2)
+    if d2 >= 0: inside.append(p3)
+    else: outside.append(p3)
+    
+    insidePointCount, outsidePointCount = len(inside), len(outside)
+    
+    if insidePointCount == 0:
+        # reject -> no vertices are valid
+        return 0
+    elif insidePointCount == 3:
+        # accept -> all vertices are valid
+        return 1
+    elif insidePointCount == 1 and outsidePointCount == 2:
+        # Clip triangle, 2 points lie outside
+        # < COPY TRIANGLE DATA >
+        p_in = inside[0]
+        p1_out = intersection(p, n, p_in, outside[0])
+        p2_out = intersection(p, n, p_in, outside[1])
+        #print(f"p1_out , p2_out : {p1_out}, {p2_out}")
+        outTri1[0, :] = p_in
+        outTri1[1, :] = p1_out
+        outTri1[2, :] = p2_out
+        return 1
+    elif insidePointCount == 2 and outsidePointCount == 1:
+        # Clip triangle, 2 points lie inside -> form quad
+        # < COPY TRIANGLE DATA >
+        p1_in, p2_in = inside[0], inside[1]
+        pi3 = intersection(p, n, p1_in, outside[0])
+        p3_in = inside[1]
+        pi4 = intersection(p, n, p2_in, outside[0])
+        outTri1[0, :] = p1_in
+        outTri1[1, :] = p2_in
+        outTri1[2, :] = pi3
 
-def vector_dot(v1, v2):
-    x = v1[0] * v2[0]
-    y = v1[1] * v2[1]
-    z = v1[2] * v2[2]
-    return x + y + z
+        outTri2[0, :] = p2_in
+        outTri1[1, :] = pi3
+        outTri1[2, :] = pi4
+        return 2
+        #return cTri
 
-def vector_mul(v1, a):
-    x = v1[0] * a
-    y = v1[1] * a
-    z = v1[2] * a
-    return Float3(x,y,z)
 
-def vector_add(v1, v2):
-    x = float(v1[0] + v2[0])
-    y = float(v1[1] + v2[1])
-    z = float(v1[2] + v2[2])
-    return Float3(x, y, z)
 
-def vector_sub(v1, v2):
-    x = float(v1[0] - v2[0])
-    y = float(v1[1] - v2[1])
-    z = float(v1[2] - v2[2])
-    return Float3(x, y, z)
 
-def vector_div(v1, k):
-    x = float(v1[0] / k)
-    y = float(v1[1] / k) 
-    z = float(v1[2] / k) 
-    return Float3(x, y, z)
+
+
+
+
+
+
+
+
+
+
+
 
