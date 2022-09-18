@@ -11,7 +11,7 @@ import math
 
 class Engine:
 
-    def __init__(self, width=500, height=500, title=""):
+    def __init__(self, width=500, height=500, title="Lukkelele Game Engine"):
         self.pg = pygame.init()
         self.fpsClock = pygame.time.Clock()
         self.window = window.Window(width, height, title)

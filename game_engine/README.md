@@ -1,3 +1,7 @@
+# Game Engine
+---
+\<insert details\>
+---
 ## P(x,y) -> Q(x,y)
 UNIT VECTORS!
 
@@ -8,5 +12,7 @@ In the same manner -> Qy = Ay + By (Py\*Ay + Py\*By) <br>
 Qx = Px\*Ax + Py\*Bx <br>
 Qy = Px\*Ay + Py\*By <br>
 <br>
+
+---
 
 
