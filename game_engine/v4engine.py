@@ -63,6 +63,7 @@ xRot = Transform.get_rotation_matrix_x(theta)
 
 
 while True:
+    e.window.screen.blit(background, (0,0)) # TODO: fix refresh for screen
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -128,44 +129,41 @@ while True:
                          Transform.matrix_multiply_vector(matView, p3t)
         
         # Clip world space
-        viewPlane = Transform.Float4(0,0,0.1,0)
-        normalPlane = Transform.Float4(0,0,1,0)
+        viewPlane = Transform.Float4(0,0,10,0)
+        normalPlane = Transform.Float4(0,0,-5,0)
         outTri1, outTri2 = Transform.Matrix4(), Transform.Matrix4()
         clipped = [outTri1, outTri2] 
-        q = Transform.triangle_clip(viewPlane, normalPlane, [p1v, p2v, p3v], outTri1, outTri2)
-        queue = []
-        for n in range(q):
+        triQueue = []
+        clip_count = Transform.triangle_clip(viewPlane, normalPlane, [p1v, p2v, p3v], clipped[0], clipped[1])
+        for n in range(clip_count):
             p1p = np.dot(matProj, clipped[n][0])
             p2p = np.dot(matProj, clipped[n][1])
             p3p = np.dot(matProj, clipped[n][2])
-            #p1p, p2p, p3p = np.dot(matProj, p1v), np.dot(matProj, p2v), np.dot(matProj, p3v)
+            p1p, p2p, p3p = np.dot(matProj, p1v), np.dot(matProj, p2v), np.dot(matProj, p3v)
             triProj = [p1p, p2p, p3p]
             for vert in triProj:
                 v = Transform.vector_div(vert, vert[3])  # vector / w
                 v = Transform.vector_add(v, vOffsetView) # offset view
-                v[0] *= -1.0 # redo inversion
+                v[0] *= -1.0 # redo inversion -> for XY plane
                 v[1] *= -1.0 # redo inversion
                 x = v[0]*scale + OFFSET_x
                 y = v[1]*scale + OFFSET_y 
                 v = (x, y)
                 triOffset.append(v)
 
+        # TODO: ADD METHOD
             P1 = triOffset[0]
             P2 = triOffset[1]
             P3 = triOffset[2]
-
             line1 = np.array([P2[0] - P1[0], P2[1] - P1[1]], dtype=np.float32)
             line2 = np.array([P3[0] - P1[0], P3[1] - P1[1]], dtype=np.float32)
             line_norm = np.cross(line1, line2)
-            print([P1,P2,P3]) 
-            queue.append([P1,P2,P3])
             # if face is visible
-            #if line_norm > 0:
-        # TODO: FIX HERE!!
-        for i in range(len(queue)):
-            P = queue[i]
-            P1, P2, P3 = P[0], P[1], P[2]
-            print(P)
+            if line_norm > 0:
+                triQueue.append(triOffset)
+
+        for triangle in triQueue:
+            P1, P2, P3 = triangle[0], triangle[1], triangle[2]
             pygame.draw.line(e.window.screen, color, P1, P2)
             pygame.draw.line(e.window.screen, color, P1, P3)
             pygame.draw.line(e.window.screen, color, P2, P3)
@@ -175,5 +173,4 @@ while True:
     
     e.fpsClock.tick(30)
     e.window.update()
-    e.window.screen.blit(background, (0,0)) # TODO: fix refresh for screen
 

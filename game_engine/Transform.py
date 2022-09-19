@@ -449,11 +449,11 @@ def triangle_clip(p, n, tri, outTri1, outTri2):
     # return shortest distance from point -> plane
     d0, d1, d2 = get_dist(p1,n), get_dist(p2,n), get_dist(p3,n)
     if d0 >= 0: inside.append(p1)
-    else: outside.append(p1)
+    else:       outside.append(p1)
     if d1 >= 0: inside.append(p2)
-    else: outside.append(p2)
+    else:       outside.append(p2)
     if d2 >= 0: inside.append(p3)
-    else: outside.append(p3)
+    else:       outside.append(p3)
     
     insidePointCount, outsidePointCount = len(inside), len(outside)
     
@@ -462,6 +462,7 @@ def triangle_clip(p, n, tri, outTri1, outTri2):
         return 0
     elif insidePointCount == 3:
         # accept -> all vertices are valid
+        outTri1 = np.array(tri)
         return 1
     elif insidePointCount == 1 and outsidePointCount == 2:
         # Clip triangle, 2 points lie outside
@@ -489,7 +490,6 @@ def triangle_clip(p, n, tri, outTri1, outTri2):
         outTri1[1, :] = pi3
         outTri1[2, :] = pi4
         return 2
-        #return cTri
 
 
 
