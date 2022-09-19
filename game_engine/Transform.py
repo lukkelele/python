@@ -403,13 +403,16 @@ def point_at(pos, target, up):
     a = vector_mul(newForward, vector_dot(up, newForward))
     newUp = vector_sub(up, a)
     newUp = normalize(newUp)
+
     right = np.cross(newUp, newForward)
+
     matrix = np.matrix([
         [right[0], right[1], right[2], 0.0],
         [up[0], up[1], up[2], 0.0],
         [newForward[0], newForward[1], newForward[2], 0.0],
         [pos[0], pos[1], pos[2], 1.0]
         ], dtype=np.float32)
+
     return matrix
 
 def intersection(point, n, startPos, endPos):
@@ -419,19 +422,17 @@ def intersection(point, n, startPos, endPos):
     startPos: start position of line
     endPos: end position of line
     """
-    #startPos = startPos[:3]
-    #endPos = endPos[:3]
     startPos = startPos
     endPos = endPos
     n = normalize(n)
     d = float(-1.0 * np.dot(n, point))
-    #print(d)
     ad = np.dot(startPos, n)
     bd = np.dot(endPos, n)
-    #print(f"ad and bd => {ad}, {bd}")
     t = (-d - ad) / (bd - ad)
+
     line = vector_sub(endPos, startPos)
     intersection = vector_mul(line, t)
+
     return np.append(vector_add(startPos, intersection), np.array([0])) #FIXME
 
 def get_dist(p, n):
@@ -441,13 +442,15 @@ def get_dist(p, n):
     dist = float(nx*x + ny*y + nz*z - np.dot(n, p))
     return dist
 
-def triangle_clip(p, n, tri, outTri1, outTri2):
+def triangle_clip(p, n, tri):
     inside, outside = [], []
     p1, p2, p3 = tri[0], tri[1], tri[2]
     n = normalize(n)
     nx, ny, nz = n[0], n[1], n[2]
+
     # return shortest distance from point -> plane
     d0, d1, d2 = get_dist(p1,n), get_dist(p2,n), get_dist(p3,n)
+
     if d0 >= 0: inside.append(p1)
     else:       outside.append(p1)
     if d1 >= 0: inside.append(p2)
@@ -459,37 +462,45 @@ def triangle_clip(p, n, tri, outTri1, outTri2):
     
     if insidePointCount == 0:
         # reject -> no vertices are valid
-        return 0
+        return None, None
+
     elif insidePointCount == 3:
         # accept -> all vertices are valid
-        outTri1 = np.array(tri)
-        return 1
+        tri1 = Matrix4()
+        tri1[0, :] = tri[0]
+        tri1[1, :] = tri[1]
+        tri1[2, :] = tri[2]
+        return tri1, None
+
     elif insidePointCount == 1 and outsidePointCount == 2:
         # Clip triangle, 2 points lie outside
         # < COPY TRIANGLE DATA >
+        outTri1, outTri2 = Matrix4(), Matrix4()
         p_in = inside[0]
         p1_out = intersection(p, n, p_in, outside[0])
         p2_out = intersection(p, n, p_in, outside[1])
-        #print(f"p1_out , p2_out : {p1_out}, {p2_out}")
+
         outTri1[0, :] = p_in
         outTri1[1, :] = p1_out
         outTri1[2, :] = p2_out
-        return 1
+        return outTri1, outTri2
+
     elif insidePointCount == 2 and outsidePointCount == 1:
         # Clip triangle, 2 points lie inside -> form quad
         # < COPY TRIANGLE DATA >
+        tri1, tri2 = Matrix4(), Matrix4()
         p1_in, p2_in = inside[0], inside[1]
         pi3 = intersection(p, n, p1_in, outside[0])
-        p3_in = inside[1]
         pi4 = intersection(p, n, p2_in, outside[0])
-        outTri1[0, :] = p1_in
-        outTri1[1, :] = p2_in
-        outTri1[2, :] = pi3
 
-        outTri2[0, :] = p2_in
-        outTri1[1, :] = pi3
-        outTri1[2, :] = pi4
-        return 2
+        tri1[0, :] = p1_in
+        tri1[1, :] = p2_in
+        tri1[2, :] = pi3
+
+        tri2[0, :] = p2_in
+        tri2[1, :] = pi3
+        tri2[2, :] = pi4
+        return tri1, tri2
 
 
 

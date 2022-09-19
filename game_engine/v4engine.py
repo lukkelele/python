@@ -131,15 +131,18 @@ while True:
         # Clip world space
         viewPlane = Transform.Float4(0,0,10,0)
         normalPlane = Transform.Float4(0,0,-5,0)
-        outTri1, outTri2 = Transform.Matrix4(), Transform.Matrix4()
-        clipped = [outTri1, outTri2] 
+        clipped_triangles = [] 
+        tri1, tri2 = Transform.triangle_clip(viewPlane, normalPlane, [p1v, p2v, p3v])
+        
+        if tri1 is not None:
+            clipped_triangles.append(tri1)
+            if tri2 is not None: clipped_triangles.append(tri2)
         triQueue = []
-        clip_count = Transform.triangle_clip(viewPlane, normalPlane, [p1v, p2v, p3v], clipped[0], clipped[1])
-        for n in range(clip_count):
-            p1p = np.dot(matProj, clipped[n][0])
-            p2p = np.dot(matProj, clipped[n][1])
-            p3p = np.dot(matProj, clipped[n][2])
-            p1p, p2p, p3p = np.dot(matProj, p1v), np.dot(matProj, p2v), np.dot(matProj, p3v)
+        c = len(clipped_triangles)
+        for n in range(c):
+            tri = clipped_triangles[n]
+            # Project the clipped triangle
+            p1p, p2p, p3p = np.dot(matProj, tri[0]), np.dot(matProj, tri[1]), np.dot(matProj, tri[2])
             triProj = [p1p, p2p, p3p]
             for vert in triProj:
                 v = Transform.vector_div(vert, vert[3])  # vector / w
