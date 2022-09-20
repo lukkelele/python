@@ -1,22 +1,24 @@
 from pygame.locals import *
 from pygame.key import *
+from Window import *
 import pygame, sys, os
-import pywavefront
+#import pywavefront
 import numpy as np
 import Transform
-import Window as window
-import time
-import math
+import Triangle
+import Line
 
 
 class Engine:
 
-    def __init__(self, width=500, height=500, title="Lukkelele Game Engine"):
+    def __init__(self, width=1200, height=1024, title="Lukkelele Game Engine", tickrate=60):
         self.pg = pygame.init()
         self.fpsClock = pygame.time.Clock()
-        self.window = window.Window(width, height, title)
+        self.tickrate = tickrate
+        self.window = Window(width, height, title)
         self.WIDTH  = width
         self.HEIGHT = height
+        self.lineColor = RED
 
     def clearScreen(self):
         self.window.clear()
@@ -26,7 +28,12 @@ class Engine:
         pygame.quit()
         exit()
 
-    def drawEdges(self, vertices, color=(255,255,255), rad=4):
+    def tick(self):
+        e.window.update()
+        e.fpsClock.tick(self.tickrate)
+
+
+    def drawEdges(self, vertices, color=WHITE, rad=4):
         # FIXME
         vec1, vec2, vec3 = vertices[0], vertices[1], vertices[2]
         pygame.draw.circle(self.window.screen, color, vec1, radius=rad)
@@ -34,7 +41,7 @@ class Engine:
         pygame.draw.circle(self.window.screen, color, vec3, radius=rad)
 
 
-e = Engine(width=1000, height=1000)
+e = Engine()
 e.window.screen.fill((0,0,0)) # blackscreen
 background = pygame.Surface((e.WIDTH, e.HEIGHT))
 cube = Transform.createCube()
@@ -53,7 +60,7 @@ theta, fYaw = 0.0, 0.0
 matCam, matView = Transform.Matrix4(), Transform.Matrix4()
 vOffsetView = Transform.Float3(0,0,1)
 matProj = Transform.perspective(90.0, e.HEIGHT/e.WIDTH, 0.10, 1000.0)
-color = (255,255,255) # REMOVE
+color = MAGENTA
 
 edges = True
 scale = 100
@@ -155,25 +162,18 @@ while True:
                 triOffset.append(v)
 
         # TODO: ADD METHOD
-            P1 = triOffset[0]
-            P2 = triOffset[1]
-            P3 = triOffset[2]
-            line1 = np.array([P2[0] - P1[0], P2[1] - P1[1]], dtype=np.float32)
-            line2 = np.array([P3[0] - P1[0], P3[1] - P1[1]], dtype=np.float32)
-            line_norm = np.cross(line1, line2)
+            #P1 = triOffset[0]
+            #P2 = triOffset[1]
+            #P3 = triOffset[2]
+            P1, P2, P3 = Triangle.get_points(triOffset)
+            line1 = Line.line(P1, P2)
+            line2 = Line.line(P1, P3)
+            line_norm = Line.normal(line1, line2)
             # if face is visible
             if line_norm > 0:
                 triQueue.append(triOffset)
 
         for triangle in triQueue:
-            P1, P2, P3 = triangle[0], triangle[1], triangle[2]
-            pygame.draw.line(e.window.screen, color, P1, P2)
-            pygame.draw.line(e.window.screen, color, P1, P3)
-            pygame.draw.line(e.window.screen, color, P2, P3)
-            if edges == True:
-                e.drawEdges(triOffset, rad=2)
-
+            Triangle.draw(e.window.screen, triangle, color, with_edges=True)
     
-    e.fpsClock.tick(30)
-    e.window.update()
-
+    e.tick()

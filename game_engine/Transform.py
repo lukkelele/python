@@ -8,6 +8,7 @@ FOV = 90.0
 HALF_PI = math.pi * 0.5
 PI = math.pi
 TWO_PI = math.pi * 2.0
+MATRIX4_IDENTITY = np.eye(4, dtype=np.float32)
 
 
 def Float(x=0.0):
@@ -105,10 +106,13 @@ def vector_sub(v1, v2):
     return Float3(x, y, z)
 
 def vector_div(v1, k):
-    x = float(v1[0] / k)
-    y = float(v1[1] / k) 
-    z = float(v1[2] / k) 
-    return Float3(x, y, z)
+    if k != np.nan and k != 0.0:
+        x = float(v1[0] / k)
+        y = float(v1[1] / k) 
+        z = float(v1[2] / k) 
+        return Float3(x, y, z)
+    else:
+        return Float3(0,0,0) # remove possibility of division by 0
 
 def is_rotation_matrix(R):
     """Check if matrix is a valid rotation matrix"""
