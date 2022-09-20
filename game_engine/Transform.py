@@ -506,10 +506,20 @@ def triangle_clip(p, n, tri):
         tri2[2, :] = pi4
         return tri1, tri2
 
+def extend_vector_ones(v):
+    """
+    Add a column of ones to a vector v
+    """
+    return np.append(v, np.ones_like(v))
 
-
-
-
+def project_triangle(M, v):
+    """
+    Multiply a vertex by a matrix
+    Used for projections and world transformations
+    """
+    v1, v2, v3 = v[0], v[1], v[2]
+    #TODO: HERE
+    
 
 
 

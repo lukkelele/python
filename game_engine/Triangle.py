@@ -10,11 +10,11 @@ def get_points(triangle):
     p3 = triangle[2]
     return p1, p2, p3
 
-def draw(window, triangle, color=WHITE, with_edges=False):
+def draw(window, triangle, linecolor=WHITE, edgecolor=GREEN, with_edges=False):
     p1, p2, p3 = get_points(triangle)
-    _draw.line(window, color, p1, p2)
-    _draw.line(window, color, p1, p3)
-    _draw.line(window, color, p2, p3)
+    _draw.line(window, linecolor, p1, p2)
+    _draw.line(window, linecolor, p1, p3)
+    _draw.line(window, linecolor, p2, p3)
     if with_edges:
-        draw_edges(window, triangle, color)
+        draw_edges(window, triangle, edgecolor)
 
