@@ -11,7 +11,7 @@ import Line
 
 class Engine:
 
-    def __init__(self, width=1200, height=1024, title="Lukkelele Game Engine", tickrate=60,
+    def __init__(self, width=1600, height=1024, title="Lukkelele Game Engine", tickrate=60,
                  linecolor=WHITE, edgecolor=GREEN, camstep=0.10, yawstep=0.10):
         self.pg = pygame.init()
         self.fpsClock = pygame.time.Clock()
@@ -43,8 +43,7 @@ class Engine:
         exit()
 
 
-
-e = Engine()
+e = Engine(width=1400, height=1000)
 e.window.screen.fill((0,0,0)) # blackscreen
 background = pygame.Surface((e.width, e.height))
 cube = Transform.createCube()
@@ -55,10 +54,6 @@ e.clear_screen()
 objmodel = ship
 
 OFFSET_x, OFFSET_y = e.width / 2, e.height / 2
-vCam = Transform.Float3(0,0,0)
-vLookDir = Transform.Float3(0,0,1)
-vUp = Transform.Float3(0,1,0)
-vForward = Transform.Float3(0,0,1)
 theta, fYaw = 0.0, 0.0
 matCam, matView = Transform.Matrix4(), Transform.Matrix4()
 vOffsetView = Transform.Float3(0,0,1)
@@ -70,42 +65,30 @@ camScale = 0.10
 zRot = Transform.get_rotation_matrix_z(theta * 0.50)
 xRot = Transform.get_rotation_matrix_x(theta)
 
-
 while True:
     e.window.screen.blit(background, (0,0)) # TODO: fix refresh for screen
 
     for event in pygame.event.get():
-        if event.type == QUIT:
-            e.quit()
+        if event.type == QUIT: e.quit()
     
     # Basic input controls for camera
-    if pygame.key.get_pressed()[K_RIGHT]:
-        e.vCam[0] += e.camstep
-    elif pygame.key.get_pressed()[K_LEFT]:
-        e.vCam[0] -= e.camstep
-    elif pygame.key.get_pressed()[K_UP]:
-        e.vCam[1] += e.camstep
-    elif pygame.key.get_pressed()[K_DOWN]:
-        e.vCam[1] -= e.camstep
+    if pygame.key.get_pressed()[K_RIGHT]:  e.vCam[0] += e.camstep
+    elif pygame.key.get_pressed()[K_LEFT]: e.vCam[0] -= e.camstep
+    elif pygame.key.get_pressed()[K_UP]:   e.vCam[1] += e.camstep
+    elif pygame.key.get_pressed()[K_DOWN]: e.vCam[1] -= e.camstep
 
     # First Person Shooter controls
-    if pygame.key.get_pressed()[K_w]:
-        e.vCam = Transform.vector_add(e.vCam, e.vForward)
-    elif pygame.key.get_pressed()[K_s]:
-        e.vCam = Transform.vector_sub(e.vCam, e.vForward)
-    if pygame.key.get_pressed()[K_d]:
-        e.vCam[0] -= e.camstep
-    elif pygame.key.get_pressed()[K_a]:
-        e.vCam[0] += e.camstep
-    elif pygame.key.get_pressed()[K_q]:
-        e.yaw += e.yawstep
-    elif pygame.key.get_pressed()[K_e]:
-        e.yaw -= e.yawstep
+    if pygame.key.get_pressed()[K_w]:   e.vCam = Transform.vector_add(e.vCam, e.vForward)
+    elif pygame.key.get_pressed()[K_s]: e.vCam = Transform.vector_sub(e.vCam, e.vForward)
+    elif pygame.key.get_pressed()[K_q]: e.yaw += e.yawstep
+    elif pygame.key.get_pressed()[K_e]: e.yaw -= e.yawstep
+    elif pygame.key.get_pressed()[K_d]: e.vCam[0] -= e.camstep
+    elif pygame.key.get_pressed()[K_a]: e.vCam[0] += e.camstep
 
     # Rotate y axis by yaw value
     yRot = Transform.get_rotation_matrix_y(e.yaw)
     
-    # World matrix 
+    # World matrix
     matWorldRot = np.dot(zRot, xRot)
     e.matWorld = np.dot(e.matWorld, matWorldRot)
     matWorld = np.dot(e.matWorld, e.matTrans)
@@ -117,7 +100,7 @@ while True:
     e.vForward = Transform.vector_mul(e.vLook, 1)
 
     # Look-at matrix
-    Transform.lookat(matView, e.vCam, vTarget, vUp)
+    Transform.lookat(matView, e.vCam, vTarget, e.vUp)
 
     for triangle in objmodel:
         triProj = []; triOffset = []; triProj_norm = []
@@ -126,11 +109,12 @@ while True:
         p1 = Transform.extend_vector_ones(p1)
         p2 = Transform.extend_vector_ones(p2)
         p3 = Transform.extend_vector_ones(p3)
+
         # World Transformation
-        #matWorld = e.matWorld
         p1t, p2t, p3t =  Transform.matrix_multiply_vector(matWorld, p1), \
                          Transform.matrix_multiply_vector(matWorld, p2), \
                          Transform.matrix_multiply_vector(matWorld, p3)
+
         # Camera Transformation
         p1v, p2v, p3v =  Transform.matrix_multiply_vector(matView, p1t), \
                          Transform.matrix_multiply_vector(matView, p2t), \
@@ -140,7 +124,10 @@ while True:
         viewPlane = Transform.Float4(0,0,10,0)
         normalPlane = Transform.Float4(0,0,-5,0)
         clipped_triangles = [] 
-        tri1, tri2 = Transform.triangle_clip(viewPlane, normalPlane, [p1v, p2v, p3v])
+        #tri1, tri2 = Transform.triangle_clip(viewPlane, normalPlane, [p1v, p2v, p3v])
+        tri = Triangle.transform(triangle, matWorld, matView)
+        #tri = Triangle.transform(tri, matView)
+        tri1, tri2 = Transform.triangle_clip(viewPlane, normalPlane, tri)
         
         if tri1 is not None:
             clipped_triangles.append(tri1)

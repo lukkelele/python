@@ -111,8 +111,7 @@ def vector_div(v1, k):
         y = float(v1[1] / k) 
         z = float(v1[2] / k) 
         return Float3(x, y, z)
-    else:
-        return Float3(0,0,0) # remove possibility of division by 0
+    else: return Float3(0,0,0) # remove possibility of division by 0
 
 def is_rotation_matrix(R):
     """Check if matrix is a valid rotation matrix"""
