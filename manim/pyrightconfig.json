@@ -1,0 +1,6 @@
+{
+  "reportUnboundVariable": "error",
+  "reportWildcardImportFromLibrary": "none",
+  "reportGeneralTypeIssues": "error",
+  "reportUnusedClass": "none"
+}
