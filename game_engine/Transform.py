@@ -519,9 +519,27 @@ def project_triangle(M, v):
     v1, v2, v3 = v[0], v[1], v[2]
     #TODO: HERE
     
+def get_clipping_planes(view=10, normal=-5):
+    viewPlane = Float4(0,0,view,0)
+    normalPlane = Float4(0,0,normal,0)
+    return viewPlane, normalPlane
 
+def transform(triangle, matWorld, matCam):
+    p1, p2, p3 = triangle[0], triangle[1], triangle[2]
 
+    p1 = extend_vector_ones(p1)
+    p2 = extend_vector_ones(p2)
+    p3 = extend_vector_ones(p3)
+    # World Transformation
+    p1t, p2t, p3t = Transform.matrix_multiply_vector(matWorld, p1), \
+                    Transform.matrix_multiply_vector(matWorld, p2), \
+                    Transform.matrix_multiply_vector(matWorld, p3)
+    # Camera Transformation
+    p1v, p2v, p3v = Transform.matrix_multiply_vector(matCam, p1t), \
+                    Transform.matrix_multiply_vector(matCam, p2t), \
+                    Transform.matrix_multiply_vector(matCam, p3t)
 
+    return [p1v, p2v, p3v]
 
 
 

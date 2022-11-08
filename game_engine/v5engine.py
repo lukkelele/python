@@ -1,3 +1,4 @@
+from ssl import PROTOCOL_TLSv1_2
 from pygame.locals import *
 from pygame.key import *
 from Window import *
@@ -103,6 +104,7 @@ while True:
     Transform.lookat(matView, e.vCam, vTarget, e.vUp)
 
     for triangle in objmodel:
+        viewPlane, normalPlane = Transform.get_clipping_planes()
         triProj = []; triOffset = []; triProj_norm = []
         p1, p2, p3 = triangle[0], triangle[1], triangle[2]
 
@@ -110,19 +112,8 @@ while True:
         p2 = Transform.extend_vector_ones(p2)
         p3 = Transform.extend_vector_ones(p3)
 
-        # World Transformation
-        p1t, p2t, p3t =  Transform.matrix_multiply_vector(matWorld, p1), \
-                         Transform.matrix_multiply_vector(matWorld, p2), \
-                         Transform.matrix_multiply_vector(matWorld, p3)
-
-        # Camera Transformation
-        p1v, p2v, p3v =  Transform.matrix_multiply_vector(matView, p1t), \
-                         Transform.matrix_multiply_vector(matView, p2t), \
-                         Transform.matrix_multiply_vector(matView, p3t)
         
         # Clip world space
-        viewPlane = Transform.Float4(0,0,10,0)
-        normalPlane = Transform.Float4(0,0,-5,0)
         clipped_triangles = [] 
         #tri1, tri2 = Transform.triangle_clip(viewPlane, normalPlane, [p1v, p2v, p3v])
         tri = Triangle.transform(triangle, matWorld, matView)
